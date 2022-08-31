@@ -59,12 +59,14 @@ Spark 任务运行环境：Hadoop 2.7.7，Spark 3.3.0。为避免每次任务运
 
 ### 5、启动服务
 
-```python
+```
 ./bin/server.sh start dev
 -- 启动脚本有两个参数
 第一个参数可选值：start、stop、restart、status、log，启动status 和 log 不需要指定第二参数。
 第二个参数可选值：dev、test、production。对应spring boot profile，对应应用启动加载conf目录下application-[profile].properties 文件
 ```
+
+Web Console: http://ip:9001
 
 ## 五、相关项目
 1. https://gitee.com/melin/bee
