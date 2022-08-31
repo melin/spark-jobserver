@@ -33,7 +33,16 @@ var Driver = function () {
                         title: 'DriverID',
                         field: 'id',
                         align: 'left',
-                        width: 80
+                        width: 80,
+                        templet: function(record) {
+                            const serverIp = record.serverIp;
+                            const serverPort = record.serverPort;
+                            if (serverIp && serverPort) {
+                                return '<a href="http://' + serverIp + ':' + serverPort + '/gitInfo" target="_blank">' + record.id + '</a>';
+                            } else {
+                                return record.id;
+                            }
+                        }
                     },
                     {
                         title: 'ApplicationID',

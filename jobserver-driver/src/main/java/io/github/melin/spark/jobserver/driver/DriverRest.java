@@ -17,6 +17,7 @@ import org.apache.spark.SparkConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -210,5 +212,12 @@ public class DriverRest {
             IOUtils.closeQuietly(inputStream);
             IOUtils.closeQuietly(out);
         }
+    }
+
+    @RequestMapping(value = "/gitInfo", produces = "text/plain;charset=UTF-8")
+    @ResponseBody
+    public String gitInfo() throws IOException {
+        ClassPathResource hadoopResource = new ClassPathResource("git.properties");
+        return IOUtils.toString(hadoopResource.getInputStream(), Charset.defaultCharset());
     }
 }
