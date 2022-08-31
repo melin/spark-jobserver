@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <properties>
+        <property name="logPath">${sys:user.home}</property>
+    </properties>
+    <Appenders>
+        <RollingFile name="defaultRollingFile"
+                     fileName="${sys:logPath}/spark-jobserver/logs/jobserver.log"
+                     filePattern="${sys:logPath}/spark-jobserver/logs/jobserver-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="200 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10" compressionLevel="0"/>
+        </RollingFile>
+
+        <RollingFile name="AccessAppender"
+                     fileName="${sys:logPath}/spark-jobserver/logs/access.log"
+                     filePattern="${sys:logPath}/spark-jobserver/logs/access-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="200 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10" compressionLevel="0"/>
+        </RollingFile>
+
+        <RollingFile name="ServerMinitorAppender"
+                     fileName="${sys:logPath}/spark-jobserver/logs/serverMinitor.log"
+                     filePattern="${sys:logPath}/spark-jobserver/logs/serverMinitor-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <pattern>%m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="200 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10" compressionLevel="0"/>
+        </RollingFile>
+
+        <Routing name="RoutingAppender">
+            <Routes pattern="${ctx:logFileName}">
+                <Route>
+                    <File name="File-${ctx:logFileName}" fileName="${ctx:logFileName}" append="true">
+                        <PatternLayout>
+                            <Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%p] - %m%n</Pattern>
+                        </PatternLayout>
+                    </File>
+                </Route>
+                <Route key="${ctx:logFileName}" ref="Console" />
+            </Routes>
+        </Routing>
+    </Appenders>
+
+    <Loggers>
+        <logger name="accessLog" level="info" additivity="false">
+            <appender-ref ref="AccessAppender"/>
+        </logger>
+
+        <logger name="serverMinitor" level="info" additivity="false">
+            <appender-ref ref="ServerMinitorAppender"/>
+        </logger>
+
+        <logger name="jobinstancelogs" level="INFO" additivity="false">
+            <appender-ref ref="RoutingAppender"/>
+        </logger>
+
+        <logger name="org.apache.spark.launcher" level="warn" />
+        <Logger name="org.hibernate.orm.deprecation" additivity="false" level="WARN">
+            <RegexFilter regex=".*HHH90000022.*" onMatch="DENY" onMismatch="NEUTRAL"/>
+        </Logger>
+
+        <!-- LOG everything at INFO level -->
+        <Root level="info">
+            <AppenderRef ref="defaultRollingFile" />
+        </Root>
+    </Loggers>
+</Configuration>

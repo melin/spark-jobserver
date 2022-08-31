@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <title>集群管理</title>
+    <link rel="stylesheet" href="/component/pear/css/pear.css" />
+    <link rel="stylesheet" href="/component/toast/toast.min.css" />
+    <style>
+        .form-label {
+            padding: 9px 5px;
+            width: 70px;
+        }
+        .layui-tab {
+            margin: 10px 10px;
+        }
+
+        .layui-tab-title {
+            height: 30px;
+        }
+        .layui-tab-title li {
+            line-height: 30px;
+        }
+        .layui-tab-title .layui-this:after {
+            height: 31px;
+        }
+
+        .layui-tab-content {
+            padding: 5px 0;
+        }
+    </style>
+</head>
+<body class="pear-container">
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="pear-btn pear-btn-primary pear-btn-md" onclick="Cluster.newClusterWin()">
+            <i class="layui-icon layui-icon-add-1"></i>
+            新建集群
+        </button>
+    </div>
+</script>
+
+<input type="hidden" id="confDefaultValue" th:value="${confDefaultValue}">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">集群Code</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="code" placeholder="" class="layui-input">
+                </div>
+                <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+                    <i class="layui-icon layui-icon-search"></i>
+                    查询
+                </button>
+                <button type="reset" class="pear-btn pear-btn-md">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                    重置
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="cluster-table" lay-filter="cluster-table"></table>
+    </div>
+</div>
+
+<!--日志显示窗口-->
+<div id="newClusterDiv" title="新建集群" style="display: none;">
+    <form class="layui-form" action="javascript:void(0);" style="margin: 10px" lay-filter="newClusterForm">
+        <div class="layui-card-body layui-row layui-col-space10">
+            <div class="layui-col-md1">
+                <label class="layui-form-label form-label">集群Code</label>
+            </div>
+            <div class="layui-col-md3">
+                <input type="text" name="code" hover placeholder="集群Code" autocomplete="off" id="cluster_code" class="layui-input">
+            </div>
+            <div class="layui-col-md1">
+                <label class="layui-form-label form-label">集群名称</label>
+            </div>
+            <div class="layui-col-md3">
+                <input type="text" name="name" hover placeholder="集群名称" autocomplete="off" id="cluster_name" class="layui-input">
+            </div>
+            <div class="layui-col-md1">
+                <label class="layui-form-label form-label">调度类型</label>
+            </div>
+            <div class="layui-col-md3">
+                <select name="schedulerType" class="layui-input">
+                    <option value="yarn">Yarn</option>
+                    <option value="k8s">Kubernetes</option>
+                </select>
+            </div>
+            <div class="layui-col-md1">
+                <label class="layui-form-label form-label">Yarn队列</label>
+            </div>
+            <div class="layui-col-md3">
+                <input type="text" name="yarnQueueName" hover placeholder="集群默认使用队列" autocomplete="off" value="default" class="layui-input">
+            </div>
+            <div class="layui-col-md1">
+                <label class="layui-form-label form-label">Kerberos</label>
+            </div>
+            <div class="layui-col-md3">
+                <select name="kerberosEnabled" class="layui-input">
+                    <option value="0">关闭</option>
+                    <!--<option value="1">启用</option>-->
+                </select>
+            </div>
+            <div class="layui-col-md1">
+                <label class="layui-form-label form-label">集群状态</label>
+            </div>
+            <div class="layui-col-md3">
+                <select name="status" class="layui-input">
+                    <option value="1">启用</option>
+                    <option value="0">关闭</option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <div class="layui-tab">
+        <ul class="layui-tab-title">
+            <li class="layui-this">jobserver.properties</li>
+            <li>spark.conf</li>
+            <li>core-site.xml</li>
+            <li>hdfs-site.xml</li>
+            <li>yarn-site.xml</li>
+            <li>hive-site.xml</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <div id="jobserverEditor" style="width: 100%;" class="editor"></div>
+            </div>
+            <div class="layui-tab-item">
+                <div id="sparkEditor" style="width: 100%;" class="editor"></div>
+            </div>
+            <div class="layui-tab-item">
+                <div id="coreEditor" style="width: 100%;" class="editor"></div>
+            </div>
+            <div class="layui-tab-item">
+                <div id="hdfsEditor" style="width: 100%;" class="editor"></div>
+            </div>
+            <div class="layui-tab-item">
+                <div id="yarnEditor" style="width: 100%;" class="editor"></div>
+            </div>
+            <div class="layui-tab-item">
+                <div id="hiveEditor" style="width: 100%;" class="editor"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="cluster-bar">
+    <button class="pear-btn pear-btn-sm" id="opt_{{d.id}}"><i class="layui-icon layui-icon-triangle-d"></i></button>
+</script>
+
+<script type="text/javascript" src="/component/jquery.min.js"></script>
+<script type="text/javascript" src="/component/layui/layui.js"></script>
+<script type="text/javascript" src="/component/pear/pear.js"></script>
+<script src="/common/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="/common/ace/mode-log.js" type="text/javascript" charset="utf-8"></script>
+<script src="/common/ace/mode-text.js" type="text/javascript" charset="utf-8"></script>
+<script src="/common/ace/mode-xml.js" type="text/javascript" charset="utf-8"></script>
+<script src="/common/ace/mode-properties.js" type="text/javascript" charset="utf-8"></script>
+<script src="/common/ace/theme-all.js" type="text/javascript" charset="utf-8"></script>
+<script src="/component/toast/toast.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/js/cluster.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>

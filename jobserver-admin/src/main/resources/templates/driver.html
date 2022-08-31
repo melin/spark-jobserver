@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <title>Driver管理</title>
+    <link rel="stylesheet" href="/component/pear/css/pear.css" />
+    <link rel="stylesheet" href="/component/toast/toast.min.css" />
+</head>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">集群</label>
+                <div class="layui-input-inline">
+                    <select name="clusterCode" class="layui-input" id="clusterVals">
+                        <option value="">请选择...</option>
+                        <option th:each="item : ${clusters}" th:value="${item.code}" th:text="${item.name}"></option>
+                    </select>
+                </div>
+                <label class="layui-form-label">ApplicationID</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="realName" placeholder="" class="layui-input">
+                </div>
+                <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+                    <i class="layui-icon layui-icon-search"></i>
+                    查询
+                </button>
+                <button type="reset" class="pear-btn pear-btn-md">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                    重置
+                </button>
+                <button type="button" onclick="Driver.downloadYarnLogWin()" class="pear-btn pear-btn-md pear-btn-primary" style="margin-left: 20px; background-color: #4295f5!important;">
+                    下载Yarn日志
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="driver-table" lay-filter="driver-table"></table>
+    </div>
+</div>
+
+<div class="layui-card">
+    <span style="color: red" th:if="${sparkLauncherFailedMsg}" th:text="${sparkLauncherFailedMsg}"></span>
+</div>
+
+<div id="downloadYarnLogDiv" title="下载Yarn日志" style="display: none;">
+    <form class="layui-form" action="javascript:void(0);" style="margin: 10px" lay-filter="yarnLogForm">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red">*</span>ApplicationId:</label>
+            <div class="layui-input-block">
+                <input placeholder="Yarn ApplicationId" value="" class="layui-input" name="appId" autocomplete="off">
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/html" id="driver-bar">
+    <button class="pear-btn pear-btn-sm" id="opt_{{d.id}}"><i class="layui-icon layui-icon-triangle-d"></i></button>
+</script>
+
+<script type="text/javascript" src="/component/jquery.min.js"></script>
+<script type="text/javascript" src="/component/layui/layui.js"></script>
+<script type="text/javascript" src="/component/pear/pear.js"></script>
+<script src="/component/toast/toast.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/js/driver.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>

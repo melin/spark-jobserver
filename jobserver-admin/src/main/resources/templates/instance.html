@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>作业实例</title>
+    <link rel="stylesheet" href="/component/pear/css/pear.css" />
+    <link rel="stylesheet" href="/component/toast/toast.min.css" />
+
+    <style>
+        .form-label {
+            padding: 9px 10px;
+            width: 70px;
+        }
+    </style>
+</head>
+<body class="pear-container">
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="pear-btn pear-btn-primary pear-btn-md" onclick="Instance.newInstanceWin()">
+            <i class="layui-icon layui-icon-add-1"></i>
+            新建作业
+        </button>
+        <button class="pear-btn pear-btn-primary pear-btn-md" style="margin-left: 20px" onclick="Instance.batchDownloadLogs()">
+            <i class="layui-icon layui-icon-download-circle"></i>
+            批量下载日志
+        </button>
+        <button plain class="pear-btn pear-btn-success" style="margin-left: 30px">
+            <span>
+                等待数量：
+            </span><span id="waitingCount"></span>
+            <span>
+                , 运行数量：
+            </span><span id="runningCount"></span>
+            <span>
+                , 最近一天成功数量：
+            </span><span id="lastDayFinishedCount"></span>
+            <span>
+                , 最近一天失败数量：
+            </span><span id="lastDayFailedCount"></span>
+            <span>
+                , 最近一天终止数量：
+            </span><span id="lastDayStoppedCount"></span>
+        </button>
+    </div>
+</script>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <div class="layui-col-md1">
+                    <label class="layui-form-label form-label">实例Code</label>
+                </div>
+                <div class="layui-col-md2">
+                    <input type="text" name="instanceCode" placeholder="" class="layui-input" />
+                </div>
+                <div class="layui-col-md1">
+                    <label class="layui-form-label form-label">实例名称</label>
+                </div>
+                <div class="layui-col-md2">
+                    <input type="text" name="instanceName" placeholder="" class="layui-input" />
+                </div>
+
+                <div class="layui-col-md1">
+                    <label class="layui-form-label form-label" style="width: 50px">状态</label>
+                </div>
+                <div class="layui-col-md1">
+                    <select name="status" class="layui-input">
+                        <option value="">请选择...</option>
+                        <option value="NEW">NEW</option>
+                        <option value="WAITING">WAITING</option>
+                        <option value="SUBMITTED">SUBMITTED</option>
+                        <option value="RUNNING">RUNNING</option>
+                        <option value="FAILED">FAILED</option>
+                        <option value="FINISHED">FINISHED</option>
+                        <option value="KILLED">KILLED</option>
+                    </select>
+                </div>
+
+                <div class="layui-col-md1">
+                    <label class="layui-form-label form-label" style="width: 50px">客户端</label>
+                </div>
+                <div class="layui-col-md1">
+                    <select name="clientName" class="layui-input">
+                        <option value="">请选择...</option>
+                        <option th:each="item : ${clients}" th:value="${item}" th:text="${item}"></option>
+                    </select>
+                </div>
+
+                <div class="layui-col-md2" style="padding-left: 10px">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="instance-table" class="layui-hide" lay-filter="instance-table"></table>
+    </div>
+</div>
+
+<script type="text/html" id="instance-bar">
+    <button class="pear-btn pear-btn-sm" id="opt_{{d.code}}"><i class="layui-icon layui-icon-triangle-d"></i></button>
+</script>
+
+<!--代码显示窗口-->
+<div id="nodeCodeDiv"  title="作业代码" style="width:1000px;height:600px; display: none;">
+    <div id="nodeCodeArea" style="width: 990px;height: 600px;"></div>
+</div>
+
+<!--日志显示窗口-->
+<div id="nodeLogDiv"  title="作业日志" style="width:1000px;height:600px; display: none;">
+    <div id="nodeLogArea" style="width: 990px;height: 600px;"></div>
+</div>
+
+<!--日志显示窗口-->
+<div id="newInstanceDiv" title="新建作业" style="display: none;">
+    <form class="layui-form" action="javascript:void(0);" style="margin: 10px" lay-filter="newInstanceForm">
+        <div class="layui-form-item">
+            <div class="layui-col-md1">
+                <label class="layui-form-label form-label">作业类型:</label>
+            </div>
+            <div class="layui-col-md2">
+                <select lay-verify="required" name="jobType" id="jobType" lay-filter="jobType">
+                    <option value="SPARK_SQL" selected>Spark SQL</option>
+                    <option value="SPARK_JAR">Spark Jar</option>
+                    <option value="SPARK_PYTHON">Spark Python</option>
+                </select>
+            </div>
+            <div class="layui-col-md1">
+                <label class="layui-form-label form-label"><span style="color: red">*</span>集群:</label>
+            </div>
+            <div class="layui-col-md2">
+                <select name="clusterCode" class="layui-input" id="clusterVals">
+                    <option value="">请选择...</option>
+                    <option th:each="item : ${clusters}" th:value="${item.code}" th:text="${item.name}"></option>
+                </select>
+            </div>
+            <div class="layui-col-md1">
+                <label class="layui-form-label form-label"><span style="color: red">*</span>作业名称:</label>
+            </div>
+            <div class="layui-col-md5">
+                <input placeholder="实例名称" value="" class="layui-input" name="name" autocomplete="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-tab">
+                <ul class="layui-tab-title">
+                    <li class="layui-this"><span style="color: red">*</span>作业内容:</li>
+                    <li>作业参数</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <div id="jobTextEditor" style="width: 100%;" class="editor"></div>
+                    </div>
+                    <div class="layui-tab-item">
+                        <div id="jobConfigEditor" style="width: 100%;" class="editor"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="/component/jquery.min.js"></script>
+<script type="text/javascript" src="/component/layui/layui.js"></script>
+<script type="text/javascript" src="/component/pear/pear.js"></script>
+<script src="/common/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="/common/ace/mode-log.js" type="text/javascript" charset="utf-8"></script>
+<script src="/common/ace/mode-text.js" type="text/javascript" charset="utf-8"></script>
+<script src="/common/ace/mode-sql.js" type="text/javascript" charset="utf-8"></script>
+<script src="/common/ace/mode-python.js" type="text/javascript" charset="utf-8"></script>
+<script src="/common/ace/mode-properties.js" type="text/javascript" charset="utf-8"></script>
+<script src="/common/ace/theme-all.js" type="text/javascript" charset="utf-8"></script>
+<script src="/component/toast/toast.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/js/instance.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>

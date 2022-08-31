@@ -1,0 +1,25 @@
+[{
+		"id": "instance",
+		"title": "作业实例",
+		"icon": "layui-icon layui-icon-console",
+		"type": 1,
+		"openType": "_iframe",
+		"href": "/instance"
+	},
+	{
+		"id": "driver",
+		"title": "Driver管理",
+		"icon": "layui-icon layui-icon-component",
+		"type": 1,
+		"openType": "_iframe",
+		"href": "/driver"
+	},
+	{
+		"id": "cluster",
+		"title": "集群管理",
+		"icon": "layui-icon layui-icon-component",
+		"type": 1,
+		"openType": "_iframe",
+		"href": "/cluster"
+	}
+]

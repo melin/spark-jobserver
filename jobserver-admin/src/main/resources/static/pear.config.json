@@ -1,0 +1,50 @@
+{
+	"logo": {
+		"title": "Spark JobServer",
+		"image": "admin/images/logo.png"
+	},
+	"menu": {
+		"data": "admin/data/menu.json",
+		"method": "GET",
+		"accordion": true,
+		"collaspe": false,
+		"control": false,
+		"controlWidth": 500,
+		"select": "jobinstance",
+		"async": true
+	},
+	"tab": {
+		"enable": true,
+		"keepState": true,
+		"session": false,
+		"muiltTab": true,
+		"max": "30",
+		"index": {
+			"title": "作业实例",
+			"id": "instance",
+			"href": "/instance"
+		}
+	},
+	"theme": {
+		"defaultColor": "2",
+		"defaultMenu": "dark-theme",
+		"defaultHeader": "light-theme",
+		"allowCustom": false,
+		"banner": false
+	},
+	"colors": [{
+			"id": "1",
+			"color": "#2d8cf0",
+			"second": "#ecf5ff"
+		},
+		{
+			"id": "2",
+			"color": "#36b368",
+			"second": "#f0f9eb"
+		}
+	],
+	"other": {
+		"keepLoad": "1200",
+		"autoHead": false
+	}
+}

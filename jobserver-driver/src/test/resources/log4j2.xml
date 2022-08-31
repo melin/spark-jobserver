@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable" />
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <!-- LOG everything at INFO level -->
+        <Root level="INFO">
+            <AppenderRef ref="Console" />
+        </Root>
+
+        <logger name="org.apache.hadoop.io.retry.RetryInvocationHandler" level="WARN" />
+        <logger name="org.apache.hadoop.hive" level="warn" />
+        <logger name="org.apache.hive" level="warn" />
+        <logger name="org.springframework.data.redis" level="warn" />
+        <logger name="org.springframework.security" level="warn" />
+
+        <Logger name="org.hibernate.orm.deprecation" additivity="false" level="WARN">
+            <RegexFilter regex=".*HHH90000022.*" onMatch="DENY" onMismatch="NEUTRAL"/>
+        </Logger>
+    </Loggers>
+</Configuration>

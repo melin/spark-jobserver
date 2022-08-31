@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<aspectj>
+    <aspects>
+        <aspect name="io.github.melin.spark.jobserver.driver.aspectj.SparkSessionAspectj"/>
+        <weaver options="-verbose -showWeaveInfo">
+            <include within="org.apache.spark.sql..*"/>
+        </weaver>
+    </aspects>
+    <weaver options="-XaddSerialVersionUID"/>
+</aspectj>
