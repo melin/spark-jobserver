@@ -72,7 +72,7 @@ Spark 任务运行环境：Hadoop 2.7.7，Spark 3.3.0。为避免每次任务运
 第二个参数可选值：dev、test、production。对应spring boot profile，对应应用启动加载conf目录下application-[profile].properties 文件
 ```
 
-Web Console: http://ip:9001
+Web Console: http://ip:9001, 默认账号/密码: jobserver/jobserver2022
 
 ## 五、相关项目
 1. https://gitee.com/melin/bee
