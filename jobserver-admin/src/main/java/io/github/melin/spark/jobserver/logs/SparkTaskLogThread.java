@@ -115,6 +115,7 @@ public class SparkTaskLogThread extends Thread {
                             }
                             break;
                         } else {
+                            TimeUnit.SECONDS.sleep(3);
                             checkInstanceStatusCount++;
                             continue;
                         }
