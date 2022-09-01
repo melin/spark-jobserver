@@ -28,3 +28,13 @@ public class SparkDemoTest implements SparkJob {
     }
 }
 ```
+
+### Build
+将自定义实现的类打成jar包，上传到HDFS中，新建Spark Jar作业:
+jar包名 入口类名 [自定义参数, 多个参数空格分隔]
+
+可以输入多行命令，各行之间分号分割, 例如：
+
+job-demo-1.0.0.jar com.aloudata.spark.job.JavaJobDemo huaixin;
+
+推荐使用maven-shade-plugin 打包，排除SPAKE_HOME/jars目录中不存在的jar，合并成一个jar。
