@@ -5,8 +5,14 @@
 1. 通过Rest API 提交spark 作业运行，支持sql，java/scala，python类型作业，解耦业务系统与spark 集群。
 2. Spark Job 运行资源相互隔离，每一个job 独立运行在一个Spark driver中。
 3. 预启动 Spark Driver，提高Job 启动速度，Driver 共享运行多个Job(同时只有一个job运行)
-4. 支持多集群部署，Client 提交Job 到指定集群运行。
+4. 支持多集群(Yarn/K8S)部署，Client 提交Job 到指定集群运行。
 5. Driver 定制化，可以实现比较多能力，例如：表权限，碎片文件压缩，DQC等功能。
+6. 支持作业实例任务依赖(DAG),
+
+@TODO
+1. 集成k8s
+2. 集成数据权限
+3. 支持作业定时调度
 
 ## 一、Build
 
