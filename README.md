@@ -10,7 +10,7 @@
 6. 支持作业实例任务依赖(DAG),
 7. 支持kerberos 认证
 
-已经有kyuubi，livy，为什么开发jobserver？几年前就开始这方面工作，那个时候还没有kyuubi。kyuubi目前支持sql，java/scala 任务开发中，缺少python任务能力。工作中遇到大部分任务是python 作业，spark 最开始定位面向AI人员工具，pyspark是最大优势。livy主要为了交互式场景，需要客户端管理sesssionId，不太适合spark解耦。
+已经有kyuubi，livy，为什么开发jobserver？几年前就开始这方面工作，那个时候还没有kyuubi。kyuubi目前支持sql，java/scala 任务开发中，缺少python任务能力。工作中遇到大部分任务是python 作业，spark 最开始定位面向AI人员工具，pyspark是最大优势。livy主要为了交互式场景，需要客户端管理sesssionId。
 
 @TODO
 1. 集成k8s
