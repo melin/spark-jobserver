@@ -19,6 +19,7 @@
 4. 完善调度任务优先级。
 5. spark jar 上传管理
 
+![架构](jobserver.png)
 ![web console](admin.png)
 
 ## 一、Build
