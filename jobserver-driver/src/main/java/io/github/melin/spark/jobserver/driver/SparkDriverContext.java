@@ -1,5 +1,6 @@
 package io.github.melin.spark.jobserver.driver;
 
+import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.core.entity.SparkDriver;
 import io.github.melin.spark.jobserver.core.enums.DriverStatus;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
@@ -78,10 +79,11 @@ public class SparkDriverContext {
         logThread.startQueySparkStageLog();
     }
 
-    public void stopDriver(Long driverId) {
+    public void stopDriver(InstanceDto instanceDto) {
         LOGGER.info("stopQueySparkStageLog");
         logThread.stopQueySparkStageLog();
 
+        Long driverId = instanceDto.getDriverId();
         SparkDriver driver = driverService.getEntity(driverId);
         LOGGER.info("driver {} run task finished，update status idle", driver.getApplicationId());
 

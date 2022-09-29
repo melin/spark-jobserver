@@ -33,6 +33,9 @@ public class SparkDriver implements IEntity {
     @Column(name = "cluster_code")
     private String clusterCode;
 
+    @Column(name = "instance_code")
+    private String instanceCode;
+
     @Column(name = "version")
     private Integer version;
 
@@ -92,9 +95,6 @@ public class SparkDriver implements IEntity {
 
     @Column(name = "gmt_modified")
     private Instant gmtModified;
-
-    @Formula("(select p.code from sjs_job_instance p where p.application_id = application_id and p.status='RUNNING' limit 1)")
-    private String instanceCode;
 
     @Transient
     private String sparkYarnProxyUri;

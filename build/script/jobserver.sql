@@ -69,13 +69,14 @@ CREATE TABLE `sjs_job_instance_dependent` (
 DROP TABLE IF EXISTS `sjs_spark_driver`;
 CREATE TABLE `sjs_spark_driver` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `cluster_code` varchar(45) DEFAULT NULL COMMENT '集群Code',
+  `cluster_code` varchar(64) DEFAULT NULL COMMENT '集群Code',
+  `instance_code` varchar(64) DEFAULT NULL COMMENT '运行实例Code',
   `version` int DEFAULT '0' COMMENT '乐观锁，避免重复提交',
   `server_ip` varchar(100)  DEFAULT NULL,
   `server_port` int NOT NULL,
-  `driver_type` varchar(45)  DEFAULT NULL COMMENT 'thriftServer, driverServer',
-  `driver_res_type` varchar(45)  DEFAULT NULL COMMENT '作业计算类型：yarn_batch、yarn_stream、k8s_batch、k8s_stream',
-  `status` varchar(45)  NOT NULL COMMENT '状态',
+  `driver_type` varchar(64)  DEFAULT NULL COMMENT 'thriftServer, driverServer',
+  `driver_res_type` varchar(64)  DEFAULT NULL COMMENT '作业计算类型：yarn_batch、yarn_stream、k8s_batch、k8s_stream',
+  `status` varchar(64)  NOT NULL COMMENT '状态',
   `application_id` varchar(64)  NOT NULL,
   `log_server` varchar(64)  DEFAULT NULL COMMENT 'spark 日志拉取server ip',
   `instance_count` int DEFAULT '0' COMMENT '运行实例数量',

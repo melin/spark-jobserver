@@ -159,7 +159,6 @@ public class SparkTaskLogThread extends Thread {
             LOGGER.error("请求日志失败：{}", e.getMessage());
             LOGGER.error(ExceptionUtils.getStackTrace(e));
         } finally {
-            yarnClientService.closeJobServer(clusterCode, applicationId, logTaskDto.isShareDriver());
             sparkLogService.removeLogThread(instanceCode);
         }
     }

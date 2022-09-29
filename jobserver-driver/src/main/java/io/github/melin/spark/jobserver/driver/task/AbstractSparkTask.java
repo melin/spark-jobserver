@@ -90,6 +90,7 @@ public abstract class AbstractSparkTask {
             throw new SparkJobException(msg);
         }
 
+        driver.setInstanceCode(instanceCode);
         driverService.updateServerRunning(driver);
         LOG.info("Update Driver: {} Status running:", driver.getApplicationId());
         startJobLogThread(instanceCode, instanceDto.getSparkJobServerUrl());
@@ -226,7 +227,7 @@ public abstract class AbstractSparkTask {
                 String errMsg = ExceptionUtils.getStackTrace(e).trim();
                 LOG.error("Job: {} failed: {}", instanceCode, errMsg);
             } finally {
-                sparkDriverContext.stopDriver(instanceDto.getDriverId());
+                sparkDriverContext.stopDriver(instanceDto);
                 unsetConf(instanceDto.getJobConfig());
             }
 
