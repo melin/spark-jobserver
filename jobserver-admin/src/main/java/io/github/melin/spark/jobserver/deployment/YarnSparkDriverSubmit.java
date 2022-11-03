@@ -32,9 +32,9 @@ import static io.github.melin.spark.jobserver.core.enums.DriverInstance.SHARE_IN
  * huaixin 2022/4/14 21:09
  */
 @Service
-public class YarnDriverSubmit extends AbstractSubmitService {
+public class YarnSparkDriverSubmit extends AbstractSubmitService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(YarnDriverSubmit.class);
+    private static final Logger LOG = LoggerFactory.getLogger(YarnSparkDriverSubmit.class);
 
     @Autowired
     private ClusterManager clusterManager;

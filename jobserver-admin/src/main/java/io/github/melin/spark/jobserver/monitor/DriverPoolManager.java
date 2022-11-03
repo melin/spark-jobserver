@@ -1,7 +1,7 @@
 package io.github.melin.spark.jobserver.monitor;
 
 import io.github.melin.spark.jobserver.ConfigProperties;
-import io.github.melin.spark.jobserver.deployment.YarnDriverSubmit;
+import io.github.melin.spark.jobserver.deployment.YarnSparkDriverSubmit;
 import io.github.melin.spark.jobserver.support.ClusterConfig;
 import io.github.melin.spark.jobserver.support.YarnClientService;
 import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
@@ -52,7 +52,7 @@ public class DriverPoolManager implements InitializingBean {
     private ClusterConfig clusterConfig;
 
     @Autowired
-    private YarnDriverSubmit yarnDriverSubmit;
+    private YarnSparkDriverSubmit yarnSparkDriverSubmit;
 
     private final ScheduledExecutorService scheduledExecutorService =
             ThreadUtils.newDaemonSingleThreadScheduledExecutor("check-yarn-app");
@@ -123,7 +123,7 @@ public class DriverPoolManager implements InitializingBean {
             int minDriverCount = clusterConfig.getInt(cluster.getCode(), JOBSERVER_DRIVER_MIN_COUNT);
             long driverCount = driverService.queryCount();
             while (minDriverCount > driverCount) {
-                yarnDriverSubmit.buildJobServer(cluster);
+                yarnSparkDriverSubmit.buildJobServer(cluster);
                 driverCount = driverService.queryCount();
             }
         } catch (Throwable e) {

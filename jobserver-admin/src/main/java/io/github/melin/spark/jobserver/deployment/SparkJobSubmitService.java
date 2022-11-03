@@ -67,7 +67,7 @@ public class SparkJobSubmitService implements InitializingBean {
     private YarnClientService yarnClientService;
 
     @Autowired
-    private YarnDriverSubmit yarnDriverSubmit;
+    private YarnSparkDriverSubmit yarnSparkDriverSubmit;
 
     @Autowired
     private SparkDriverService driverService;
@@ -191,7 +191,7 @@ public class SparkJobSubmitService implements InitializingBean {
                     clusterManager.runSecured(clusterCode, () -> {
                         String applicationId = null;
                         try {
-                            SubmitYarnResult result = yarnDriverSubmit.submitToYarn(instanceInfo, jobserverId);
+                            SubmitYarnResult result = yarnSparkDriverSubmit.submitToYarn(instanceInfo, jobserverId);
                             applicationId = result.getApplicationId();
                             postTaskToServer(instanceInfo, result, driverInfo);
                             LOG.info("job {} has submited", instanceCode);
@@ -305,12 +305,12 @@ public class SparkJobSubmitService implements InitializingBean {
             if (StringUtils.isNotBlank(jobInstanceInfo.getJobConfig())) {
                 boolean newDriver = checkStartNewDriver(jobInstanceInfo.getJobConfig());
                 if (newDriver) {
-                    Long driverId = yarnDriverSubmit.initSparkDriver(jobInstanceInfo.getClusterCode(), false);
+                    Long driverId = yarnSparkDriverSubmit.initSparkDriver(jobInstanceInfo.getClusterCode(), false);
                     return new DriverInfo(NEW_INSTANCE, driverId);
                 }
             }
 
-            DriverInfo driverInfo = yarnDriverSubmit.allocateDriver(jobInstanceInfo, YARN_BATCH, shareDriver);
+            DriverInfo driverInfo = yarnSparkDriverSubmit.allocateDriver(jobInstanceInfo, YARN_BATCH, shareDriver);
             driverInfo.setShareDriver(shareDriver);
             return driverInfo;
         } catch (SparkJobException e) {
