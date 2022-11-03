@@ -1,7 +1,6 @@
 package io.github.melin.spark.jobserver.deployment;
 
 import io.github.melin.spark.jobserver.ConfigProperties;
-import io.github.melin.spark.jobserver.SparkJobServerConf;
 import io.github.melin.spark.jobserver.support.ClusterConfig;
 import io.github.melin.spark.jobserver.support.ClusterManager;
 import io.github.melin.spark.jobserver.support.YarnClientService;
@@ -44,6 +43,8 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
+
+import static io.github.melin.spark.jobserver.SparkJobServerConf.*;
 
 /**
  * huaixin 2022/4/14 21:08
@@ -192,7 +193,7 @@ public abstract class AbstractSubmitService {
     protected SparkAppHandle startApplication(JobInstanceInfo jobInstanceInfo, String clusterCode,
                                               Long driverId, String yarnQueue) throws Exception {
 
-        String sparkHome = clusterConfig.getValue(clusterCode, SparkJobServerConf.JOBSERVER_SPARK_HOME);
+        String sparkHome = clusterConfig.getValue(clusterCode, JOBSERVER_SPARK_HOME);
         if (StringUtils.isBlank(sparkHome)) {
             throw new IllegalArgumentException("sparkHome 不能为空");
         } else {
@@ -214,7 +215,7 @@ public abstract class AbstractSubmitService {
 
         SparkLauncher sparkLauncher = new SparkLauncher(envParams);
 
-        boolean hiveEnabled = clusterConfig.getBoolean(clusterCode, SparkJobServerConf.JOBSERVER_DRIVER_HIVE_ENABLED);
+        boolean hiveEnabled = clusterConfig.getBoolean(clusterCode, JOBSERVER_DRIVER_HIVE_ENABLED);
         try (Stream<Path> paths = Files.walk(Paths.get(confDir))) {
             paths.forEach(path -> {
                 String file = path.toFile().getPath();
@@ -238,7 +239,7 @@ public abstract class AbstractSubmitService {
         sparkLauncher.setPropertiesFile(propertyFile);
 
         LOG.info("aspectj version: {}", config.getAspectjVersion());
-        String driverHome = clusterConfig.getValue(clusterCode, SparkJobServerConf.JOBSERVER_DRIVER_HOME);
+        String driverHome = clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_HOME);
         String aspectjweaverJar = "aspectjweaver-" + config.getAspectjVersion() + ".jar";
         String aspectjPath = defaultFS + driverHome + "/" + aspectjweaverJar;
         sparkLauncher.setConf("spark.yarn.dist.jars", aspectjPath);
@@ -256,7 +257,7 @@ public abstract class AbstractSubmitService {
                 + " -Dspring.datasource.password=" + datasourcePassword
                 + " -javaagent:" + aspectjweaverJar + " " + driverExtraOptions;
 
-        boolean remoteDebug = clusterConfig.getBoolean(clusterCode, SparkJobServerConf.JOBSERVER_DRIVER_REMOTE_DEBUG_ENABLED);
+        boolean remoteDebug = clusterConfig.getBoolean(clusterCode, JOBSERVER_DRIVER_REMOTE_DEBUG_ENABLED);
         if (remoteDebug) {
             sparkDriverExtraJavaOptionsConf += " -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=50112 ";
         }
@@ -277,7 +278,7 @@ public abstract class AbstractSubmitService {
 
         //driverJar 包 hdfs 地址
         String driverJarFile = defaultFS + driverHome + "/" +
-                clusterConfig.getValue(clusterCode, SparkJobServerConf.JOBSERVER_DRIVER_JAR_NAME);
+                clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_JAR_NAME);
         LOG.info("driver kerberos enabled: {}, hive enabled: {}", isKerberosEnabled, hiveEnabled);
 
         List<String> args = Lists.newArrayList("-j", String.valueOf(driverId),
@@ -306,8 +307,8 @@ public abstract class AbstractSubmitService {
     }
 
     private void pythonEnvConf(SparkLauncher sparkLauncher, String clusterCode) {
-        String pythonPath = clusterConfig.getValue(clusterCode, SparkJobServerConf.JOBSERVER_PYTHON_HOME);
-        String pysparkPath = clusterConfig.getValue(clusterCode, SparkJobServerConf.JOBSERVER_PYSPARK_PATH);
+        String pythonPath = clusterConfig.getValue(clusterCode, JOBSERVER_PYTHON_HOME);
+        String pysparkPath = clusterConfig.getValue(clusterCode, JOBSERVER_PYSPARK_PATH);
 
         if (StringUtils.isNotBlank(pythonPath) && StringUtils.isNotBlank(pysparkPath)) {
             sparkLauncher.setConf("spark.pyspark.driver.python", pythonPath);
@@ -345,7 +346,7 @@ public abstract class AbstractSubmitService {
         if (StringUtils.isNotBlank(yarnQueue)) {
             sparkLauncher.setConf("spark.yarn.queue", yarnQueue);
         } else {
-            yarnQueue = clusterConfig.getValue(clusterCode, SparkJobServerConf.JOBSERVER_DRIVER_YAEN_QUEUE_NAME);
+            yarnQueue = clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_YAEN_QUEUE_NAME);
             sparkLauncher.setConf("spark.yarn.queue", yarnQueue);
         }
 
@@ -357,15 +358,15 @@ public abstract class AbstractSubmitService {
         // 注意不要删除参数，避免分区表丢失数据
         sparkLauncher.setConf("spark.sql.sources.partitionOverwriteMode", "dynamic");
 
-        String sparkVersion = clusterConfig.getValue(clusterCode, SparkJobServerConf.JOBSERVER_SPARK_VERSION);
+        String sparkVersion = clusterConfig.getValue(clusterCode, JOBSERVER_SPARK_VERSION);
         String sparkYarnJarsDir = driverHome + "/spark-" + sparkVersion;
         FSUtils.checkHdfsPathExist(hadoopConf, sparkYarnJarsDir);
         String yarnJars = defaultFS + sparkYarnJarsDir + "/*";
         String driverJar = defaultFS + driverHome + "/" +
-                clusterConfig.getValue(clusterCode, SparkJobServerConf.JOBSERVER_DRIVER_JAR_NAME);
+                clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_JAR_NAME);
         yarnJars = yarnJars + "," + driverJar;
 
-        String customSparkYarnJars = clusterConfig.getValue(clusterCode, SparkJobServerConf.JOBSERVER_CUSTOM_SPARK_YARN_JARS);
+        String customSparkYarnJars = clusterConfig.getValue(clusterCode, JOBSERVER_CUSTOM_SPARK_YARN_JARS);
         if (StringUtils.isNotBlank(customSparkYarnJars)) {
             if (!StringUtils.startsWith(customSparkYarnJars, defaultFS)) {
                 customSparkYarnJars = defaultFS + customSparkYarnJars;
@@ -384,8 +385,8 @@ public abstract class AbstractSubmitService {
     private String getJvmExtraOptions(String clusterCode, Properties params, String role) {
         String key = String.format("spark.job.%s.extraJavaOptions", role);
         String jvmOptions = "driver".equals(role) ?
-                clusterConfig.getValue(clusterCode, SparkJobServerConf.JOBSERVER_JOB_DRIVER_EXTRA_JAVA_OPTIONS) :
-                clusterConfig.getValue(clusterCode, SparkJobServerConf.JOBSERVER_JOB_EXECUTOR_EXTRA_JAVA_OPTIONS);
+                clusterConfig.getValue(clusterCode, JOBSERVER_JOB_DRIVER_EXTRA_JAVA_OPTIONS) :
+                clusterConfig.getValue(clusterCode, JOBSERVER_JOB_EXECUTOR_EXTRA_JAVA_OPTIONS);
 
         if (StringUtils.isNotBlank(jvmOptions)) {
             jvmOptions = jvmOptions + " " + params.getProperty(key, "");
@@ -424,7 +425,7 @@ public abstract class AbstractSubmitService {
         Long driverId;
         try {
             SparkDriver driver = SparkDriver.buildSparkDriver(clusterCode, shareDriver);
-            String yarnQueue = clusterConfig.getValue(clusterCode, SparkJobServerConf.JOBSERVER_DRIVER_YAEN_QUEUE_NAME);
+            String yarnQueue = clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_YAEN_QUEUE_NAME);
             driver.setYarnQueue(yarnQueue);
 
             while (!redisLeaderElection.trylock()) {
@@ -433,7 +434,7 @@ public abstract class AbstractSubmitService {
             LOG.info("Get redis lock");
 
             long initDriverCount = driverService.queryCount("status", DriverStatus.INIT);
-            long maxConcurrentSubmitCount = clusterConfig.getInt(clusterCode, SparkJobServerConf.JOBSERVER_SUBMIT_DRIVER_MAX_CONCURRENT_COUNT);
+            long maxConcurrentSubmitCount = clusterConfig.getInt(clusterCode, JOBSERVER_SUBMIT_DRIVER_MAX_CONCURRENT_COUNT);
             if (initDriverCount > maxConcurrentSubmitCount) {
                 String msg = "当前正在提交jobserver数量: " + initDriverCount + ", 最大提交数量: " + maxConcurrentSubmitCount
                         + ", 可调整参数: jobserver.concurrent.submit.max.num";
@@ -456,7 +457,7 @@ public abstract class AbstractSubmitService {
 
     protected void checkMaxDriverCount(String clusterCode) {
         long driverCount = driverService.queryCount();
-        int driverMaxCount = clusterConfig.getInt(clusterCode, SparkJobServerConf.JOBSERVER_DRIVER_MAX_COUNT);
+        int driverMaxCount = clusterConfig.getInt(clusterCode, JOBSERVER_DRIVER_MAX_COUNT);
         if (driverCount >= driverMaxCount) {
             String msg = "当前正在运行任务数量已达最大数量限制: " + driverMaxCount + "，请休息一会再重试！";
             throw new ResouceLimitException(msg);
