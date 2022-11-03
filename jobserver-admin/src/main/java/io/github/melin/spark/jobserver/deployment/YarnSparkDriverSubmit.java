@@ -107,7 +107,7 @@ public class YarnSparkDriverSubmit extends AbstractSubmitService {
             driverId = initSparkDriver(clusterCode, true);
             LOG.info("预启动 driver Id: {}", driverId);
 
-            sparkAppHandle = getSparkAppHandle(jobInstanceInfo, cluster.getCode(), driverId, yarnQueue);
+            sparkAppHandle = startApplication(jobInstanceInfo, cluster.getCode(), driverId, yarnQueue);
             long appSubmitTime = System.currentTimeMillis();
             SparkAppHandle.State state = sparkAppHandle.getState();
             String applicationId = "";
