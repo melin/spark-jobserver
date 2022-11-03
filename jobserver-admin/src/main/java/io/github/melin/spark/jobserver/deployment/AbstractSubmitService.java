@@ -297,6 +297,7 @@ public abstract class AbstractSubmitService {
                 .setMaster("yarn")
                 .directory(new File(sparkHome))
                 .setDeployMode("cluster")
+                .setConf("spark.yarn.applicationType", "spark-jobserver")
                 .setConf("spark.jobserver.host", hostName)
                 .setConf("spark.driver.extraJavaOptions", sparkDriverExtraJavaOptionsConf)
                 .setConf("spark.executor.extraJavaOptions", sparkExecutorExtraJavaOptionsConf)
