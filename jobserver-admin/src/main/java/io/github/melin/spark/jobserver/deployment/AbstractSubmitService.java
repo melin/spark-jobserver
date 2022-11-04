@@ -281,10 +281,10 @@ public abstract class AbstractSubmitService {
                 clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_JAR_NAME);
         LOG.info("driver kerberos enabled: {}, hive enabled: {}", isKerberosEnabled, hiveEnabled);
 
-        List<String> args = Lists.newArrayList("-j", String.valueOf(driverId),
+        List<String> programArgs = Lists.newArrayList("-j", String.valueOf(driverId),
                 "-type", "driverserver", "-conf", conf);
         if (hiveEnabled) {
-            args.add("-hive");
+            programArgs.add("-hive");
         }
 
         pythonEnvConf(sparkLauncher, clusterCode);
@@ -303,7 +303,7 @@ public abstract class AbstractSubmitService {
                 .setConf("spark.executor.extraJavaOptions", sparkExecutorExtraJavaOptionsConf)
                 .setMainClass("io.github.melin.spark.jobserver.driver.SparkDriverApp")
                 .setAppResource(driverJarFile)
-                .addAppArgs(args.toArray(new String[0]))
+                .addAppArgs(programArgs.toArray(new String[0]))
                 .startApplication();
     }
 
