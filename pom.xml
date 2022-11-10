@@ -23,17 +23,16 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
 
-        <spark.version>3.3.0</spark.version>
+        <spark.version>3.3.1</spark.version>
         <hadoop.version>3.3.4</hadoop.version>
         <yarn.version>${hadoop.version}</yarn.version>
         <scala.version>2.12.15</scala.version>
         <scala.binary.version>2.12</scala.binary.version>
-        <dubbo.version>2.7.15</dubbo.version>
         <spotbugs.version>4.6.0</spotbugs.version>
         <aspectj.version>1.9.9.1</aspectj.version>
         <iceberg.version>0.14.0</iceberg.version>
-        <bee.version>1.4.12</bee.version>
-        <hibernate-validator.version>6.2.4.Final</hibernate-validator.version>
+        <bee.version>1.4.18</bee.version>
+        <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
 
         <!-- 与spark 版本一致 -->
         <netty.version>4.1.74.Final</netty.version>
