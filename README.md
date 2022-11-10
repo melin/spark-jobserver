@@ -21,7 +21,7 @@
 
 ![架构](jobserver.png)
 ![web console](admin.png)
-![作业执行流程](flow.png)
+![作业执行流程](jobflow.png)
 
 ## 一、Build
 
