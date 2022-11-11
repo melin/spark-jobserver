@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
  */
 public class SparkJobServerConf extends BeeConf {
 
-    public static final String DEFAULT_SPARK_VERSION = "spark-3.3.0-bin-hadoop2";
+    public static final String DEFAULT_SPARK_VERSION = "spark-3.3.1-bin-hadoop3";
 
     public static final ConfigEntry<Integer> JOBSERVER_DRIVER_MIN_COUNT =
             buildConf("jobserver.driver.min.count")
@@ -57,7 +57,7 @@ public class SparkJobServerConf extends BeeConf {
     public static final ConfigEntry<String> JOBSERVER_DRIVER_HOME =
             buildConf("jobserver.driver.home")
                     .doc("driver home 路径，一般为 hdfs 路径")
-                    .version("3.3.0")
+                    .version("3.3.1")
                     .stringConf()
                     .createWithDefault("/user/superior/spark-jobserver");
 
