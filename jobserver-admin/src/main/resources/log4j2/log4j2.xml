@@ -3,6 +3,7 @@
     <properties>
         <property name="logPath">${sys:user.home}</property>
     </properties>
+
     <Appenders>
         <RollingFile name="defaultRollingFile"
                      fileName="${sys:logPath}/spark-jobserver/logs/jobserver.log"
@@ -68,6 +69,9 @@
         </logger>
 
         <logger name="org.apache.spark.launcher" level="warn" />
+        <logger name="org.apache.hadoop" level="warn" />
+        <logger name="org.apache.hive" level="warn" />
+
         <Logger name="org.hibernate.orm.deprecation" additivity="false" level="WARN">
             <RegexFilter regex=".*HHH90000022.*" onMatch="DENY" onMismatch="NEUTRAL"/>
         </Logger>

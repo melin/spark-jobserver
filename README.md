@@ -19,9 +19,10 @@
 4. 完善调度任务优先级。
 5. spark jar 上传管理
 
-![架构](jobserver.png)
-![web console](admin.png)
-![作业执行流程](jobflow.png)
+![架构](imgs/jobserver.png)
+![Hadoop 集群管理](imgs/cluster.png)
+![实例运行日志](imgs/instance.png)
+![与大数据开发平台集成，作业执行流程](imgs/jobflow.png)
 
 ## 一、Build
 
@@ -49,10 +50,12 @@ def main(sparkSession):
 
 ## 四、Yarn Cluster 模式部署
 ### 1、准备环境
-Spark 任务运行环境：Hadoop 2.7.7，Spark 3.3.0。为避免每次任务运行上传jar，提前把相关jar 上传到 hdfs 路径。根路径：/user/superior/spark-jobserver (可以在集群管理中通过，修改jobserver.driver.home 参数设置)，根路径下有不同jar 和 目录
+Spark 任务运行环境：Hadoop 2.7.7，Spark 3.3.1。为避免每次任务运行上传jar，提前把相关jar 上传到 hdfs 路径。根路径：/user/superior/spark-jobserver (可以在集群管理中通过，修改jobserver.driver.home 参数设置)，根路径下有不同jar 和 目录
 1. spark-jobserver-driver-0.1.0.jar  -- spark jobserver driver jar，jar 参考编译spark jobserver 部分。
 2. aspectjweaver-1.9.9.1.jar  -- aspectj 拦截spark 相关代码，实现功能增强，直接maven 仓库下载
-3. spark-3.3.0  --Spark 依赖所有jar，从spark 官网下载: spark-3.3.0-bin-hadoop2.tgz, 解压后把jars 目录下所有jar 上传到 spark-3.3.0 目录。
+3. spark-3.3.1  --Spark 依赖所有jar，从spark 官网下载: spark-3.3.1-bin-hadoop2.tgz, 解压后把jars 目录下所有jar 上传到 spark-3.3.1 目录。
+4. 集成hudi(可选)，下载 https://repo1.maven.org/maven2/org/apache/hudi/hudi-spark3.3-bundle_2.12/0.12.1/hudi-spark3.3-bundle_2.12-0.12.1.jar 文件 上传到 spark-3.3.1 目录
+
 
 ### 2、Yarn 集群配置要求
 1. yarn 开启日志聚合，方便出现问题查看日志

@@ -59,7 +59,7 @@ public class SparkJobServerConf extends BeeConf {
                     .doc("driver home 路径，一般为 hdfs 路径")
                     .version("3.3.1")
                     .stringConf()
-                    .createWithDefault("/user/superior/spark-jobserver");
+                    .createWithDefault("/user/jobserver/spark-jobserver");
 
     public static final ConfigEntry<String> JOBSERVER_DRIVER_JAR_NAME =
             buildConf("jobserver.driver.jar.name")
@@ -124,14 +124,14 @@ public class SparkJobServerConf extends BeeConf {
                     .doc("pyspark 包路径 路径")
                     .version("3.3.0")
                     .stringConf()
-                    .createWithDefault("/home/devops/pyspark/3.3.0/pyspark.zip:/home/devops/pyspark/3.3.0/py4j-0.10.9.5-src.zip");
+                    .createWithDefault("/home/devops/pyspark/3.3.1/pyspark.zip:/home/devops/pyspark/3.3.1/py4j-0.10.9.5-src.zip");
 
     public static final ConfigEntry<String> JOBSERVER_SPARK_VERSION =
             buildConf("jobserver.spark.version")
                     .doc("jobserver spark verion")
                     .version("3.3.0")
                     .stringConf()
-                    .createWithDefault("3.3.0");
+                    .createWithDefault("3.3.1");
 
     public static final ConfigEntry<Integer> JOBSERVER_YARN_MIN_MEMORY_MB =
             buildConf("jobserver.yarn.min.memory.mb")

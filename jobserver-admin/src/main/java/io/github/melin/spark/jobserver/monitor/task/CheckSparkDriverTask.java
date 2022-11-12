@@ -119,17 +119,18 @@ public class CheckSparkDriverTask implements Runnable {
 
         // 清理僵死 driver 记录
         try {
-            final Instant oneHourBefore = Instant.now().minus(15, ChronoUnit.MINUTES);
             Criterion statusCriterion = Restrictions.in("status", INIT, LOCKED);
-            Criterion oneHourBeforeCriterion = Restrictions.lt("gmtModified", oneHourBefore);
-            List<SparkDriver> drivers = driverService.findByCriterions(statusCriterion, oneHourBeforeCriterion);
+            List<SparkDriver> drivers = driverService.findByCriterions(statusCriterion);
 
+            final Instant instant = Instant.now().minus(10, ChronoUnit.MINUTES);
             for (SparkDriver driver : drivers) {
-                driverService.deleteEntity(driver);
-                String applicationId = driver.getApplicationId();
-                if (StringUtils.isNotBlank(applicationId)) {
-                    LOG.warn("[DriverCheck] delete driver: {}, status: {}, gmtModified: {}",
-                            applicationId, driver.getStatus().getName(), DateUtils.formateDateTime(driver.getGmtModified()));
+                if (driver.getGmtModified().isBefore(instant)) {
+                    driverService.deleteEntity(driver);
+                    String applicationId = driver.getApplicationId();
+                    if (StringUtils.isNotBlank(applicationId)) {
+                        LOG.warn("[DriverCheck] delete driver: {}, status: {}, gmtModified: {}",
+                                applicationId, driver.getStatus().getName(), DateUtils.formateDateTime(driver.getGmtModified()));
+                    }
                 }
             }
         } catch (Throwable e) {
@@ -156,18 +157,19 @@ public class CheckSparkDriverTask implements Runnable {
 
         // 修复 jobserver 完成状态，如果长期处于完成状态，关闭 driver
         try {
-            final Instant threeMinBefore = Instant.now().minus(3, ChronoUnit.MINUTES);
-            Criterion threeMinBeforeCrt = Restrictions.lt("gmtModified", threeMinBefore);
             Criterion statusCrt = Restrictions.eq("status", FINISHED);
-            List<SparkDriver> drivers = driverService.findByCriterions(statusCrt, threeMinBeforeCrt);
+            List<SparkDriver> drivers = driverService.findByCriterions(statusCrt);
 
+            final Instant instant = Instant.now().minus(3, ChronoUnit.MINUTES);
             for (SparkDriver driver : drivers) {
-                String applicationId = driver.getApplicationId();
-                String clusterCode = driver.getClusterCode();
+                if (driver.getGmtModified().isBefore(instant)) {
+                    String applicationId = driver.getApplicationId();
+                    String clusterCode = driver.getClusterCode();
 
-                yarnClientService.closeJobServer(clusterCode, applicationId, driver.isShareDriver());
-                LOG.warn("[DriverCheck]修复 jobserver 完成状态: {}, gmtModified: {}",
-                        applicationId, DateUtils.formateDateTime(driver.getGmtModified()));
+                    yarnClientService.closeJobServer(clusterCode, applicationId, driver.isShareDriver());
+                    LOG.warn("[DriverCheck]修复 driver 完成状态: {}, gmtModified: {}",
+                            applicationId, DateUtils.formateDateTime(driver.getGmtModified()));
+                }
             }
         } catch (Throwable e) {
             LOG.info(e.getMessage(), e);
@@ -175,19 +177,19 @@ public class CheckSparkDriverTask implements Runnable {
 
         // 非共享 driver，超过一定时间没有关闭，定期清理
         try {
-            final Instant threeMinBefore = Instant.now().minus(3, ChronoUnit.MINUTES);
-            Criterion threeMinBeforeCriterion = Restrictions.lt("gmtModified", threeMinBefore);
             List<SparkDriver> drivers = driverService.findByNamedParam(
-                    "status", IDLE, "shareDriver", false,
-                    "gmtModified", threeMinBeforeCriterion);
+                    "status", IDLE, "shareDriver", false);
 
+            final Instant instant = Instant.now().minus(3, ChronoUnit.MINUTES);
             for (SparkDriver driver : drivers) {
-                String applicationId = driver.getApplicationId();
-                String clusterCode = driver.getClusterCode();
+                if (driver.getGmtModified().isBefore(instant)) {
+                    String applicationId = driver.getApplicationId();
+                    String clusterCode = driver.getClusterCode();
 
-                yarnClientService.closeJobServer(clusterCode, applicationId, false);
-                LOG.warn("[DriverCheck]关闭非共享jobserver: {}, gmtModified: {}",
-                        applicationId, DateUtils.formateDateTime(driver.getGmtModified()));
+                    yarnClientService.closeJobServer(clusterCode, applicationId, false);
+                    LOG.warn("[DriverCheck]关闭非共享 driver: {}, gmtModified: {}",
+                            applicationId, DateUtils.formateDateTime(driver.getGmtModified()));
+                }
             }
         } catch (Throwable e) {
             LOG.info(e.getMessage(), e);
@@ -206,7 +208,7 @@ public class CheckSparkDriverTask implements Runnable {
                         String applicationId = driver.getApplicationId();
                         yarnClientService.closeJobServer(clusterCode, applicationId, true);
 
-                        LOG.warn("[DriverCheck]关闭老版本jobserver: {}", applicationId);
+                        LOG.warn("[DriverCheck]关闭老版本 driver: {}", applicationId);
                     }
                 }
             });
@@ -226,7 +228,7 @@ public class CheckSparkDriverTask implements Runnable {
                 String code = (String) map.get("code");
                 String appId = (String) map.get("application_id");
 
-                LOG.warn("[DriverCheck]instance {} 为运行状态，jobserver {} 已经关闭", code, appId);
+                LOG.warn("[DriverCheck]instance {} 为运行状态，driver {} 已经关闭", code, appId);
                 instanceService.updateJobStatusByCode(code, FAILED);
             }
         } catch (Throwable e) {

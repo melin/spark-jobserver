@@ -31,7 +31,7 @@
         <spotbugs.version>4.6.0</spotbugs.version>
         <aspectj.version>1.9.9.1</aspectj.version>
         <iceberg.version>0.14.0</iceberg.version>
-        <bee.version>1.4.18</bee.version>
+        <bee.version>1.4.19</bee.version>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
 
         <!-- 与spark 版本一致 -->

@@ -346,7 +346,7 @@ var Instance = function () {
                     if (result.success) {
                         layer.close(index);
                         Instance.refresh();
-                        toastr.error("保存成功");
+                        toastr.success("保存成功");
                     } else {
                         toastr.error(result.message);
                     }

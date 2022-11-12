@@ -30,8 +30,8 @@
             <appender-ref ref="RoutingAppender"/>
         </logger>
 
-        <logger name="org.apache.hadoop.io.retry.RetryInvocationHandler" level="WARN" />
-        <logger name="org.apache.hadoop.hive" level="warn" />
+        <logger name="org.apache.spark.launcher" level="warn" />
+        <logger name="org.apache.hadoop" level="warn" />
         <logger name="org.apache.hive" level="warn" />
         <logger name="org.springframework.data.redis" level="warn" />
         <logger name="org.springframework.security" level="warn" />

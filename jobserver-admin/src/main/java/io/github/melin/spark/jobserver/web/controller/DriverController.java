@@ -150,9 +150,9 @@ public class DriverController implements InitializingBean {
 
         String applicationId = driver.getApplicationId();
         String clusterCode = driver.getClusterCode();
-        LOG.info("kill application {}", applicationId);
 
         if (StringUtils.startsWith(applicationId, "application_")) {
+            LOG.info("kill application {}", applicationId);
             if (DriverStatus.INIT == driver.getStatus()) {
                 yarnClientService.killApplicationOnYarn(clusterCode, applicationId);
             } else {

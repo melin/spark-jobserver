@@ -41,8 +41,8 @@ var Cluster = function () {
                         align: 'left',
                         width: 100,
                         templet: function(record) {
-                            const status = record.status;
-                            if (status === 1) {
+                            const kerberosEnabled = record.kerberosEnabled;
+                            if (kerberosEnabled === 1) {
                                 return '<span style="font-weight:bold; color: #5FB878">启用</span>'
                             } else {
                                 return '<span style="font-weight:bold;color: #FF5722">关闭</span>'

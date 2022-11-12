@@ -239,9 +239,9 @@ public abstract class AbstractSubmitService {
         sparkLauncher.setPropertiesFile(propertyFile);
 
         LOG.info("aspectj version: {}", config.getAspectjVersion());
-        String driverHome = clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_HOME);
+        String driverHome = defaultFS + clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_HOME);
         String aspectjweaverJar = "aspectjweaver-" + config.getAspectjVersion() + ".jar";
-        String aspectjPath = defaultFS + driverHome + "/" + aspectjweaverJar;
+        String aspectjPath = driverHome + "/" + aspectjweaverJar;
         sparkLauncher.setConf("spark.yarn.dist.jars", aspectjPath);
 
         Properties params = addJobConfig(sparkLauncher, jobInstanceInfo);
@@ -277,7 +277,7 @@ public abstract class AbstractSubmitService {
         String conf = Base64.getEncoder().encodeToString("{}".getBytes(StandardCharsets.UTF_8));
 
         //driverJar 包 hdfs 地址
-        String driverJarFile = defaultFS + driverHome + "/" +
+        String driverJarFile = driverHome + "/" +
                 clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_JAR_NAME);
         LOG.info("driver kerberos enabled: {}, hive enabled: {}", isKerberosEnabled, hiveEnabled);
 
@@ -362,9 +362,8 @@ public abstract class AbstractSubmitService {
         String sparkVersion = clusterConfig.getValue(clusterCode, JOBSERVER_SPARK_VERSION);
         String sparkYarnJarsDir = driverHome + "/spark-" + sparkVersion;
         FSUtils.checkHdfsPathExist(hadoopConf, sparkYarnJarsDir);
-        String yarnJars = defaultFS + sparkYarnJarsDir + "/*";
-        String driverJar = defaultFS + driverHome + "/" +
-                clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_JAR_NAME);
+        String yarnJars =  sparkYarnJarsDir + "/*";
+        String driverJar = driverHome + "/" + clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_JAR_NAME);
         yarnJars = yarnJars + "," + driverJar;
 
         String customSparkYarnJars = clusterConfig.getValue(clusterCode, JOBSERVER_CUSTOM_SPARK_YARN_JARS);
