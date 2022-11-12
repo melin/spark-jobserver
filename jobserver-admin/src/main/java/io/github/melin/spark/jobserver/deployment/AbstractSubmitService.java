@@ -378,6 +378,14 @@ public abstract class AbstractSubmitService {
 
         LOG.info("spark.yarn.jars = {}", yarnJars);
         sparkLauncher.setConf("spark.yarn.jars", yarnJars + "," + driverJar);
+
+        String sparkHistoryDir = driverHome + "/spark-eventLogs";
+        FSUtils.mkdir(hadoopConf, sparkHistoryDir);
+        sparkLauncher.setConf("spark.eventLog.dir", sparkHistoryDir);
+
+        String sparkCheckPointDir = driverHome + "/spark-checkpoints";
+        FSUtils.mkdir(hadoopConf, sparkCheckPointDir);
+        sparkLauncher.setConf("spark.sql.streaming.checkpointLocation", sparkCheckPointDir);
     }
 
     /**
