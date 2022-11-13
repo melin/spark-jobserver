@@ -420,7 +420,7 @@ public abstract class AbstractSubmitService {
         if (availableMemorySize < (minAvailableMem * 1024)) {
             String msg = "当前系统总内存: " + totalMemorySizeRead + ", 可用内存: " + availableMemorySizeRead
                     + ", 要求最小可用内存: " + minAvailableMem + "m " + NetUtils.getLocalHost();
-            msg = msg + ", 可调整参数：artic.local-min-memory-mb, 单位兆";
+            msg = msg + ", 可调整参数：jobserver.local-min-memory-mb, 单位兆";
             LOG.warn(msg);
             throw new ResouceLimitException(msg);
         }
