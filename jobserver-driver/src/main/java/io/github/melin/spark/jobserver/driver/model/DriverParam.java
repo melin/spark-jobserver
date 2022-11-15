@@ -22,7 +22,7 @@ public class DriverParam {
     private String kerberosUser;
 
     @Parameter(names = "-hive", description = "hive enabled", required = false)
-    private boolean hiveEnable = true;
+    private boolean hiveEnable = false;
 
     public Long getDriverId() {
         return driverId;
