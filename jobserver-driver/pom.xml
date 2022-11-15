@@ -15,6 +15,7 @@
 
     <properties>
         <libScope>compile</libScope>
+        <hadoop.deps.scope>provided</hadoop.deps.scope>
     </properties>
 
     <dependencies>
