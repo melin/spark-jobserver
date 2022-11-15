@@ -34,9 +34,9 @@ import java.util.Map;
  * huaixin 2022/4/11 18:22
  */
 @RestController
-public class DriverRest {
+public class SparkDriverRest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DriverRest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SparkDriverRest.class);
 
     @Autowired
     private SparkDriverContext sparkDriverContext;
