@@ -8,7 +8,7 @@ import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
 import io.github.melin.spark.jobserver.web.controller.DriverController;
 import io.github.melin.spark.jobserver.core.entity.Cluster;
 import io.github.melin.spark.jobserver.core.entity.SparkDriver;
-import io.github.melin.spark.jobserver.core.enums.DriverResType;
+import io.github.melin.spark.jobserver.core.enums.ComputeType;
 import io.github.melin.spark.jobserver.core.exception.SubmitTimeoutException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -49,7 +49,7 @@ public class YarnSparkDriverSubmit extends AbstractSubmitService {
     protected String profiles;
 
     @Override
-    public DriverInfo allocateDriver(JobInstanceInfo job, DriverResType driverResType, boolean shareDriver) {
+    public DriverInfo allocateDriver(JobInstanceInfo job, ComputeType computeType, boolean shareDriver) {
         String clusterCode = job.getClusterCode();
         int maxInstanceCount = clusterConfig.getInt(clusterCode, JOBSERVER_DRIVER_RUN_MAX_INSTANCE_COUNT);
         long minDriverId = clusterConfig.getLong(clusterCode, JOBSERVER_DRIVER_MIN_PRIMARY_ID);

@@ -5,7 +5,7 @@ import io.github.melin.spark.jobserver.ConfigProperties;
 import io.github.melin.spark.jobserver.deployment.dto.JobInstanceInfo;
 import io.github.melin.spark.jobserver.core.entity.JobInstance;
 import io.github.melin.spark.jobserver.core.entity.SparkDriver;
-import io.github.melin.spark.jobserver.core.enums.DriverResType;
+import io.github.melin.spark.jobserver.core.enums.ComputeType;
 import io.github.melin.spark.jobserver.core.service.JobInstanceService;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
 import com.gitee.melin.bee.util.ThreadUtils;
@@ -70,12 +70,12 @@ public class SparkLogService implements ApplicationContextAware, InitializingBea
                 list.forEach(driver -> {
                     boolean flag = driverService.lockCurrentLogServer(driver.getApplicationId());
                     if (flag) {
-                        DriverResType driverResType = driver.getDriverResType();
+                        ComputeType scheduleType = driver.getComputeType();
                         String appId = driver.getApplicationId();
                         String sparkDriverUrl = driver.getSparkDriverUrl();
                         boolean shareDriver = driver.isShareDriver();
 
-                        if (DriverResType.YARN_BATCH == driverResType) {
+                        if (ComputeType.YARN_BATCH == scheduleType) {
                             JobInstance instance = instanceService.queryInstanceByAppId(appId);
                             if (instance != null) {
                                 JobInstanceInfo instanceInfo = new JobInstanceInfo();
@@ -91,7 +91,7 @@ public class SparkLogService implements ApplicationContextAware, InitializingBea
                                 this.startJobLogThread(instanceCode);
                             }
                         } else {
-                            throw new UnsupportedOperationException("driverResType not supported");
+                            throw new UnsupportedOperationException("compute type not supported");
                         }
                     }
 

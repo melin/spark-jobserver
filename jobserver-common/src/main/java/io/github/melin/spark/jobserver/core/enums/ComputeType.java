@@ -10,7 +10,7 @@ import com.gitee.melin.bee.core.enums.jackson.JacksonEnumStringSerializer;
  * Created by admin on 2019/10/29 3:01 下午
  */
 @JsonSerialize(using = JacksonEnumStringSerializer.class)
-public enum DriverResType implements BaseStringEnum {
+public enum ComputeType implements BaseStringEnum {
     YARN_BATCH("yarn_batch"),
     YARN_STREAM("yarn_stream"),
     K8S_BATCH("k8s_batch"),
@@ -18,7 +18,7 @@ public enum DriverResType implements BaseStringEnum {
 
     private String name;
 
-    private DriverResType(String name) {
+    private ComputeType(String name) {
         this.name = name;
     }
 

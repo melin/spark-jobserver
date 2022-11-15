@@ -8,7 +8,7 @@ import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
 import io.github.melin.spark.jobserver.util.FSUtils;
 import io.github.melin.spark.jobserver.util.JobServerUtils;
 import io.github.melin.spark.jobserver.core.entity.SparkDriver;
-import io.github.melin.spark.jobserver.core.enums.DriverResType;
+import io.github.melin.spark.jobserver.core.enums.ComputeType;
 import io.github.melin.spark.jobserver.core.enums.DriverStatus;
 import io.github.melin.spark.jobserver.core.exception.ResouceLimitException;
 import io.github.melin.spark.jobserver.core.exception.SparkJobException;
@@ -85,7 +85,7 @@ public abstract class AbstractSubmitService {
 
     private static final String hostName = NetUtils.getLocalHost();
 
-    public abstract DriverInfo allocateDriver(JobInstanceInfo jobInstanceInfo, DriverResType driverResType, boolean shareDriver);
+    public abstract DriverInfo allocateDriver(JobInstanceInfo jobInstanceInfo, ComputeType computeType, boolean shareDriver);
 
     /**
      * 通过spark-submit提交任务到集群
@@ -245,8 +245,8 @@ public abstract class AbstractSubmitService {
         sparkLauncher.setConf("spark.yarn.dist.jars", aspectjPath);
 
         Properties params = addJobConfig(sparkLauncher, jobInstanceInfo);
-        String driverExtraOptions = getJvmExtraOptions(clusterCode, params, "driver");
-        String executorExtraOptions = getJvmExtraOptions(clusterCode, params, "executor");
+        String driverExtraOptions = getJvmOpts(clusterCode, params, "driver");
+        String executorExtraOptions = getJvmOpts(clusterCode, params, "executor");
 
         String sparkDriverExtraJavaOptionsConf = "-Dfile.encoding=UTF-8"
                 + " -Dspring.profiles.active=" + profiles
@@ -390,11 +390,11 @@ public abstract class AbstractSubmitService {
     /**
      * driver & executor jvm 参数
      */
-    private String getJvmExtraOptions(String clusterCode, Properties params, String role) {
-        String key = String.format("spark.job.%s.extraJavaOptions", role);
+    private String getJvmOpts(String clusterCode, Properties params, String role) {
+        String key = String.format("spark.job.%s.java.opts", role);
         String jvmOptions = "driver".equals(role) ?
-                clusterConfig.getValue(clusterCode, JOBSERVER_JOB_DRIVER_EXTRA_JAVA_OPTIONS) :
-                clusterConfig.getValue(clusterCode, JOBSERVER_JOB_EXECUTOR_EXTRA_JAVA_OPTIONS);
+                clusterConfig.getValue(clusterCode, JOBSERVER_JOB_DRIVER_JAVA_OPTS) :
+                clusterConfig.getValue(clusterCode, JOBSERVER_JOB_EXECUTOR_JAVA_OPTS);
 
         if (StringUtils.isNotBlank(jvmOptions)) {
             jvmOptions = jvmOptions + " " + params.getProperty(key, "");

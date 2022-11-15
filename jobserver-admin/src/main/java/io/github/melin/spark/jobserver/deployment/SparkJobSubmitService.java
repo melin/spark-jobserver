@@ -48,7 +48,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static io.github.melin.spark.jobserver.core.enums.DriverInstance.NEW_INSTANCE;
-import static io.github.melin.spark.jobserver.core.enums.DriverResType.YARN_BATCH;
+import static io.github.melin.spark.jobserver.core.enums.ComputeType.YARN_BATCH;
 
 /**
  * huaixin 2022/4/15 15:27

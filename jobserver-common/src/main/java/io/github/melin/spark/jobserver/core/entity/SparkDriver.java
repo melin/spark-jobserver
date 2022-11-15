@@ -1,6 +1,6 @@
 package io.github.melin.spark.jobserver.core.entity;
 
-import io.github.melin.spark.jobserver.core.enums.DriverResType;
+import io.github.melin.spark.jobserver.core.enums.ComputeType;
 import io.github.melin.spark.jobserver.core.enums.DriverStatus;
 import io.github.melin.spark.jobserver.core.enums.DriverType;
 import com.gitee.melin.bee.model.IEntity;
@@ -14,7 +14,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.time.Instant;
 
-import static io.github.melin.spark.jobserver.core.enums.DriverResType.YARN_BATCH;
+import static io.github.melin.spark.jobserver.core.enums.ComputeType.YARN_BATCH;
 import static io.github.melin.spark.jobserver.core.enums.DriverType.DRIVER_SERVER;
 
 @Getter
@@ -50,11 +50,11 @@ public class SparkDriver implements IEntity {
                     value = "io.github.melin.spark.jobserver.core.enums.DriverType")})
     private DriverType driverType;
 
-    @Column(name = "driver_res_type")
+    @Column(name = "compute_type")
     @Type(type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClass",
-                    value = "io.github.melin.spark.jobserver.core.enums.DriverResType")})
-    private DriverResType driverResType;
+                    value = "io.github.melin.spark.jobserver.core.enums.ComputeType")})
+    private ComputeType computeType;
 
     @Type(type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClass",
@@ -113,7 +113,7 @@ public class SparkDriver implements IEntity {
         jobServer.setVersion(0);
         jobServer.setServerIp("0.0.0.0");
         jobServer.setServerPort(-1);
-        jobServer.setDriverResType(YARN_BATCH);
+        jobServer.setComputeType(YARN_BATCH);
         jobServer.setStatus(DriverStatus.INIT);
         jobServer.setApplicationId("");
         jobServer.setCreater("");
