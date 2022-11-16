@@ -140,7 +140,7 @@ public class YarnSparkDriverSubmit extends AbstractSubmitService {
                     }
                 } else {
                     //启动jobserver 失败
-                    ApplicationReport applicationReport = yarnClientService.getYarnAppStatus(cluster.getCode(), applicationId);
+                    ApplicationReport applicationReport = yarnClientService.getYarnApplicationReport(cluster.getCode(), applicationId);
                     if (applicationReport.getYarnApplicationState() == YarnApplicationState.FAILED) {
                         if (sparkAppHandle.getError().isPresent()) {
                             Throwable error = sparkAppHandle.getError().get();

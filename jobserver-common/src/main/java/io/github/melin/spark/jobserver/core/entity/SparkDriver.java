@@ -72,7 +72,7 @@ public class SparkDriver implements IEntity {
     private Integer instanceCount;
 
     @Column(name = "server_cores", nullable = false)
-    private Long serverCores;
+    private Integer serverCores;
 
     @Column(name = "server_memory", nullable = false)
     private Long serverMemory;
@@ -120,7 +120,7 @@ public class SparkDriver implements IEntity {
         jobServer.setGmtCreated(Instant.now());
         jobServer.setGmtModified(Instant.now());
         jobServer.setInstanceCount(0);
-        jobServer.setServerCores(0L);
+        jobServer.setServerCores(0);
         jobServer.setServerMemory(0L);
         jobServer.setShareDriver(shareDriver);
         jobServer.setLogServer(hostName);

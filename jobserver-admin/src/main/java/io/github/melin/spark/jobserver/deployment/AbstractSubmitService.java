@@ -127,7 +127,7 @@ public abstract class AbstractSubmitService {
                 }
             } else {
                 //启动jobserver 失败
-                ApplicationReport applicationReport = yarnClientService.getYarnAppStatus(clusterCode, applicationId);
+                ApplicationReport applicationReport = yarnClientService.getYarnApplicationReport(clusterCode, applicationId);
                 if (applicationReport.getYarnApplicationState() == YarnApplicationState.FAILED) {
                     if (sparkAppHandle.getError().isPresent()) {
                         Throwable error = sparkAppHandle.getError().get();

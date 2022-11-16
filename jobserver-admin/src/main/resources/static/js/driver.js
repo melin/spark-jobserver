@@ -121,7 +121,7 @@ var Driver = function () {
                         width: 80,
                         templet: function(record) {
                             const serverMemory = record.serverMemory;
-                            return Math.ceil(serverMemory / 1024) + "G"
+                            return Math.floor(serverMemory / 1024 * 100) / 100 + "G"
                         }
                     },
                     {

@@ -102,7 +102,7 @@ public class YarnClientService {
 
     public YarnApplicationState getApplicationStatus(String clusterCode, String appId) {
         try {
-            ApplicationReport report = this.getYarnAppStatus(clusterCode, appId);
+            ApplicationReport report = this.getYarnApplicationReport(clusterCode, appId);
             if (report != null) {
                 return report.getYarnApplicationState();
             } else {
@@ -120,7 +120,7 @@ public class YarnClientService {
         }
     }
 
-    public ApplicationReport getYarnAppStatus(String clusterCode, String appId) throws Exception {
+    public ApplicationReport getYarnApplicationReport(String clusterCode, String appId) {
         return clusterManager.runSecured(clusterCode, () -> {
             YarnClient yarnClient = createYarnClient(clusterCode);
             ApplicationId applicationId = ConverterUtils.toApplicationId(appId);
@@ -128,7 +128,7 @@ public class YarnClientService {
         });
     }
 
-    public void moveApplicationAcrossQueues(String clusterCode, String appId, String yarnQueue) throws Exception {
+    public void moveApplicationAcrossQueues(String clusterCode, String appId, String yarnQueue) {
         clusterManager.runSecured(clusterCode, () -> {
             ApplicationId applicationId = ConverterUtils.toApplicationId(appId);
 

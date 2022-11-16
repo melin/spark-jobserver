@@ -9,11 +9,9 @@ import io.github.melin.spark.jobserver.driver.task.SparkPythonTask;
 import io.github.melin.spark.jobserver.driver.task.SparkSqlTask;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
 import com.gitee.melin.bee.core.support.Result;
-import com.google.common.collect.Maps;
 import io.github.melin.spark.jobserver.core.util.TaskStatusFlag;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.spark.SparkConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.Map;
 
 /**
  * huaixin 2022/4/11 18:22
@@ -114,33 +111,6 @@ public class SparkDriverRest {
             return sparkPythonTask.runTask(instanceDto);
         } else {
             return Result.failureResult("不支持的 jobType: " + jobType);
-        }
-    }
-
-    @RequestMapping("/sparkDriver/getDriverResource")
-    public Result<Map<String, Long>> getAppResource() {
-        try {
-            if (SparkEnv.getSparkSession() != null) {
-                int executorNums = SparkEnv.getSparkSession().sparkContext().getExecutorIds().size();
-                SparkConf sparkConf = SparkEnv.getSparkSession().sparkContext().getConf();
-                long executorCores = sparkConf.getLong("spark.executor.cores", 1);
-                long driverCores = sparkConf.getLong("spark.driver.cores", 1);
-                long cores = driverCores + executorCores * executorNums;
-
-                long executorMemory = sparkConf.getSizeAsMb("spark.executor.memory", "10240");
-                long driverMemory = sparkConf.getSizeAsMb("spark.driver.memory", "5120");
-                long memorys = driverMemory + executorMemory * executorNums;
-
-                Map<String, Long> data = Maps.newHashMap();
-                data.put("cores", cores);
-                data.put("memorys", memorys);
-                return Result.successDataResult(data);
-            } else {
-                return Result.failureResult("spark session is null");
-            }
-        } catch (Exception e) {
-            LOG.error("query driver resource" + e.getMessage());
-            return Result.failureResult("query driver resource" + e.getMessage());
         }
     }
 
