@@ -8,7 +8,8 @@
 4. 支持多Yarn集群部署，Client 提交Job 到指定集群运行。
 5. Driver 定制化，可以实现比较多能力，例如：表权限，碎片文件压缩，DQC等功能。
 6. 支持作业实例任务依赖(DAG),
-7. 支持kerberos 认证
+7. 更加灵活的对调度任务并发控制和优先级，例如单个用户最大并发数量，不完全依赖底层yarn、k8s等资源管理能力。例如一些调度框架是把作业直接传给yarn 资源管理器，如果yarn资源不够，提交上去的任务全部在yarn 等待队列中。CDH 默认是公平调度，会导致任务无法按照优先级运行。
+8. 支持kerberos 认证
 
 已经有kyuubi，livy，为什么开发jobserver？几年前就开始中台产品工作, DataStudio需要有一个getway 提交作业，spark 往yarn 提交driver会比较慢，为了更好的交互体验，需要预先启动spark driver，类似jdbc connection 管理spark driver，同时需要解决资源隔离问题。那个时候还没有kyuubi。kyuubi目前支持sql，java/scala 任务开发中，缺少python任务能力。工作中遇到大部分任务是python 作业，spark 最开始定位面向AI人员工具，pyspark是最大优势。livy主要为了交互式场景，需要客户端管理sesssionId。spark thrift 没有资源离，一个作业可能就会把所有资源用完，导致其它用户无法使用。
 
