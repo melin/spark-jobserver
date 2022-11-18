@@ -9,8 +9,8 @@ var Cluster = function () {
 
     return {
         init: function () {
-            winWidth = $(window).width() * 0.9;
-            winHeight = $(window).height() * 0.9;
+            winWidth = $(window).width() * 0.95;
+            winHeight = $(window).height() * 0.95;
 
             let cols = [
                 [{
