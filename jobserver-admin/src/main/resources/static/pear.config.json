@@ -10,7 +10,7 @@
 		"collaspe": false,
 		"control": false,
 		"controlWidth": 500,
-		"select": "jobinstance",
+		"select": "instance",
 		"async": true
 	},
 	"tab": {
