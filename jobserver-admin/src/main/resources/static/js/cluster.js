@@ -56,7 +56,7 @@ var Cluster = function () {
                         width: 80,
                         templet: function(record) {
                             const status = record.status;
-                            if (status === 1) {
+                            if (status) {
                                 return '<span style="font-weight:bold; color: #5FB878">启用</span>'
                             } else {
                                 return '<span style="font-weight:bold;color: #FF5722">关闭</span>'

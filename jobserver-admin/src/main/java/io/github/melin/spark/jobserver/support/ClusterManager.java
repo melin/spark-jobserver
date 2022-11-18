@@ -79,7 +79,7 @@ public class ClusterManager implements InitializingBean {
         LOGGER.info("清理本地配置数据");
         FileUtils.deleteQuietly(new File(LOCAL_HADOOP_CONFIG_DIR));
 
-        List<Cluster> clusters = clusterService.findByNamedParam("status", 1);
+        List<Cluster> clusters = clusterService.findByNamedParam("status", true);
 
         for (Cluster cluster : clusters) {
             LOGGER.info("========================= load {} ==============================", cluster.getCode());
@@ -95,7 +95,7 @@ public class ClusterManager implements InitializingBean {
                     }
                 }
 
-                List<Cluster> clusterList = clusterService.findByNamedParam("status", 1);
+                List<Cluster> clusterList = clusterService.findByNamedParam("status", true);
                 for (Cluster cluster : clusterList) {
                     long updateTime = clusterService.getClusterUpdateTime(cluster.getCode());
                     Long cacheUpdateTime = clusterUpdateTimeMap.get(cluster.getCode());

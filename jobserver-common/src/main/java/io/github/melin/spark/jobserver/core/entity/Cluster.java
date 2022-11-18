@@ -1,5 +1,6 @@
 package io.github.melin.spark.jobserver.core.entity;
 
+import com.gitee.melin.bee.core.hibernate5.type.BooleanToIntConverter;
 import io.github.melin.spark.jobserver.core.enums.SchedulerType;
 import io.github.melin.spark.jobserver.core.enums.StorageType;
 import com.gitee.melin.bee.model.IEntity;
@@ -79,7 +80,8 @@ public class Cluster implements IEntity {
     @Column(name = "yarn_queue_name")
     private String yarnQueueName;
 
-    private Integer status = 1;
+    @Convert(converter = BooleanToIntConverter.class)
+    private boolean status = true;
 
     @Column(name = "creater", length = 45)
     private String creater;

@@ -1,6 +1,5 @@
 package io.github.melin.spark.jobserver.web.controller;
 
-import io.github.melin.spark.jobserver.ConfigProperties;
 import io.github.melin.spark.jobserver.SparkJobServerConf;
 import io.github.melin.spark.jobserver.core.entity.Cluster;
 import io.github.melin.spark.jobserver.core.service.ClusterService;
@@ -32,9 +31,6 @@ public class ClusterController {
 
     @Autowired
     protected RestTemplate restTemplate;
-
-    @Autowired
-    private ConfigProperties configProperties;
 
     @RequestMapping("/cluster")
     public String cluster(ModelMap model) throws Exception {

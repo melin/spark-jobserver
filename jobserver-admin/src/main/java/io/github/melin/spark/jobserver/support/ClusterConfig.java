@@ -46,7 +46,7 @@ public class ClusterConfig implements InitializingBean {
     }
 
     private void loadConfig() {
-        List<Cluster> clusters = clusterService.findByNamedParam("status", 1);
+        List<Cluster> clusters = clusterService.findByNamedParam("status", true);
         for (Cluster cluster : clusters) {
             String clusterCode = cluster.getCode();
             try {
