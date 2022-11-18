@@ -98,7 +98,7 @@ public class ClusterController {
                 old.setYarnConfig(cluster.getYarnConfig());
                 old.setHiveConfig(cluster.getHiveConfig());
                 old.setKerberosConfig(cluster.getKerberosConfig());
-                old.setKerberosEnabled(cluster.getKerberosEnabled());
+                old.setKerberosEnabled(cluster.isKerberosEnabled());
                 old.setYarnQueueName(cluster.getYarnQueueName());
                 clusterService.updateEntity(old);
             }

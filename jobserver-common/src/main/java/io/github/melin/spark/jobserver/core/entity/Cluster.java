@@ -41,8 +41,9 @@ public class Cluster implements IEntity {
                     value = "io.github.melin.spark.jobserver.core.enums.SchedulerType")})
     private SchedulerType schedulerType; // 调度框架:YARN、K8S
 
+    @Convert(converter = BooleanToIntConverter.class)
     @Column(name = "kerberos_enabled")
-    private Integer kerberosEnabled;
+    private boolean kerberosEnabled = false;
 
     @Column(name = "kerberos_keytab")
     private byte[] kerberosKeytab;
@@ -94,12 +95,4 @@ public class Cluster implements IEntity {
 
     @Column(name = "gmt_modified")
     private Instant gmtModified;
-
-    public boolean isKerberosEnabled() {
-        if (kerberosEnabled != null && kerberosEnabled == 1) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 }

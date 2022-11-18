@@ -167,6 +167,17 @@ var Cluster = function () {
                     success: function (result) {
                         if (result.success) {
                             let data = result.data;
+                            if (data.kerberosEnabled) {
+                                data.kerberosEnabled = 1;
+                            } else {
+                                data.kerberosEnabled = 0;
+                            }
+                            if (data.status) {
+                                data.status = 1;
+                            } else {
+                                data.status = 0;
+                            }
+
                             form.val('newClusterForm', data);
                             Cluster.setEditorValue(jobserverEditor, data.jobserverConfig)
                             Cluster.setEditorValue(sparkEditor, data.sparkConfig)
