@@ -4,7 +4,7 @@ import io.github.melin.spark.jobserver.core.enums.DriverStatus;
 import io.github.melin.spark.jobserver.core.enums.JobType;
 import io.github.melin.spark.jobserver.core.util.LogRecord;
 import io.github.melin.spark.jobserver.core.dto.InstanceDto;
-import io.github.melin.spark.jobserver.driver.task.SparkJarTask;
+import io.github.melin.spark.jobserver.driver.task.SparkAppTask;
 import io.github.melin.spark.jobserver.driver.task.SparkPythonTask;
 import io.github.melin.spark.jobserver.driver.task.SparkSqlTask;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
@@ -42,7 +42,7 @@ public class SparkDriverRest {
     private SparkSqlTask sparkSqlTask;
 
     @Autowired
-    private SparkJarTask sparkJarTask;
+    private SparkAppTask sparkAppTask;
 
     @Autowired
     private SparkPythonTask sparkPythonTask;
@@ -94,18 +94,18 @@ public class SparkDriverRest {
         LOG.info("spark dirver received job");
 
         LogUtils.info("当前 yarn queue: {}, ApplicationId: {}, shareDriver: {}",
-                instanceDto.getYarnQueue(), SparkEnv.getApplicationId(), String.valueOf(instanceDto.isShareDriver()));
+                instanceDto.getYarnQueue(), SparkDriverEnv.getApplicationId(), String.valueOf(instanceDto.isShareDriver()));
 
         LOG.info("Spark task: {} begined, submit from {}",
-                instanceDto.getInstanceCode(), instanceDto.getSparkJobServerUrl());
+                instanceDto.getInstanceCode(), instanceDto.getSparkDriverUrl());
 
         JobType jobType = instanceDto.getJobType();
         if (JobType.SPARK_SQL == jobType) {
             sparkDriverContext.startDriver();
             return sparkSqlTask.runTask(instanceDto);
-        } else if (JobType.SPARK_JAR == jobType) {
+        } else if (JobType.SPARK_APP == jobType) {
             sparkDriverContext.startDriver();
-            return sparkJarTask.runTask(instanceDto);
+            return sparkAppTask.runTask(instanceDto);
         } else if (JobType.SPARK_PYTHON == jobType) {
             sparkDriverContext.startDriver();
             return sparkPythonTask.runTask(instanceDto);
@@ -134,7 +134,7 @@ public class SparkDriverRest {
 
         try {
             sparkDriverContext.setUserStopTask(true);
-            SparkEnv.getSparkSession().sparkContext().cancelAllJobs();
+            SparkDriverEnv.getSparkSession().sparkContext().cancelAllJobs();
             if (sparkPythonTask.getPythonPid() > 0) {
                 String command = "kill -9 " + sparkPythonTask.getPythonPid();
                 Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", command});
@@ -143,8 +143,8 @@ public class SparkDriverRest {
             JobType jobType = InstanceContext.getJobType();
             if (JobType.SPARK_SQL == jobType) {
                 sparkSqlTask.killJob(instanceCode);
-            } else if (JobType.SPARK_JAR == jobType) {
-                sparkJarTask.killJob(instanceCode);
+            } else if (JobType.SPARK_APP == jobType) {
+                sparkAppTask.killJob(instanceCode);
             } else if (JobType.SPARK_PYTHON == jobType) {
                 sparkPythonTask.killJob(instanceCode);
             }

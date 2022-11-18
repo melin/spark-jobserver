@@ -12,14 +12,13 @@ import io.github.melin.spark.jobserver.core.util.CommonUtils;
 import io.github.melin.spark.jobserver.driver.InstanceContext;
 import io.github.melin.spark.jobserver.driver.ServerPortService;
 import io.github.melin.spark.jobserver.driver.SparkDriverContext;
-import io.github.melin.spark.jobserver.driver.SparkEnv;
+import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
 import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
 import io.github.melin.spark.jobserver.driver.util.MetricsUtils;
 import com.gitee.melin.bee.core.support.Result;
 import com.gitee.melin.bee.util.RestTemplateUtils;
 import com.github.melin.superior.sql.parser.SQLParserException;
-import io.github.melin.spark.jobserver.core.util.TaskStatusFlag;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.spark.sql.AnalysisException;
@@ -32,8 +31,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.StringReader;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.Properties;
+
+import static io.github.melin.spark.jobserver.core.util.TaskStatusFlag.*;
 
 /**
  * huaixin 2022/4/4 3:21 PM
@@ -64,7 +64,7 @@ public abstract class AbstractSparkTask {
 
     public Result<String> runTask(InstanceDto instanceDto) {
         new Task(instanceDto).start();
-        return Result.successMessageResult(SparkEnv.getApplicationId());
+        return Result.successMessageResult(SparkDriverEnv.getApplicationId());
     }
 
     /**
@@ -78,7 +78,7 @@ public abstract class AbstractSparkTask {
             throw new SparkJobException("作业实例不存在: " + instanceCode);
         }
 
-        String applicationId = SparkEnv.getApplicationId();
+        String applicationId = SparkDriverEnv.getApplicationId();
         instanceService.startJobInstance(instanceDto.getInstanceCode(), applicationId);
 
         startTime = System.currentTimeMillis();
@@ -93,7 +93,7 @@ public abstract class AbstractSparkTask {
         driver.setInstanceCode(instanceCode);
         driverService.updateServerRunning(driver);
         LOG.info("Update Driver: {} Status running:", driver.getApplicationId());
-        startJobLogThread(instanceCode, instanceDto.getSparkJobServerUrl());
+        startJobLogThread(instanceCode, instanceDto.getSparkDriverUrl());
     }
 
     protected void endJob(String instanceCode, InstanceStatus status) {
@@ -108,7 +108,7 @@ public abstract class AbstractSparkTask {
             instanceService.instanceRunEnd(instanceCode, status, errorMsg);
             LOG.info("作业: {} 运行完成，更新实例状态：{}", instanceCode, status.getValue());
 
-            driverService.updateServerFinished(SparkEnv.getApplicationId());
+            driverService.updateServerFinished(SparkDriverEnv.getApplicationId());
             MetricsUtils.logMetricsCollect(InstanceContext.getJobType());
 
             if (InstanceStatus.FAILED == status && errorMsg != null) {
@@ -117,14 +117,14 @@ public abstract class AbstractSparkTask {
         } catch (Exception e) {
             LOG.error("结束作业失败: " + e.getMessage(), e);
         } finally {
-            SparkEnv.getSparkSession().catalog().clearCache();
+            SparkDriverEnv.getSparkSession().catalog().clearCache();
         }
     }
 
     protected void exitFailure(String instanceCode, String errorMsg) {
         LOG.error("Job {} Failed: {}", instanceCode, errorMsg);
         endJob(instanceCode, InstanceStatus.FAILED, errorMsg);
-        LogUtils.sendTaskStatusFlag(TaskStatusFlag.TASK_ERROR_FLAG, errorMsg);
+        LogUtils.sendTaskStatusFlag(TASK_ERROR_FLAG, errorMsg);
     }
 
     public void killJob(String instanceCode) {
@@ -136,7 +136,7 @@ public abstract class AbstractSparkTask {
 
         long time = System.currentTimeMillis() - startTime;
         LogUtils.info("任务执行成功, 耗时: {}", CommonUtils.convertTime(time));
-        LogUtils.sendTaskStatusFlag(TaskStatusFlag.TASK_END_FLAG);
+        LogUtils.sendTaskStatusFlag(TASK_END_FLAG);
     }
 
     private String getErrorMsg(Throwable e) {
@@ -203,7 +203,7 @@ public abstract class AbstractSparkTask {
         public void run() {
             String instanceCode = instanceDto.getInstanceCode();
             try {
-                LOG.info("Sql Job: {} begined, submit from {}", instanceCode, instanceDto.getSparkJobServerUrl());
+                LOG.info("Sql Job: {} begined, submit from {}", instanceCode, instanceDto.getSparkDriverUrl());
                 startJob(instanceDto);
                 setConf(instanceDto.getJobConfig());
 
@@ -221,7 +221,7 @@ public abstract class AbstractSparkTask {
                     LogUtils.info("stopped by user");
                 }
 
-                LogUtils.sendTaskStatusFlag(TaskStatusFlag.TASK_ERROR_FLAG, e.getMessage());
+                LogUtils.sendTaskStatusFlag(TASK_ERROR_FLAG, e.getMessage());
                 endJob(instanceCode, InstanceStatus.FAILED, e.getMessage());
 
                 String errMsg = ExceptionUtils.getStackTrace(e).trim();
@@ -266,13 +266,6 @@ public abstract class AbstractSparkTask {
                 String propKey = (String) key;
                 if (StringUtils.startsWith(propKey, "spark.sql")) {
                     String value = properties.getProperty(propKey);
-
-                    if (StringUtils.startsWith(propKey, "spark.sql.air.")) {
-                        SparkSession.active().conf().set(propKey.toLowerCase(Locale.ROOT), value);
-                    } else {
-                        SparkSession.active().conf().set(propKey, value);
-                    }
-
                     LogUtils.info("set param {} = {}", propKey, value);
                 }
             }

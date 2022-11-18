@@ -27,9 +27,9 @@ import java.util.Base64;
 @SpringBootApplication(exclude = {HibernateJpaAutoConfiguration.class, GsonAutoConfiguration.class})
 @EnableScheduling
 @EnableTransactionManagement
-public class SparkDriverApp extends SpringBootServletInitializer {
+public class SparkDriverServer extends SpringBootServletInitializer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SparkDriverApp.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SparkDriverServer.class);
 
     public static void main(String[] args) throws Exception {
         DriverParam driverParam = new DriverParam();
@@ -40,18 +40,18 @@ public class SparkDriverApp extends SpringBootServletInitializer {
         byte[] asBytes = Base64.getDecoder().decode(driverParam.getConfig());
         String configText = new String(asBytes, StandardCharsets.UTF_8);
 
-        ApplicationContext applicationContext = SpringApplication.run(SparkDriverApp.class);
+        ApplicationContext applicationContext = SpringApplication.run(SparkDriverServer.class);
         SparkDriverContext sparkDriverContext = applicationContext.getBean(SparkDriverContext.class);
 
         boolean kerberosEnabled = driverParam.isKerberosEnabled();
         boolean hiveEnabled = driverParam.isHiveEnable();
         SparkConf conf = new SparkConf(true);
         ConfigClient.init(configText, conf);
-        SparkEnv.init(conf, kerberosEnabled, hiveEnabled);
+        SparkDriverEnv.init(conf, kerberosEnabled, hiveEnabled);
 
         sparkDriverContext.initSparkDriver(driverId);
 
-        SparkEnv.waitDriver();
+        SparkDriverEnv.waitDriver();
         LOG.info("application finished");
     }
 }

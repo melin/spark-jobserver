@@ -11,7 +11,7 @@ import com.gitee.melin.bee.core.enums.jackson.JacksonEnumStringSerializer;
 @JsonSerialize(using = JacksonEnumStringSerializer.class)
 public enum JobType implements BaseStringEnum {
     SPARK_SQL,
-    SPARK_JAR,
+    SPARK_APP,
     SPARK_PYTHON;
 
     @JsonValue
@@ -21,6 +21,6 @@ public enum JobType implements BaseStringEnum {
     }
 
     public static boolean isBatchJob(JobType jobType) {
-        return SPARK_SQL == jobType || SPARK_JAR == jobType || SPARK_PYTHON == jobType;
+        return SPARK_SQL == jobType || SPARK_APP == jobType || SPARK_PYTHON == jobType;
     }
 }

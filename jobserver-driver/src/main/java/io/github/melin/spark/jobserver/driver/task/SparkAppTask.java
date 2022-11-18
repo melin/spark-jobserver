@@ -4,7 +4,7 @@ import io.github.melin.spark.jobserver.api.SparkJob;
 import io.github.melin.spark.jobserver.api.SparkJobServerException;
 import io.github.melin.spark.jobserver.core.util.CommonUtils;
 import io.github.melin.spark.jobserver.driver.InstanceContext;
-import io.github.melin.spark.jobserver.driver.SparkEnv;
+import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
 import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.driver.support.SparkClassLoader;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
@@ -26,9 +26,9 @@ import java.util.UUID;
  * huaixin 2022/4/8 3:00 PM
  */
 @Service
-public class SparkJarTask extends AbstractSparkTask {
+public class SparkAppTask extends AbstractSparkTask {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SparkJarTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SparkAppTask.class);
 
     @Value("${driver.hdfs.home}/jarTasks")
     protected String sparkJarTemp;
@@ -37,7 +37,7 @@ public class SparkJarTask extends AbstractSparkTask {
     protected void executeJobText(InstanceDto instanceDto) throws Exception {
         String jarHdfsPath = null;
         try {
-            Configuration hadoopConf = SparkEnv.hadoopConfiguration();
+            Configuration hadoopConf = SparkDriverEnv.hadoopConfiguration();
 
             String noCommentJobText = CommonUtils.cleanSqlComment(instanceDto.getJobText());
             List<StatementData> statementDatas = JobTaskHelper.getStatementData(noCommentJobText);
@@ -67,12 +67,12 @@ public class SparkJarTask extends AbstractSparkTask {
                     LOG.info("exec job classname: {}", className);
                     if (job instanceof SparkJob) {
                         SparkJob sparkJob = (SparkJob) job;
-                        SparkEnv.getSparkContext().setJobGroup(groupId, "", true);
-                        SparkEnv.getSparkContext().addJar(jarHdfsPath);
+                        SparkDriverEnv.getSparkContext().setJobGroup(groupId, "", true);
+                        SparkDriverEnv.getSparkContext().addJar(jarHdfsPath);
 
-                        sparkJob.runJob(SparkEnv.getSparkSession(), params.toArray(new String[0]));
+                        sparkJob.runJob(SparkDriverEnv.getSparkSession(), params.toArray(new String[0]));
 
-                        Thread.currentThread().setContextClassLoader(SparkJarTask.class.getClassLoader());
+                        Thread.currentThread().setContextClassLoader(SparkAppTask.class.getClassLoader());
                     } else {
                         throw new SparkJobServerException(className + " 不是SparkJob的实例");
                     }

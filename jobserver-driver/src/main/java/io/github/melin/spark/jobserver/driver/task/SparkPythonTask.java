@@ -2,7 +2,7 @@ package io.github.melin.spark.jobserver.driver.task;
 
 import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.core.exception.SparkJobException;
-import io.github.melin.spark.jobserver.driver.SparkEnv;
+import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
 import io.github.melin.spark.jobserver.driver.support.Py4jEndPoint;
 import io.github.melin.spark.jobserver.driver.util.DriverUtils;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
@@ -57,7 +57,7 @@ public class SparkPythonTask extends AbstractSparkTask {
             if (StringUtils.isNotBlank(errMsg)) {
                 LOG.info("(" + instanceCode + ")原始msg: \n" + errMsg);
 
-                boolean printLog = SparkEnv.sparkConf().getBoolean("spark.python.print.full.logs", false);
+                boolean printLog = SparkDriverEnv.sparkConf().getBoolean("spark.python.print.full.logs", false);
                 if (printLog) {
                     LogUtils.error(errMsg);
                 }
@@ -74,8 +74,8 @@ public class SparkPythonTask extends AbstractSparkTask {
     }
 
     private String execCommand(String instanceCode, String pythonFile, String secret, int port) throws Exception {
-        String pythonPath = SparkEnv.sparkConf().get("spark.pyspark.driver.python");
-        String pysparkPath = SparkEnv.sparkConf().get("spark.executorEnv.PYTHONPATH");
+        String pythonPath = SparkDriverEnv.sparkConf().get("spark.pyspark.driver.python");
+        String pysparkPath = SparkDriverEnv.sparkConf().get("spark.executorEnv.PYTHONPATH");
 
         String cmd = pythonPath + " " + pythonFile + " " + port + " " + instanceCode + " " + secret;
         String user = System.getProperty("user.name");

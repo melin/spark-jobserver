@@ -267,7 +267,7 @@ public class SparkJobSubmitService implements InitializingBean {
             instanceDto.setJobConfig(instanceInfo.getJobConfig());
             instanceDto.setAccessKey(accessKey);
             instanceDto.setYarnQueue(instanceInfo.getYarnQueue());
-            instanceDto.setSparkJobServerUrl(sparkJobServerUrl);
+            instanceDto.setSparkDriverUrl(sparkJobServerUrl);
 
             sparkLogService.createSparkJobLog(instanceInfo, applicationId, shareDriver, sparkDriverUrl);
             String url = sparkDriverUrl + "/sparkDriver/runSparkJob";

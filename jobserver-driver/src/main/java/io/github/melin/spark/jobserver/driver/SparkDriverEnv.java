@@ -17,8 +17,8 @@ import java.util.concurrent.CountDownLatch;
 /**
  * huaixin 2022/4/6 7:05 PM
  */
-public class SparkEnv {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SparkEnv.class);
+public class SparkDriverEnv {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SparkDriverEnv.class);
 
     private static SparkSession sparkSession;
 
@@ -57,7 +57,7 @@ public class SparkEnv {
     }
 
     public static Configuration hadoopConfiguration() {
-        return SparkEnv.getSparkSession().sparkContext().hadoopConfiguration();
+        return SparkDriverEnv.getSparkSession().sparkContext().hadoopConfiguration();
     }
 
     public static SparkSession getSparkSession() {
@@ -73,7 +73,7 @@ public class SparkEnv {
     }
 
     public static void setSparkSession(SparkSession sparkSession) {
-        SparkEnv.sparkSession = sparkSession;
+        SparkDriverEnv.sparkSession = sparkSession;
     }
 
     public static SparkConf sparkConf() {
@@ -88,6 +88,6 @@ public class SparkEnv {
     }
 
     public static void waitDriver() throws InterruptedException {
-        SparkEnv.countDownLatch.await();
+        SparkDriverEnv.countDownLatch.await();
     }
 }

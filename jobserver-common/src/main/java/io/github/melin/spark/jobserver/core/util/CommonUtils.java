@@ -214,8 +214,13 @@ public class CommonUtils {
         return StringUtils.join(chars, "");
     }
 
+    private static final String[] SQL_SPLIT_WORDKEYS =
+            new String[] {"insert", "delete", "update", "drop", "create", "explain",
+                    "alter", "select", "use", "set", "replace", "analyze", "show", "desc", "truncate",
+                    "merge", "call", "sync", "msck", "with", "load", "datatunnel"};
+
     /**
-     * 多个sql语句用分号分割
+     * 多个sql语句逗号分隔拆开
      */
     public static List<String> splitMultiSql(String sql) {
         List<String> sqls = Lists.newArrayList();
@@ -247,6 +252,20 @@ public class CommonUtils {
                     sqls.add(content);
                 }
                 lastIndex = i + 1;
+            } else if (ch == '\n') {
+                // 增强体验，如果用户没有用分号分隔多个sql语句，通过每行首个单词判断是否分隔
+                for (String wordkey : SQL_SPLIT_WORDKEYS) {
+                    int index = StringUtils.indexOfIgnoreCase(sql, wordkey, i);
+                    if ((i + 1) == index) {
+                        String content = StringUtils.substring(sql, lastIndex, i).trim();
+                        if (StringUtils.isNotBlank(content)) {
+                            sqls.add(content);
+                        }
+                        lastIndex = i + 1;
+
+                        break;
+                    }
+                }
             }
         }
 

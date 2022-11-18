@@ -2,7 +2,7 @@ package io.github.melin.spark.jobserver.driver.util;
 
 import io.github.melin.spark.jobserver.core.enums.JobType;
 import io.github.melin.spark.jobserver.core.util.CommonUtils;
-import io.github.melin.spark.jobserver.driver.SparkEnv;
+import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
 import io.github.melin.spark.jobserver.driver.listener.DriverMetric;
 import io.github.melin.spark.jobserver.driver.listener.ExecutorMetric;
 import io.github.melin.spark.jobserver.driver.listener.MetricsData;
@@ -22,7 +22,7 @@ public class MetricsUtils {
 
     public static void logMetricsCollect(JobType jobType) {
         try {
-            SparkConf sparkConf = SparkEnv.getSparkSession().sparkContext().getConf();
+            SparkConf sparkConf = SparkDriverEnv.getSparkSession().sparkContext().getConf();
             long executorMemory = sparkConf.getSizeAsKb("spark.executor.memory", "10485760");
             long driverMemory = sparkConf.getSizeAsKb("spark.driver.memory", "5242880");
 
@@ -79,7 +79,7 @@ public class MetricsUtils {
                 }
             }
 
-            SparkConf conf = SparkEnv.getSparkSession().sparkContext().getConf();
+            SparkConf conf = SparkDriverEnv.getSparkSession().sparkContext().getConf();
             String defaultDriverMemory = conf.get("spark.default.driver.memory", "0G");
             String defaultExecutorMemory = conf.get("spark.default.executor.memory", "0G");
             String defaultDriverMemoryOverhead = conf.get("spark.default.driver.memoryOverhead", "0G");

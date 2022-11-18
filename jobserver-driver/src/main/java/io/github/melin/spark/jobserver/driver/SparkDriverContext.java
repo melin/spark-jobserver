@@ -44,7 +44,7 @@ public class SparkDriverContext {
     private TaskLogThread logThread;
 
     public void initSparkDriver(Long driverId) {
-        SparkEnv.getSparkContext().addSparkListener(sparkListener);
+        SparkDriverEnv.getSparkContext().addSparkListener(sparkListener);
         updateJobServerIdle(driverId);
     }
 
@@ -59,7 +59,7 @@ public class SparkDriverContext {
         driver.setServerIp(NetUtils.getLocalHost());
         driver.setServerPort(serverPortService.getPort());
         driver.setStatus(DriverStatus.IDLE);
-        String applicationId = SparkEnv.getApplicationId();
+        String applicationId = SparkDriverEnv.getApplicationId();
         driver.setApplicationId(applicationId);
         driver.setCreater("admin");
 

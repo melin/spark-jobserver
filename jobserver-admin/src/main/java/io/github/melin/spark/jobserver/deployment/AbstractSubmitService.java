@@ -301,7 +301,7 @@ public abstract class AbstractSubmitService {
                 .setConf("spark.jobserver.host", hostName)
                 .setConf("spark.driver.extraJavaOptions", sparkDriverExtraJavaOptionsConf)
                 .setConf("spark.executor.extraJavaOptions", sparkExecutorExtraJavaOptionsConf)
-                .setMainClass("io.github.melin.spark.jobserver.driver.SparkDriverApp")
+                .setMainClass("io.github.melin.spark.jobserver.driver.SparkDriverServer")
                 .setAppResource(driverJarFile)
                 .addAppArgs(programArgs.toArray(new String[0]))
                 .startApplication();

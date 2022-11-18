@@ -22,7 +22,7 @@ public class InstanceDto {
 
     private String accessKey;
 
-    private String sparkJobServerUrl;
+    private String sparkDriverUrl;
 
     private JobType jobType;
 

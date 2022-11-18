@@ -2,7 +2,7 @@ package io.github.melin.spark.jobserver.driver.support;
 
 import io.github.melin.spark.jobserver.core.enums.InstanceType;
 import io.github.melin.spark.jobserver.driver.InstanceContext;
-import io.github.melin.spark.jobserver.driver.SparkEnv;
+import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
 import com.google.common.base.Joiner;
 import org.apache.commons.lang3.StringUtils;
@@ -24,19 +24,19 @@ public class Py4jEndPoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(Py4jEndPoint.class);
 
     public SparkSession getSparkSession() {
-        return SparkEnv.getSparkSession();
+        return SparkDriverEnv.getSparkSession();
     }
 
     public JavaSparkContext getSparkContext() {
-        return new JavaSparkContext(SparkEnv.getSparkSession().sparkContext());
+        return new JavaSparkContext(SparkDriverEnv.getSparkSession().sparkContext());
     }
 
     public SparkConf getSparkConf() {
-        return SparkEnv.getSparkSession().sparkContext().getConf();
+        return SparkDriverEnv.getSparkSession().sparkContext().getConf();
     }
 
     public String getSparkConfig(String key, String defaultVale) {
-        return SparkEnv.getSparkSession().conf().get(key, defaultVale);
+        return SparkDriverEnv.getSparkSession().conf().get(key, defaultVale);
     }
 
     public void sendMsg(String msgType, Object message) {
@@ -65,7 +65,7 @@ public class Py4jEndPoint {
     }
 
     public Boolean execDataFrameShowEnabled() {
-        boolean enabled = SparkEnv.getSparkSession().sparkContext()
+        boolean enabled = SparkDriverEnv.getSparkSession().sparkContext()
                 .getConf().getBoolean("spark.prod.dataframe.show.enabled", false);
 
         if (InstanceType.DEV == InstanceContext.getInstanceType() || enabled) {
@@ -77,7 +77,7 @@ public class Py4jEndPoint {
 
     public Boolean checkTabExist(String databaseName, String tableName) {
         try {
-            SparkEnv.getSparkSession().catalog().getTable(databaseName, tableName);
+            SparkDriverEnv.getSparkSession().catalog().getTable(databaseName, tableName);
             return true;
         } catch (AnalysisException e) {
             return false;

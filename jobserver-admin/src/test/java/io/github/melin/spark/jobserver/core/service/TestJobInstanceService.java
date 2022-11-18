@@ -41,7 +41,7 @@ public class TestJobInstanceService {
     public void getScheduleInstancesTest() {
         JobInstance instance1 = JobInstance.builder().setCode("code1").setName("job1").setScheduleTime(Instant.now().minusSeconds(10))
                 .setCreater("admin").setStatus(InstanceStatus.WAITING).setOwner("admin")
-                .setJobType(JobType.SPARK_JAR).setInstanceType(InstanceType.SCHEDULE).build();
+                .setJobType(JobType.SPARK_APP).setInstanceType(InstanceType.SCHEDULE).build();
         instanceService.insertEntity(instance1);
 
         JobInstance instance2 = JobInstance.builder().setCode("code2").setName("job2").setScheduleTime(Instant.now().minusSeconds(10))

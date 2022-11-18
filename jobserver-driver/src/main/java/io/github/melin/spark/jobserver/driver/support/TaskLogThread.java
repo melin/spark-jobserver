@@ -2,7 +2,7 @@ package io.github.melin.spark.jobserver.driver.support;
 
 import io.github.melin.spark.jobserver.core.enums.DriverStatus;
 import io.github.melin.spark.jobserver.driver.SparkDriverContext;
-import io.github.melin.spark.jobserver.driver.SparkEnv;
+import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
 import io.github.melin.spark.jobserver.driver.listener.MetricsData;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
 import com.gitee.melin.bee.util.ThreadUtils;
@@ -69,7 +69,7 @@ public class TaskLogThread implements InitializingBean, Runnable {
         while (true) {
             if (queryLog.get()) {
                 try {
-                    SparkSession sparkSession = SparkEnv.getSparkSession();
+                    SparkSession sparkSession = SparkDriverEnv.getSparkSession();
                     if (sparkSession != null) {
                         SparkConf conf = sparkSession.sparkContext().getConf();
                         boolean logEnabled = conf.getBoolean("spark.job.status.log.enable", true);
