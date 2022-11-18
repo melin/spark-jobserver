@@ -73,6 +73,6 @@ public class ClusterService extends BaseServiceImpl<Cluster, Long> {
 
     @Transactional(readOnly = true)
     public List<Cluster> queryValidClusters() {
-        return this.findByNamedParam("status", 1);
+        return this.findByNamedParam("status", true);
     }
 }
