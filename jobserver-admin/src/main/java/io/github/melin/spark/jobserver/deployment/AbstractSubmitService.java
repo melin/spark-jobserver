@@ -346,7 +346,7 @@ public abstract class AbstractSubmitService {
         if (StringUtils.isNotBlank(yarnQueue)) {
             sparkLauncher.setConf("spark.yarn.queue", yarnQueue);
         } else {
-            yarnQueue = clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_YAEN_QUEUE_NAME);
+            yarnQueue = clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_YARN_QUEUE_NAME);
             sparkLauncher.setConf("spark.yarn.queue", yarnQueue);
         }
 
@@ -432,7 +432,7 @@ public abstract class AbstractSubmitService {
         Long driverId;
         try {
             SparkDriver driver = SparkDriver.buildSparkDriver(clusterCode, shareDriver);
-            String yarnQueue = clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_YAEN_QUEUE_NAME);
+            String yarnQueue = clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_YARN_QUEUE_NAME);
             driver.setYarnQueue(yarnQueue);
 
             while (!redisLeaderElection.trylock()) {

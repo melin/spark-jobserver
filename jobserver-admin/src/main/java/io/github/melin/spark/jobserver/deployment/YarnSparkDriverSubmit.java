@@ -84,7 +84,7 @@ public class YarnSparkDriverSubmit extends AbstractSubmitService {
             Long driverId = initSparkDriver(job.getClusterCode(), shareDriver);
             DriverInfo driverInfo = new DriverInfo(NEW_INSTANCE, driverId);
 
-            String yarnQueue = clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_YAEN_QUEUE_NAME);
+            String yarnQueue = clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_YARN_QUEUE_NAME);
             driverInfo.setYarnQueue(yarnQueue);
             return driverInfo;
         } finally {
@@ -104,7 +104,7 @@ public class YarnSparkDriverSubmit extends AbstractSubmitService {
 
             JobInstanceInfo jobInstanceInfo = new JobInstanceInfo();
             jobInstanceInfo.setClusterCode(clusterCode);
-            String yarnQueue = clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_YAEN_QUEUE_NAME);
+            String yarnQueue = clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_YARN_QUEUE_NAME);
             driverId = initSparkDriver(clusterCode, true);
             LOG.info("预启动 driver Id: {}", driverId);
 
