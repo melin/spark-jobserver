@@ -12,28 +12,34 @@
     <div class="layui-card-body">
         <form class="layui-form" action="">
             <div class="layui-form-item">
-                <label class="layui-form-label">集群</label>
-                <div class="layui-input-inline">
+                <div class="layui-col-md1">
+                    <label class="layui-form-label">集群</label>
+                </div>
+                <div class="layui-col-md2">
                     <select name="clusterCode" class="layui-input" id="clusterVals">
                         <option value="">请选择...</option>
                         <option th:each="item : ${clusters}" th:value="${item.code}" th:text="${item.name}"></option>
                     </select>
                 </div>
-                <label class="layui-form-label">ApplicationID</label>
-                <div class="layui-input-inline">
+                <div class="layui-col-md1">
+                    <label class="layui-form-label">ApplicationID</label>
+                </div>
+                <div class="layui-col-md2">
                     <input type="text" name="realName" placeholder="" class="layui-input">
                 </div>
-                <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
-                    <i class="layui-icon layui-icon-search"></i>
-                    查询
-                </button>
-                <button type="reset" class="pear-btn pear-btn-md">
-                    <i class="layui-icon layui-icon-refresh"></i>
-                    重置
-                </button>
-                <button type="button" onclick="Driver.downloadYarnLogWin()" class="pear-btn pear-btn-md pear-btn-primary" style="margin-left: 20px; background-color: #4295f5!important;">
-                    下载Yarn日志
-                </button>
+                <div class="layui-col-md2" style="padding-left: 10px">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                    <button type="button" onclick="Driver.downloadYarnLogWin()" class="pear-btn pear-btn-md pear-btn-primary" style="margin-left: 20px; background-color: #4295f5!important;">
+                        下载Yarn日志
+                    </button>
+                </div>
             </div>
         </form>
     </div>

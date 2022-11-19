@@ -103,11 +103,12 @@ public class YarnSparkDriverSubmit extends AbstractSubmitService {
             clusterManager.checkYarnResourceLimit(clusterCode);
 
             JobInstanceInfo jobInstanceInfo = new JobInstanceInfo();
+            jobInstanceInfo.setClusterCode(clusterCode);
             String yarnQueue = clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_YAEN_QUEUE_NAME);
             driverId = initSparkDriver(clusterCode, true);
             LOG.info("预启动 driver Id: {}", driverId);
 
-            sparkAppHandle = startApplication(jobInstanceInfo, cluster.getCode(), driverId, yarnQueue);
+            sparkAppHandle = startApplication(jobInstanceInfo, driverId, yarnQueue);
             long appSubmitTime = System.currentTimeMillis();
             SparkAppHandle.State state = sparkAppHandle.getState();
             String applicationId = "";

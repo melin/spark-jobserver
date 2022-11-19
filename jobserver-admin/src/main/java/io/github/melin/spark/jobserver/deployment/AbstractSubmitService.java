@@ -97,7 +97,7 @@ public abstract class AbstractSubmitService {
         LOG.info("jobserver yarn queue: {}", yarnQueue);
 
         int submitTimeOut = config.getDriverSubmitTimeOutSeconds();
-        SparkAppHandle sparkAppHandle = startApplication(job, clusterCode, driverId, yarnQueue);
+        SparkAppHandle sparkAppHandle = startApplication(job, driverId, yarnQueue);
         long appSubmitTime = System.currentTimeMillis();
         SparkAppHandle.State state = sparkAppHandle.getState();
         String applicationId;
@@ -190,9 +190,8 @@ public abstract class AbstractSubmitService {
     /**
      * 构造SparkLauncher
      */
-    protected SparkAppHandle startApplication(JobInstanceInfo jobInstanceInfo, String clusterCode,
-                                              Long driverId, String yarnQueue) throws Exception {
-
+    protected SparkAppHandle startApplication(JobInstanceInfo jobInstanceInfo, Long driverId, String yarnQueue) throws Exception {
+        String clusterCode = jobInstanceInfo.getClusterCode();
         String sparkHome = clusterConfig.getValue(clusterCode, JOBSERVER_SPARK_HOME);
         if (StringUtils.isBlank(sparkHome)) {
             throw new IllegalArgumentException("sparkHome 不能为空");
