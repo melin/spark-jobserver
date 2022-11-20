@@ -68,6 +68,7 @@
             <appender-ref ref="RoutingAppender"/>
         </logger>
 
+        <logger name="org.apache.hadoop.yarn.client" level="warn" />
         <logger name="org.apache.spark.launcher" level="warn" />
         <logger name="org.apache.hadoop" level="warn" />
         <logger name="org.apache.hive" level="warn" />
