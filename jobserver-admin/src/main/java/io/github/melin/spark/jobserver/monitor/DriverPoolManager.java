@@ -11,6 +11,7 @@ import io.github.melin.spark.jobserver.core.service.ClusterService;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
 import com.gitee.melin.bee.util.ThreadUtils;
 import io.github.melin.spark.jobserver.support.leader.LeaderTypeEnum;
+import jdk.jpackage.internal.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -62,14 +63,18 @@ public class DriverPoolManager implements InitializingBean {
         redisLeaderElection.buildLeader(LeaderTypeEnum.DRIVER_POOL_MANAGER);
 
         scheduledExecutorService.scheduleAtFixedRate(() -> {
-            if (redisLeaderElection.checkLeader(LeaderTypeEnum.DRIVER_POOL_MANAGER)) {
-                List<Cluster> clusters = clusterService.findByNamedParam("status", 1);
-                for (Cluster cluster : clusters) {
-                    LOG.debug("monitor driver pool: {}", cluster.getCode());
+            try {
+                if (redisLeaderElection.checkLeader(LeaderTypeEnum.DRIVER_POOL_MANAGER)) {
+                    List<Cluster> clusters = clusterService.findByNamedParam("status", true);
+                    for (Cluster cluster : clusters) {
+                        LOG.debug("monitor driver pool: {}", cluster.getCode());
 
-                    stopMaxIdleJobserver(cluster);
-                    startMinJobServer(cluster);
+                        stopMaxIdleJobserver(cluster);
+                        startMinJobServer(cluster);
+                    }
                 }
+            } catch (Throwable e) {
+                LOG.error("start jobserver failed: " + e.getMessage(), e);
             }
         }, 10, 10, TimeUnit.SECONDS);
     }
