@@ -45,13 +45,6 @@ public class SparkDriverContext {
 
     public void initSparkDriver(Long driverId) {
         SparkDriverEnv.getSparkContext().addSparkListener(sparkListener);
-        updateJobServerIdle(driverId);
-    }
-
-    /**
-     * driver 启动成功，初始化状态为Idle
-     */
-    private void updateJobServerIdle(Long driverId) {
         SparkDriver driver = driverService.getEntity(driverId);
         if (driver == null) {
             throw new RuntimeException("No driver Id: " + driverId);
