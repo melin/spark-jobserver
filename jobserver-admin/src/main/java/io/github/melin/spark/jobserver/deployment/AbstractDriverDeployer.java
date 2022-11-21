@@ -49,9 +49,9 @@ import static io.github.melin.spark.jobserver.SparkJobServerConf.*;
 /**
  * huaixin 2022/4/14 21:08
  */
-public abstract class AbstractSubmitService {
+public abstract class AbstractDriverDeployer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractSubmitService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractDriverDeployer.class);
 
     @Autowired
     protected ConfigProperties config;
