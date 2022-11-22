@@ -64,7 +64,7 @@ public abstract class AbstractSparkTask {
 
     public Result<String> runTask(InstanceDto instanceDto) {
         new Task(instanceDto).start();
-        return Result.successMessageResult(SparkDriverEnv.getApplicationId());
+        return Result.successResult();
     }
 
     /**
