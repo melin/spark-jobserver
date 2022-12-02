@@ -229,9 +229,9 @@ public class ClusterManager implements InitializingBean {
                     String hostName = value.split(":")[0];
                     if (StringUtils.startsWith(rmWebappAddress, hostName)) {
                         rmAddr = value;
-                        LOGGER.info("rm webapp adddress: {}, rm address: {}", rmWebappAddress, value);
+                        LOGGER.info("rm webapp adddress: 【{}】, rm address: 【{}】", rmWebappAddress, value);
                     } else {
-                        LOGGER.warn("rm webapp adddress: {}, rm address: {}", rmWebappAddress, value);
+                        LOGGER.warn("rm webapp adddress: 【{}】, rm address invalid: 【{}】", rmWebappAddress, value);
                     }
                 }
             }
@@ -243,7 +243,6 @@ public class ClusterManager implements InitializingBean {
             LOGGER.error("cluster {} can not find yarn.resourcemanager.address", clusterCode);
             return null;
         }
-        LOGGER.info("yarn.resourcemanager.address: {}", rmAddr);
         conf.set("yarn.resourcemanager.address", rmAddr);
         conf.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
         conf.set("ipc.client.fallback-to-simple-auth-allowed", "true");
