@@ -87,8 +87,9 @@ public class ClusterManager implements InitializingBean {
         List<Cluster> clusters = clusterService.findByNamedParam("status", true);
 
         for (Cluster cluster : clusters) {
-            LOGGER.info("========================= load {} ==============================", cluster.getCode());
+            LOGGER.info("========================= load {} start==============================", cluster.getCode());
             downloadClusterConfig(cluster);
+            LOGGER.info("========================= load {} end==============================", cluster.getCode());
         }
         executorService = new ScheduledThreadPoolExecutor(5);
         executorService.scheduleWithFixedDelay(() -> {
