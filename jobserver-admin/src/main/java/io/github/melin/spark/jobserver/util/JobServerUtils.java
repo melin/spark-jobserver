@@ -72,7 +72,7 @@ public class JobServerUtils {
     }
 
     public static String deleteLogFile(String instanceLogPath, JobInstance instance) {
-        String scheduleDate = DateUtils.formateDate(instance.getScheduleTime());
+        String scheduleDate = DateUtils.formatDate(instance.getScheduleTime());
         String instanceCode = instance.getCode();
         String logFile = instanceLogPath + "/" + scheduleDate + "/" + instanceCode + ".log";
         File file = new File(logFile);

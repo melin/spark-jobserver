@@ -254,7 +254,7 @@ public class InstanceController {
                 JobInstance instance = instanceService.queryJobInstanceByCode(instanceCode);
                 if (instance != null) {
                     String instanceLogPath = configProperties.getInstanceLogPath();
-                    String scheduleDate = DateUtils.formateDate(instance.getScheduleTime());
+                    String scheduleDate = DateUtils.formatDate(instance.getScheduleTime());
                     String logFile = instanceLogPath + "/" + scheduleDate + "/" + instanceCode + ".log";
                     File fileToZip = new File(logFile);
 

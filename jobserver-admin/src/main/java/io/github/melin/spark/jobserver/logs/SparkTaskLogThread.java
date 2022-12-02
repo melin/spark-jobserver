@@ -65,7 +65,7 @@ public class SparkTaskLogThread extends Thread {
         final String sparkDriverUrl = logTaskDto.getSparkDriverUrl();
         final String clusterCode = logTaskDto.getClusterCode();
         final String applicationId = logTaskDto.getApplicationId();
-        final String scheduleDate = DateUtils.formateDate(logTaskDto.getScheduleTime());
+        final String scheduleDate = DateUtils.formatDate(logTaskDto.getScheduleTime());
 
         try {
             String path = instanceLogPath + "/" + scheduleDate + "/" + instanceCode + ".log";

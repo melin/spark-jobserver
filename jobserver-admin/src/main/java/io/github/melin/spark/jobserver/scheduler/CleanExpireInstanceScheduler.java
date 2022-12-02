@@ -99,7 +99,7 @@ public class CleanExpireInstanceScheduler implements InitializingBean {
         LOG.info("max instance day: {}", maxDays);
         if (maxDays > 0) {
             Instant lastDay = Instant.now().minus(maxDays, ChronoUnit.DAYS);
-            LOG.info("max instance day: {}, expire time: {}", maxDays, DateUtils.formateDateTime(lastDay));
+            LOG.info("max instance day: {}, expire time: {}", maxDays, DateUtils.formatDateTime(lastDay));
 
             Criterion beforeScheduleTimeCrt = Restrictions.lt("scheduleTime", lastDay);
             return instanceService.findByCriterion(Projections.property("id"), beforeScheduleTimeCrt);

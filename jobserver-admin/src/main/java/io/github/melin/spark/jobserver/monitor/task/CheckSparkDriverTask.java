@@ -129,7 +129,7 @@ public class CheckSparkDriverTask implements Runnable {
                     String applicationId = driver.getApplicationId();
                     if (StringUtils.isNotBlank(applicationId)) {
                         LOG.warn("[DriverCheck] delete driver: {}, status: {}, gmtModified: {}",
-                                applicationId, driver.getStatus().getName(), DateUtils.formateDateTime(driver.getGmtModified()));
+                                applicationId, driver.getStatus().getName(), DateUtils.formatDateTime(driver.getGmtModified()));
                     }
                 }
             }
@@ -168,7 +168,7 @@ public class CheckSparkDriverTask implements Runnable {
 
                     yarnClientService.closeJobServer(clusterCode, applicationId, driver.isShareDriver());
                     LOG.warn("[DriverCheck]修复 driver 完成状态: {}, gmtModified: {}",
-                            applicationId, DateUtils.formateDateTime(driver.getGmtModified()));
+                            applicationId, DateUtils.formatDateTime(driver.getGmtModified()));
                 }
             }
         } catch (Throwable e) {
@@ -188,7 +188,7 @@ public class CheckSparkDriverTask implements Runnable {
 
                     yarnClientService.closeJobServer(clusterCode, applicationId, false);
                     LOG.warn("[DriverCheck]关闭非共享 driver: {}, gmtModified: {}",
-                            applicationId, DateUtils.formateDateTime(driver.getGmtModified()));
+                            applicationId, DateUtils.formatDateTime(driver.getGmtModified()));
                 }
             }
         } catch (Throwable e) {

@@ -147,7 +147,7 @@ public class JobServerServiceImpl implements InitializingBean {
 
     public String queryInstanceLog(String instanceCode) {
         JobInstance instance = instanceService.queryJobInstanceByCode(instanceCode);
-        final String scheduleDate = DateUtils.formateDate(instance.getScheduleTime());
+        final String scheduleDate = DateUtils.formatDate(instance.getScheduleTime());
 
         String logFile = configProperties.getInstanceLogPath() + "/" + scheduleDate + "/" + instanceCode + ".log";
         File file = new File(logFile);

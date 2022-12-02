@@ -79,6 +79,12 @@ public class ClusterController {
     @RequestMapping("/cluster/saveCluster")
     @ResponseBody
     public Result<Void> saveCluster(Cluster cluster) {
+        if (!StringUtils.contains(cluster.getYarnConfig(), "yarn.resourcemanager.webapp.address")
+                || !StringUtils.contains(cluster.getYarnConfig(), "yarn.resourcemanager.address")) {
+            String msg = "yarn-site.xml 缺少 yarn.resourcemanager.webapp.address & yarn.resourcemanager.address 参数配置";
+            return Result.failureResult(msg);
+        }
+
         try {
             cluster.setGmtCreated(Instant.now());
             cluster.setGmtModified(Instant.now());
