@@ -46,3 +46,4 @@ FROM tdl_kafka_message;
 ### 资料
 
 1. https://blog.51cto.com/u_14693305/4765083
+2. [Apache Hudi 建表需要考虑哪些参数？（Spark）-- 上篇](https://mp.weixin.qq.com/s/oSkthOKqs9DxfBA7EoeaJw)
