@@ -7,6 +7,7 @@ import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.driver.task.SparkAppTask;
 import io.github.melin.spark.jobserver.driver.task.SparkPythonTask;
 import io.github.melin.spark.jobserver.driver.task.SparkSqlTask;
+import io.github.melin.spark.jobserver.driver.task.SparkStreamSqlTask;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
 import com.gitee.melin.bee.core.support.Result;
 import io.github.melin.spark.jobserver.core.util.TaskStatusFlag;
@@ -40,6 +41,9 @@ public class SparkDriverRest {
 
     @Autowired
     private SparkSqlTask sparkSqlTask;
+
+    @Autowired
+    private SparkStreamSqlTask sparkStreamSqlTask;
 
     @Autowired
     private SparkAppTask sparkAppTask;
@@ -103,6 +107,9 @@ public class SparkDriverRest {
         if (JobType.SPARK_SQL == jobType) {
             sparkDriverContext.startDriver();
             return sparkSqlTask.runTask(instanceDto);
+        } if (JobType.SPARK_STREAM_SQL == jobType) {
+            sparkDriverContext.startDriver();
+            return sparkStreamSqlTask.runTask(instanceDto);
         } else if (JobType.SPARK_APP == jobType) {
             sparkDriverContext.startDriver();
             return sparkAppTask.runTask(instanceDto);

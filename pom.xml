@@ -33,6 +33,8 @@
         <iceberg.version>0.14.0</iceberg.version>
         <bee.version>1.4.19</bee.version>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
+        <kafka.version>3.3.1</kafka.version>
+        <hudi.version>0.12.1</hudi.version>
 
         <!-- 与spark 版本一致 -->
         <netty.version>4.1.74.Final</netty.version>

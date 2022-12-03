@@ -30,8 +30,8 @@ public class SparkAppTask extends AbstractSparkTask {
 
     private static final Logger LOG = LoggerFactory.getLogger(SparkAppTask.class);
 
-    @Value("${driver.hdfs.home}/jarTasks")
-    protected String sparkJarTemp;
+    @Value("${driver.hdfs.home}/tempJars")
+    protected String sparkTempJars;
 
     @Override
     protected void executeJobText(InstanceDto instanceDto) throws Exception {

@@ -11,6 +11,7 @@ import com.gitee.melin.bee.core.enums.jackson.JacksonEnumStringSerializer;
 @JsonSerialize(using = JacksonEnumStringSerializer.class)
 public enum JobType implements BaseStringEnum {
     SPARK_SQL,
+    SPARK_STREAM_SQL,
     SPARK_APP,
     SPARK_PYTHON;
 
