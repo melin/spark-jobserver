@@ -1,7 +1,7 @@
 ### Spark Streaming SQL
 使用 SQL 简化 Spark Streaming 应用，对接数据数据源: debezium json、kafka、canal、hudi cdc
 
-### Example: kafka 数据写入hudi
+### 1、Example: kafka 数据写入hudi
 
 ```sql
 CREATE Stream TABLE tdl_kafka_message (
@@ -26,21 +26,21 @@ SELECT id, userid, city, kafka_topic, date_format(current_timestamp, "yyyyMMddHH
 FROM tdl_kafka_message;
 ```
 
-### Example: Hudi 增量查询写入 hudi
+### 2、Example: Hudi 增量查询写入 hudi
 
 kafka 数据写入hudi，Hudi 增量查询写入 hudi，实现实时数仓
 
 ```sql
-CREATE Stream TABLE tdl_kafka_message
+CREATE Stream TABLE tdl_hudi_stream_json_dt
 WITH (
     type = 'hudi',
     databaseName = "bigdata",
-    tableName = "test_huid_stream_json_dt",
+    tableName = "hudi_stream_json_dt",
 );
 
 insert into bigdata.dws_orders
-SELECT id, userid, city, kafka_topic, date_format(current_timestamp, "yyyyMMddHH") ds 
-FROM tdl_kafka_message;
+SELECT id, userid, city
+FROM tdl_hudi_stream_json_dt where city is not null
 ```
 
 ### 资料
