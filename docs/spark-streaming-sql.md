@@ -1,5 +1,7 @@
 ### Spark Streaming SQL
-使用 SQL 简化 Spark Streaming 应用，对接数据数据源: debezium json、kafka、canal、hudi cdc
+使用 SQL 简化 Spark Streaming 应用，方便快速构建spark实时数仓，支持流失数据数据源: debezium json、kafka、canal、hudi cdc
+
+![sparkstreaminsql.png](..%2Fimgs%2Fsparkstreaminsql.png)
 
 ### 1、Example: kafka 数据写入hudi
 
