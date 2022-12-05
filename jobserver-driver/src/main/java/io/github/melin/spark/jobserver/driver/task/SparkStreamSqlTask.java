@@ -4,15 +4,22 @@ import com.github.melin.superior.sql.parser.StatementType;
 import com.github.melin.superior.sql.parser.model.*;
 import com.github.melin.superior.sql.parser.spark.SparkStreamSQLHelper;
 import io.github.melin.spark.jobserver.core.dto.InstanceDto;
+import io.github.melin.spark.jobserver.core.exception.SparkJobException;
 import io.github.melin.spark.jobserver.core.util.CommonUtils;
 import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
 import io.github.melin.spark.jobserver.driver.stream.KafkaSouce;
 import io.github.melin.spark.jobserver.driver.task.udf.GenericUDTFJsonExtractValue;
 import io.github.melin.spark.jobserver.driver.util.HudiUtils;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.catalyst.TableIdentifier;
+import org.apache.spark.sql.catalyst.catalog.CatalogTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import scala.Some;
 
 import java.util.List;
 
@@ -23,6 +30,8 @@ import java.util.List;
 public class SparkStreamSqlTask extends AbstractSparkTask {
 
     private static final Logger LOG = LoggerFactory.getLogger(SparkStreamSqlTask.class);
+
+    private static final String[] SOURCE_TYPES = new String[] {"kafka", "hudi"};
 
     @Override
     protected void executeJobText(InstanceDto instanceDto) throws Exception {
@@ -39,8 +48,8 @@ public class SparkStreamSqlTask extends AbstractSparkTask {
             } else {
                 Statement statement = statementData.getStatement();
                 if (statement instanceof StreamTable) {
-                    KafkaSouce kafkaSouce = new KafkaSouce();
-                    kafkaSouce.createStreamTempTable(SparkDriverEnv.getSparkSession(), (StreamTable) statement);
+                    StreamTable streamTable = (StreamTable) statement;
+                    buildSourceTable(streamTable);
                 } else if (statement instanceof StreamInsertStatement) {
                     HudiUtils.deltaInsertStreamSelectAdapter(SparkDriverEnv.getSparkSession(),
                             (StreamInsertStatement) statement);
@@ -51,6 +60,38 @@ public class SparkStreamSqlTask extends AbstractSparkTask {
                 }
             }
         });
+    }
+
+    private void buildSourceTable(StreamTable streamTable) {
+        try {
+            String sourceType = streamTable.getProperties().get("type");
+
+            if (!ArrayUtils.contains(SOURCE_TYPES, sourceType)) {
+                throw new IllegalArgumentException("not support source type: " + sourceType);
+            }
+
+            if ("kafka".equals(sourceType)) {
+                KafkaSouce kafkaSouce = new KafkaSouce();
+                kafkaSouce.createStreamTempTable(SparkDriverEnv.getSparkSession(), streamTable);
+            } else if ("hudi".equals(sourceType)) {
+                SparkSession spark = SparkDriverEnv.getSparkSession();
+                String databaseName = streamTable.getProperties().get("databaseName");
+                String tableName = streamTable.getProperties().get("tableName");
+                if (StringUtils.isBlank(databaseName) || StringUtils.isBlank(tableName)) {
+                    throw new IllegalArgumentException("databaseName and tableName cannot be empty");
+                }
+
+                TableIdentifier identifier = new TableIdentifier(tableName, new Some<String>(databaseName));
+                CatalogTable table = spark.sessionState().catalog().getTableMetadata(identifier);
+                String location = table.location().getPath();
+                LOG.info("hudi table: {}.{}, location: {}", databaseName, tableName, location);
+
+                SparkDriverEnv.getSparkSession().readStream().format("hudi")
+                        .load(location).createGlobalTempView(streamTable.getTableName());
+            }
+        } catch (Exception e) {
+            throw new SparkJobException("create source table failed", e);
+        }
     }
 
     private boolean checkValidSql(StatementType sqlType) {
