@@ -92,6 +92,10 @@ CREATE TABLE `sjs_spark_driver` (
   KEY `idx_application_id` (`application_id`) USING BTREE
 ) ENGINE=InnoDB COMMENT='Job driver注册信息';
 
+-- ----------------------------
+-- Table structure for sjs_cluster
+-- ----------------------------
+DROP TABLE IF EXISTS `sjs_cluster`;
 CREATE TABLE `sjs_cluster` (
     `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
     `code` varchar(64) NOT NULL COMMENT 'code',
@@ -119,3 +123,24 @@ CREATE TABLE `sjs_cluster` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `code_UNIQUE` (`code`)
 ) ENGINE=InnoDB COMMENT='计算集群';
+
+-- ----------------------------
+-- Table structure for sjs_data_connector
+-- ----------------------------
+DROP TABLE IF EXISTS `sjs_data_connector`;
+CREATE TABLE `sjs_data_connector` (
+    `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `code` varchar(64) DEFAULT NULL COMMENT 'Code，随机字符8位长',
+    `name` varchar(128) DEFAULT NULL COMMENT '数据源名称',
+    `db_type` varchar(45) DEFAULT NULL COMMENT 'mysql, db2, pg等',
+    `username` varchar(45) DEFAULT NULL COMMENT '数据库账号',
+    `password` varchar(45) DEFAULT NULL COMMENT '密码',
+    `db_url` varchar(256) DEFAULT NULL COMMENT '数据库连接地址',
+    `description` varchar(512) DEFAULT NULL COMMENT '数据源描述',
+    `creater` varchar(45) DEFAULT NULL COMMENT '创建人',
+    `modifier` varchar(45) DEFAULT NULL COMMENT '修改人',
+    `gmt_created` datetime DEFAULT NULL COMMENT '创建者',
+    `gmt_modified` datetime DEFAULT NULL COMMENT '修改时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE KEY `index_code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据连接管理';
