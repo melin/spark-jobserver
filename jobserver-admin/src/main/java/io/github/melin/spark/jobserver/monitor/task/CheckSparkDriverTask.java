@@ -79,7 +79,7 @@ public class CheckSparkDriverTask implements Runnable {
             String appNamePrefix = JobServerUtils.appNamePrefix(profiles);
             clusterManager.getCluerCodes().forEach(clusterCode -> {
                 clusterManager.runSecured(clusterCode, () -> {
-                    YarnClient yarnClient = yarnClientService.createYarnClient(clusterCode);
+                    YarnClient yarnClient = yarnClientService.getYarnClient(clusterCode);
                     if (yarnClient != null) {
                         try {
                             yarnClient.getApplications(EnumSet.of(YarnApplicationState.RUNNING, YarnApplicationState.ACCEPTED)).forEach(applicationReport -> {
