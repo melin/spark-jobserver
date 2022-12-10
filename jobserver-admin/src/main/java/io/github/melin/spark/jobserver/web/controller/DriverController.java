@@ -97,14 +97,14 @@ public class DriverController implements InitializingBean {
     @ResponseBody
     public Pagination<SparkDriver> queryDrivers(String applicationId, int page, int limit, HttpServletRequest request) {
         String sort = request.getParameter("sort");
-        String order = request.getParameter("order");
+        String orderStr = request.getParameter("order");
 
-        Order order1 = Order.desc("gmtModified");
+        Order order = Order.desc("gmtModified");
         if (StringUtils.isNotEmpty(sort)) {
-            if ("asc".equals(order)) {
-                order1 = Order.asc(sort);
+            if ("asc".equals(orderStr)) {
+                order = Order.asc(sort);
             } else {
-                order1 = Order.desc(sort);
+                order = Order.desc(sort);
             }
         }
 
@@ -115,7 +115,7 @@ public class DriverController implements InitializingBean {
             values.add(applicationId);
         }
         Pagination<SparkDriver> pagination = driverService.findPageByNamedParamAndOrder(params, values,
-                Lists.newArrayList(order1), page, limit);
+                Lists.newArrayList(order), page, limit);
 
         pagination.getResult().forEach(driver -> {
             String url = clusterConfig.getValue(driver.getClusterCode(), SparkJobServerConf.JOBSERVER_YARN_PROXY_URI);

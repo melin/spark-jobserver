@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <title>Connector Admin</title>
+    <link rel="stylesheet" href="/component/pear/css/pear.css" />
+    <link rel="stylesheet" href="/component/toast/toast.min.css" />
+</head>
+<body class="pear-container">
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="pear-btn pear-btn-primary pear-btn-md" onclick="Connector.newConnectorWin()">
+            <i class="layui-icon layui-icon-add-1"></i>
+            New Connector
+        </button>
+    </div>
+</script>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <div class="layui-col-md1">
+                    <label class="layui-form-label">Connector</label>
+                </div>
+                <div class="layui-col-md2">
+                    <input type="text" name="name" placeholder="" class="layui-input">
+                </div>
+                <div class="layui-col-md2" style="padding-left: 10px">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="connector-table" lay-filter="connector-table"></table>
+    </div>
+</div>
+
+<div class="layui-card">
+    <span style="color: red" th:if="${sparkLauncherFailedMsg}" th:text="${sparkLauncherFailedMsg}"></span>
+</div>
+
+<div id="newConnectorDiv" title="New Connector" style="display: none;">
+    <form class="layui-form" action="javascript:void(0);" style="margin: 20px" lay-filter="connectorForm">
+        <div class="layui-form-item">
+            <div class="layui-col-md3">
+                <label class="layui-form-label"><span style="color: red">*</span>Data Source:</label>
+            </div>
+            <div class="layui-col-md9">
+                <select class="layui-select" name="connectorType" id="connectorType">
+                    <option value="">请选择</option>
+                    <option value="MySQL">MySQL</option>
+                    <option value="PostgreSQL">PostgreSQL</option>
+                    <option value="DB2">DB2</option>
+                    <option value="SQLServer">SQLServer</option>
+                    <option value="Oracle">Oracle</option>
+                    <option value="Gauss">Gauss</option>
+                    <option value="Greenplum">Greenplum</option>
+                    <option value="TiDB">TiDB</option>
+                    <option value="Doris">Doris</option>
+                    <option value="StarRocks">StarRocks</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-col-md3">
+                <label class="layui-form-label"><span style="color: red">*</span>Code:</label>
+            </div>
+            <div class="layui-col-md9">
+                <input class="layui-input" name="code" autocomplete="off" id="code" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-col-md3">
+                <label class="layui-form-label"><span style="color: red">*</span>Name:</label>
+            </div>
+            <div class="layui-col-md9">
+                <input class="layui-input" name="username" autocomplete="off" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-col-md3">
+                <label class="layui-form-label"><span style="color: red">*</span>User:</label>
+            </div>
+            <div class="layui-col-md9">`
+                <input class="layui-input" name="username" autocomplete="off" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-col-md3">
+                <label class="layui-form-label"><span style="color: red">*</span>Password:</label>
+            </div>
+            <div class="layui-col-md9">
+                <input class="layui-input" type="password" name="password" autocomplete="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-col-md3">
+                <label class="layui-form-label"><span style="color: red">*</span>URL:</label>
+            </div>
+            <div class="layui-col-md9">
+                <input class="layui-input" name="jdbcUrl" autocomplete="off" style="width: 100%">
+            </div>
+        </div>
+        <div id="testresult"></div>
+    </form>
+</div>
+
+<script type="text/html" id="connector-bar">
+    <button class="pear-btn pear-btn-sm" id="opt_{{d.id}}"><i class="layui-icon layui-icon-triangle-d"></i></button>
+</script>
+
+<script type="text/javascript" src="/component/jquery.min.js"></script>
+<script type="text/javascript" src="/component/layui/layui.js"></script>
+<script type="text/javascript" src="/component/pear/pear.js"></script>
+<script src="/component/toast/toast.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/js/connector.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>

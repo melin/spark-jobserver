@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="utf-8">
-    <title>Driver管理</title>
+    <title>Driver Admin</title>
     <link rel="stylesheet" href="/component/pear/css/pear.css" />
     <link rel="stylesheet" href="/component/toast/toast.min.css" />
 </head>
@@ -13,11 +13,11 @@
         <form class="layui-form" action="">
             <div class="layui-form-item">
                 <div class="layui-col-md1">
-                    <label class="layui-form-label">集群</label>
+                    <label class="layui-form-label">Cluster</label>
                 </div>
                 <div class="layui-col-md2">
                     <select name="clusterCode" class="layui-input" id="clusterVals">
-                        <option value="">请选择...</option>
+                        <option value="">Please...</option>
                         <option th:each="item : ${clusters}" th:value="${item.code}" th:text="${item.name}"></option>
                     </select>
                 </div>
@@ -58,9 +58,11 @@
 <div id="downloadYarnLogDiv" title="下载Yarn日志" style="display: none;">
     <form class="layui-form" action="javascript:void(0);" style="margin: 10px" lay-filter="yarnLogForm">
         <div class="layui-form-item">
-            <label class="layui-form-label"><span style="color: red">*</span>ApplicationId:</label>
-            <div class="layui-input-block">
-                <input placeholder="Yarn ApplicationId" value="" class="layui-input" name="appId" autocomplete="off">
+            <div class="layui-col-md4">
+                <label class="layui-form-label"><span style="color: red">*</span>ApplicationId:</label>
+            </div>
+            <div class="layui-col-md8">
+                <input placeholder="Yarn ApplicationId" value="" class="layui-input" name="appId" autocomplete="off" style="width: 100%">
             </div>
         </div>
     </form>

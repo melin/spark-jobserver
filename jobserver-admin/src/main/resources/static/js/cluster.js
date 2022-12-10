@@ -200,13 +200,13 @@ var Cluster = function () {
 
             var index = layer.open({
                 type: 1,
-                title: '新建集群',
+                title: 'New Cluster',
                 area: [winWidth + 'px', winHeight + "px"],
                 shade: 0, //去掉遮罩
                 resize: false,
                 btnAlign: 'c',
                 content: $("#newClusterDiv"),
-                btn: ['保存'],
+                btn: ['Save'],
                 btn1: function(index, layero) {
                     let data = form.val('newClusterForm');
                     if (!data.code) {
@@ -264,7 +264,7 @@ var Cluster = function () {
                     success: function (result) {
                         if (result.success) {
                             toastr.success("成功关闭集群: " + clusterCode)
-                            table.reload('cluster-table');
+                            Cluster.refresh();
                         } else {
                             toastr.error(result.message)
                         }

@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="utf-8">
-    <title>集群管理</title>
+    <title>Cluster Admin</title>
     <link rel="stylesheet" href="/component/pear/css/pear.css" />
     <link rel="stylesheet" href="/component/toast/toast.min.css" />
     <style>
@@ -31,7 +31,7 @@
     <div class="layui-btn-container">
         <button class="pear-btn pear-btn-primary pear-btn-md" onclick="Cluster.newClusterWin()">
             <i class="layui-icon layui-icon-add-1"></i>
-            新建集群
+            New Cluster
         </button>
     </div>
 </script>
@@ -42,7 +42,7 @@
         <form class="layui-form" action="">
             <div class="layui-form-item">
                 <div class="layui-col-md1">
-                    <label class="layui-form-label">集群Code</label>
+                    <label class="layui-form-label">Cluster Code</label>
                 </div>
                 <div class="layui-col-md2">
                     <input type="text" name="code" placeholder="" class="layui-input">
@@ -69,23 +69,23 @@
 </div>
 
 <!--日志显示窗口-->
-<div id="newClusterDiv" title="新建集群" style="display: none;">
+<div id="newClusterDiv" title="New Cluster" style="display: none;">
     <form class="layui-form" action="javascript:void(0);" style="margin: 10px" lay-filter="newClusterForm">
         <div class="layui-card-body layui-row layui-col-space10">
             <div class="layui-col-md1">
-                <label class="layui-form-label form-label">集群Code</label>
+                <label class="layui-form-label form-label">Cluster Code</label>
             </div>
             <div class="layui-col-md3">
-                <input type="text" name="code" hover placeholder="集群Code" autocomplete="off" id="cluster_code" class="layui-input">
+                <input type="text" name="code" hover placeholder="Cluster Code" autocomplete="off" id="cluster_code" class="layui-input">
             </div>
             <div class="layui-col-md1">
-                <label class="layui-form-label form-label">集群名称</label>
+                <label class="layui-form-label form-label">Cluster Name</label>
             </div>
             <div class="layui-col-md3">
-                <input type="text" name="name" hover placeholder="集群名称" autocomplete="off" id="cluster_name" class="layui-input">
+                <input type="text" name="name" hover placeholder="Cluster Name" autocomplete="off" id="cluster_name" class="layui-input">
             </div>
             <div class="layui-col-md1">
-                <label class="layui-form-label form-label">调度类型</label>
+                <label class="layui-form-label form-label">Schedule Type</label>
             </div>
             <div class="layui-col-md3">
                 <select name="schedulerType" class="layui-input">
@@ -94,7 +94,7 @@
                 </select>
             </div>
             <div class="layui-col-md1">
-                <label class="layui-form-label form-label">Yarn队列</label>
+                <label class="layui-form-label form-label">Yarn Queue</label>
             </div>
             <div class="layui-col-md3">
                 <input type="text" name="yarnQueueName" hover placeholder="集群默认使用队列" autocomplete="off" value="default" class="layui-input">

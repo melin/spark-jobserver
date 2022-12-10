@@ -1,6 +1,6 @@
 [{
 		"id": "instance",
-		"title": "作业实例",
+		"title": "Job Admin",
 		"icon": "layui-icon layui-icon-console",
 		"type": 1,
 		"openType": "_iframe",
@@ -8,7 +8,7 @@
 	},
 	{
 		"id": "driver",
-		"title": "Driver管理",
+		"title": "Driver Admin",
 		"icon": "layui-icon layui-icon-component",
 		"type": 1,
 		"openType": "_iframe",
@@ -16,10 +16,18 @@
 	},
 	{
 		"id": "cluster",
-		"title": "集群管理",
+		"title": "Cluster Admin",
 		"icon": "layui-icon layui-icon-component",
 		"type": 1,
 		"openType": "_iframe",
 		"href": "/cluster"
+	},
+	{
+		"id": "connector",
+		"title": "Connector Admin",
+		"icon": "layui-icon layui-icon-component",
+		"type": 1,
+		"openType": "_iframe",
+		"href": "/connector"
 	}
 ]
