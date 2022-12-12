@@ -148,6 +148,7 @@ var Connector = function () {
                 },
                 btn2: function(index, layero) {
                     let params = form.val('connectorForm')
+                    params.id = connectorId;
                     $.ajax({
                         type: "POST",
                         data: params,
