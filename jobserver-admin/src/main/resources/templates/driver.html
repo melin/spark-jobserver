@@ -27,7 +27,7 @@
                 <div class="layui-col-md2">
                     <input type="text" name="realName" placeholder="" class="layui-input">
                 </div>
-                <div class="layui-col-md2" style="padding-left: 10px">
+                <div class="layui-col-md4" style="padding-left: 10px">
                     <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
                         <i class="layui-icon layui-icon-search"></i>
                         查询
@@ -69,7 +69,8 @@
 </div>
 
 <script type="text/html" id="driver-bar">
-    <button class="pear-btn pear-btn-sm" id="opt_{{d.id}}"><i class="layui-icon layui-icon-triangle-d"></i></button>
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="download"><i class="layui-icon layui-icon-download-circle"></i></button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
 </script>
 
 <script type="text/javascript" src="/component/jquery.min.js"></script>

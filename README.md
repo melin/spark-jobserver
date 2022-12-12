@@ -1,5 +1,7 @@
 ## REST job server for Apache Spark 
 
+![架构](imgs/compare.png)
+
 主要特点
 
 1. 通过Rest API 提交spark 作业运行，支持sql，java/scala，python类型作业，解耦业务系统与spark 集群。

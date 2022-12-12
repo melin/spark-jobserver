@@ -14,19 +14,19 @@ var Connector = function () {
                         title: 'Code',
                         field: 'code',
                         align: 'center',
-                        width: 90
+                        width: 120
                     },
                     {
                         title: 'Name',
                         field: 'name',
                         align: 'left',
-                        width: 80
+                        width: 150
                     },
                     {
                         title: 'Type',
                         field: 'connectorType',
                         align: 'left',
-                        width: 80
+                        width: 100
                     },
                     {
                         title: 'User',
@@ -37,21 +37,20 @@ var Connector = function () {
                     {
                         title: 'URL',
                         field: 'jdbcUrl',
-                        align: 'left',
-                        width: 200
+                        align: 'left'
                     },
                     {
                         title: '更新时间',
                         field: 'gmtModified',
                         align: 'left',
-                        width: 120
+                        width: 140
                     },
                     {
                         title: '操作',
                         toolbar: '#connector-bar',
                         align: 'right',
                         fixed: 'right',
-                        width: 50
+                        width: 100
                     }
                 ]
             ]
@@ -70,27 +69,15 @@ var Connector = function () {
                     };
                 },
                 toolbar: '#toolbarDemo',
-                defaultToolbar: [],
-                done: function(res, curr, count) {
-                    for (var i = 0; i < res.data.length; i++) {
-                        const row = res.data[i];
-                        const menus = []
-                        menus.push({title: '编辑集群', id: "editorConnector", connectorId: row.id, code: row.code});
-                        menus.push({title: '删除集群', id: "deleteConnector", connectorId: row.id, code: row.code});
+                defaultToolbar: []
+            });
 
-                        dropdown.render({
-                            elem: '#opt_' + row.id,
-                            data: menus,
-                            id: "#opt_" + row.id,
-                            click: function(obj) {
-                                if (obj.id === "editorConnector") {
-                                    Connector.newConnectorWin(obj.connectorId)
-                                } else if (obj.id === "deleteConnector") {
-                                    Connector.deleteConnector(obj.connectorId, obj.code)
-                                }
-                            }
-                        });
-                    }
+            table.on('tool(connector-table)', function(obj) {
+                let data = obj.data;
+                if (obj.event === 'remove') {
+                    Connector.deleteConnector(data.id, data.code)
+                } else if (obj.event === 'edit') {
+                    Connector.newConnectorWin(data.id)
                 }
             });
 
@@ -191,7 +178,7 @@ var Connector = function () {
                     data: { connectorId: connectorId },
                     success: function (result) {
                         if (result.success) {
-                            toastr.success("成功删除Connector: " + clusterCode)
+                            toastr.success("成功删除Connector: " + code)
                             Connector.refresh();
                         } else {
                             toastr.error(result.message)

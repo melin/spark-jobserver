@@ -1,5 +1,6 @@
 package io.github.melin.spark.jobserver.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gitee.melin.bee.core.jdbc.Connector;
 import com.gitee.melin.bee.core.jdbc.DataConnectorType;
 import com.gitee.melin.bee.model.IEntity;
@@ -38,6 +39,7 @@ public class DataConnector implements IEntity {
 
     private String username;
 
+    @JsonIgnore
     private String password;
 
     @Column(name="jdbc_url")

@@ -22,6 +22,24 @@
         <form class="layui-form" action="">
             <div class="layui-form-item">
                 <div class="layui-col-md1">
+                    <label class="layui-form-label">Data Source</label>
+                </div>
+                <div class="layui-col-md2">
+                    <select class="layui-select" name="connectorType" id="connectorType2">
+                        <option value="">请选择</option>
+                        <option value="MySQL">MySQL</option>
+                        <option value="PostgreSQL">PostgreSQL</option>
+                        <option value="DB2">DB2</option>
+                        <option value="SQLServer">SQLServer</option>
+                        <option value="Oracle">Oracle</option>
+                        <option value="Gauss">Gauss</option>
+                        <option value="Greenplum">Greenplum</option>
+                        <option value="TiDB">TiDB</option>
+                        <option value="Doris">Doris</option>
+                        <option value="StarRocks">StarRocks</option>
+                    </select>
+                </div>
+                <div class="layui-col-md1">
                     <label class="layui-form-label">Connector</label>
                 </div>
                 <div class="layui-col-md2">
@@ -87,14 +105,14 @@
                 <label class="layui-form-label"><span style="color: red">*</span>Name:</label>
             </div>
             <div class="layui-col-md9">
-                <input class="layui-input" name="username" autocomplete="off" >
+                <input class="layui-input" name="name" autocomplete="off" >
             </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-col-md3">
                 <label class="layui-form-label"><span style="color: red">*</span>User:</label>
             </div>
-            <div class="layui-col-md9">`
+            <div class="layui-col-md9">
                 <input class="layui-input" name="username" autocomplete="off" >
             </div>
         </div>
@@ -119,7 +137,8 @@
 </div>
 
 <script type="text/html" id="connector-bar">
-    <button class="pear-btn pear-btn-sm" id="opt_{{d.id}}"><i class="layui-icon layui-icon-triangle-d"></i></button>
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
 </script>
 
 <script type="text/javascript" src="/component/jquery.min.js"></script>

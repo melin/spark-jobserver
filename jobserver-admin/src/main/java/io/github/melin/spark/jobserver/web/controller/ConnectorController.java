@@ -6,7 +6,9 @@ import com.gitee.melin.bee.core.support.Result;
 import com.google.common.collect.Lists;
 import io.github.melin.spark.jobserver.core.entity.DataConnector;
 import io.github.melin.spark.jobserver.core.service.DataConnectorService;
+import io.github.melin.spark.jobserver.core.util.AESUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
@@ -37,7 +39,8 @@ public class ConnectorController {
 
     @RequestMapping("/connector/queryConnectors")
     @ResponseBody
-    public Pagination<DataConnector> queryConnectors(String name, int page, int limit, HttpServletRequest request) {
+    public Pagination<DataConnector> queryConnectors(String connectorType, String name,
+                                                     int page, int limit, HttpServletRequest request) {
         String sort = request.getParameter("sort");
         String orderStr = request.getParameter("order");
 
@@ -52,12 +55,15 @@ public class ConnectorController {
 
         List<String> params = Lists.newArrayList();
         List<Object> values = Lists.newArrayList();
+        if (StringUtils.isNotBlank(connectorType)) {
+            params.add("connectorType");
+            values.add(connectorType);
+        }
+
         if (StringUtils.isNotBlank(name)) {
             params.add("code");
-            values.add(Restrictions.like("code", name));
-
-            params.add("name");
-            values.add(Restrictions.like("name", name));
+            values.add(Restrictions.or(Restrictions.like("code", name, MatchMode.ANYWHERE),
+                    Restrictions.like("name", name, MatchMode.ANYWHERE)));
         }
         return connectorService.findPageByNamedParamAndOrder(params, values,
                 Lists.newArrayList(order), page, limit);
@@ -110,12 +116,13 @@ public class ConnectorController {
             if (connector.getId() == null) {
                 connector.setCreater("jobserver");
                 connector.setModifier("jobserver");
+                connector.setPassword(AESUtils.encrypt(connector.getPassword()));
                 connectorService.insertEntity(connector);
             } else {
                 DataConnector old = connectorService.getEntity(connector.getId());
                 old.setName(connector.getName());
                 old.setUsername(connector.getUsername());
-                old.setPassword(connector.getPassword());
+                old.setPassword(AESUtils.encrypt(connector.getPassword()));
                 old.setJdbcUrl(connector.getJdbcUrl());
                 connectorService.updateEntity(old);
             }
