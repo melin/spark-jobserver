@@ -33,4 +33,8 @@ public class DataConnectorService extends BaseServiceImpl<DataConnector, Long> {
         AbstractDialect dialect = JdbcDialectHolder.getJdbcDialect(connector);
         return dialect.checkAccount();
     }
+
+    public DataConnector queryDataConnector(String code) {
+        return this.queryByNamedParam("code", code);
+    }
 }
