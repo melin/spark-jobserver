@@ -20,7 +20,6 @@ public class CatalogUtils {
 
     public static CatalogPlugin buildJdbcCatalogPlugin(DataConnector connector,
                                                        String catalogName) {
-        CatalogPlugin catalog = null;
         DataConnectorType connectorType = connector.getConnectorType();
 
         String user = connector.getUsername();
@@ -58,7 +57,7 @@ public class CatalogUtils {
         options.put("url", url);
         options.put("driver", driverClass);
 
-        catalog = new JDBCTableCatalog();
+        CatalogPlugin catalog = new JDBCTableCatalog();
         catalog.initialize(catalogName, new CaseInsensitiveStringMap(options));
 
         LOG.info("init {} catalog: {}", connectorType.getValue(), catalogName);
