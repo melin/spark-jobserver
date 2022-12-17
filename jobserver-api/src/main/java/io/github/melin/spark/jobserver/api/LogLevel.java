@@ -1,8 +1,5 @@
 package io.github.melin.spark.jobserver.api;
 
-/**
- * Created by admin on 2018/7/30.
- */
 public enum LogLevel {
     STDOUT("Stdout"), INFO("Info"), WARN("Warn"), ERROR("Error"), APPINFO("AppInfo");
 

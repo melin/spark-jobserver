@@ -5,9 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gitee.melin.bee.core.enums.BaseStringEnum;
 import com.gitee.melin.bee.core.enums.jackson.JacksonEnumStringSerializer;
 
-/**
- * Created by admin on 2017/5/21.
- */
 @JsonSerialize(using = JacksonEnumStringSerializer.class)
 public enum JobType implements BaseStringEnum {
     SPARK_SQL,

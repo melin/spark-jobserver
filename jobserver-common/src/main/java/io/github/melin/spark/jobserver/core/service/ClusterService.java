@@ -16,9 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 
-/**
- * Created by admin on 2017/6/29.
- */
 @Service
 @Transactional
 public class ClusterService extends BaseServiceImpl<Cluster, Long> {

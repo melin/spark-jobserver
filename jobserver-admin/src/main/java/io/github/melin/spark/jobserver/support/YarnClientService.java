@@ -26,9 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * Created by admin on 2018/12/24.
- */
 @Service
 @DependsOn("clusterManager")
 public class YarnClientService implements DisposableBean {

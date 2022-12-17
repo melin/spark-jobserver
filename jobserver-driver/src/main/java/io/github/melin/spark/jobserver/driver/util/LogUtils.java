@@ -15,9 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingQueue;
 
-/**
- * Created by admin on 2017/7/30.
- */
 public class LogUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LogUtils.class);

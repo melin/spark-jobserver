@@ -13,9 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by admin on 2017/6/29.
- */
 @Service
 @Transactional
 public class JobInstanceDependentService extends BaseServiceImpl<JobInstanceDependent, Long> {

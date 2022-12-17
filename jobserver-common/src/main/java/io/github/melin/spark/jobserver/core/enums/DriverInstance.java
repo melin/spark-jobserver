@@ -2,9 +2,6 @@ package io.github.melin.spark.jobserver.core.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-/**
- * Created by admin on 2019/10/29 11:49 上午
- */
 public enum DriverInstance {
     SHARE_INSTANCE(0),
 

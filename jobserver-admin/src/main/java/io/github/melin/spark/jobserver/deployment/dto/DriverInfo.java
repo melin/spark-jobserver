@@ -2,9 +2,6 @@ package io.github.melin.spark.jobserver.deployment.dto;
 
 import io.github.melin.spark.jobserver.core.enums.DriverInstance;
 
-/**
- * Created by admin on 2017/7/1.
- */
 public class DriverInfo {
     private final DriverInstance driverInstance;
 

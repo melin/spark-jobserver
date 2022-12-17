@@ -15,9 +15,6 @@ import org.springframework.util.StopWatch;
 
 import java.util.Map;
 
-/**
- * Created by admin on 2020/3/22 下午5:07
- */
 @Aspect
 @Component
 public class ServiceLogAspect {

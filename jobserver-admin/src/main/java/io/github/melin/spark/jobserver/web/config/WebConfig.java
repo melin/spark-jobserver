@@ -25,9 +25,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-/**
- * Created by admin on 2020/4/19.
- */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 

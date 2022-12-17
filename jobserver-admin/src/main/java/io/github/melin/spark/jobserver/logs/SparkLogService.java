@@ -25,9 +25,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by admin on 2019/10/29 11:43 上午
- */
 @Service
 public class SparkLogService implements ApplicationContextAware, InitializingBean, DisposableBean {
 

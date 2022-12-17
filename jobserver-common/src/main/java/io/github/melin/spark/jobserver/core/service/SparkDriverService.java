@@ -20,9 +20,6 @@ import java.util.List;
 
 import static io.github.melin.spark.jobserver.core.enums.DriverType.DRIVER_SERVER;
 
-/**
- * Created by admin on 2017/6/29.
- */
 @Service
 @Transactional
 public class SparkDriverService extends BaseServiceImpl<SparkDriver, Long> {

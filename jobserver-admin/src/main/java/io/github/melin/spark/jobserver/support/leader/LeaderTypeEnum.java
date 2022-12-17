@@ -1,8 +1,5 @@
 package io.github.melin.spark.jobserver.support.leader;
 
-/**
- * Created by admin on 2020/6/9.
- */
 public enum LeaderTypeEnum {
     DRIVER_POOL_MANAGER("spark_leader_driver_pool_manager"),
 

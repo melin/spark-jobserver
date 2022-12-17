@@ -40,9 +40,6 @@ import java.net.URLConnection;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by admin on 2017/7/1.
- */
 @Controller
 public class DriverController implements InitializingBean {
 

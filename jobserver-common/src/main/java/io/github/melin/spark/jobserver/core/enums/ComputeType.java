@@ -7,7 +7,6 @@ import com.gitee.melin.bee.core.enums.jackson.JacksonEnumStringSerializer;
 
 /**
  * 任务计算资源类型
- * Created by admin on 2019/10/29 3:01 下午
  */
 @JsonSerialize(using = JacksonEnumStringSerializer.class)
 public enum ComputeType implements BaseStringEnum {

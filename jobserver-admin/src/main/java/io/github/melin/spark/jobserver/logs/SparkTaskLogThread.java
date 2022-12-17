@@ -24,9 +24,6 @@ import static io.github.melin.spark.jobserver.core.enums.InstanceStatus.*;
 import static io.github.melin.spark.jobserver.core.enums.JobType.*;
 import static io.github.melin.spark.jobserver.core.util.TaskStatusFlag.*;
 
-/**
- * Created by admin on 2017/7/1.
- */
 public class SparkTaskLogThread extends Thread {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("jobinstancelogs");
