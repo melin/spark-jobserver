@@ -16,9 +16,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class JobSubmitRequet {
 
-    @NotEmpty
-    private String accessKey;
-
     // 用户可以指定实例code，如果不设置系统生成32位随机数
     private String instanceCode;
 

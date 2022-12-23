@@ -29,5 +29,13 @@
 		"type": 1,
 		"openType": "_iframe",
 		"href": "/connector"
+	},
+	{
+		"id": "document",
+		"title": "Document",
+		"icon": "layui-icon layui-icon-template-1",
+		"type": 1,
+		"openType": "_blank",
+		"href": "/doc.html"
 	}
 ]
