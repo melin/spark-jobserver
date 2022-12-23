@@ -143,7 +143,6 @@ var Cluster = function () {
         getEditor: function(editor, editorId, mode) {
             editor = ace.edit(editorId);
             if ("sparkEditor" === editorId) {
-                alert(editorId)
                 editor.commands.on("afterExec", function (e) {
                     if (e.command.name == "insertstring" && /^[\w.]$/.test(e.args)) {
                         editor.execCommand("startAutocomplete");
