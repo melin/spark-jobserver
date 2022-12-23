@@ -5,6 +5,19 @@ var Cluster = function () {
     let dropdown = layui.dropdown;
     const maxInstanceCount = $("#maxInstanceCount").val();
 
+    let sparkCompleter = {
+        identifierRegexps: [/[a-zA-Z_0-9\.\$\-\u00A2-\uFFFF]/], //解决输入点启动提示
+        getCompletions: function(editor, session, pos, prefix, callback) {
+            let currentLine = session.getLine(pos.row)
+            if (currentLine.indexOf("=") > 0) { callback(null, []); return }
+            if (prefix.length === 0) { callback(null, []); return }
+
+            callback(null, SPARK_CONFIG_OPTIONS)
+        }
+    }
+    let langTools = ace.require("ace/ext/language_tools");
+    langTools.setCompleters([sparkCompleter]);
+
     let jobserverEditor, sparkEditor, coreEditor, hdfsEditor, yarnEditor, hiveEditor;
 
     return {
@@ -129,10 +142,27 @@ var Cluster = function () {
 
         getEditor: function(editor, editorId, mode) {
             editor = ace.edit(editorId);
+            if ("sparkEditor" === editorId) {
+                alert(editorId)
+                editor.commands.on("afterExec", function (e) {
+                    if (e.command.name == "insertstring" && /^[\w.]$/.test(e.args)) {
+                        editor.execCommand("startAutocomplete");
+                    }
+                });
+            }
+
             editor.setTheme("ace/theme/cobalt");
             editor.getSession().setMode(mode);
             $('#' + editorId).height((winHeight - 285) + "px");
             editor.resize();
+
+            if ("sparkEditor" === editorId) {
+                editor.setOptions({
+                    enableBasicAutocompletion: true,
+                    enableSnippets: true,
+                    enableLiveAutocompletion: true
+                });
+            }
             return editor;
         },
 
@@ -195,6 +225,7 @@ var Cluster = function () {
                 btnAlign: 'c',
                 content: $("#newClusterDiv"),
                 btn: ['Save'],
+                zIndex: 1111,
                 btn1: function(index, layero) {
                     let data = form.val('newClusterForm');
                     if (!data.code) {
