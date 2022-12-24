@@ -43,7 +43,7 @@
     <div class="layui-btn-container">
         <button class="pear-btn pear-btn-primary pear-btn-md" onclick="Cluster.newClusterWin()">
             <i class="layui-icon layui-icon-add-1"></i>
-            New Cluster
+            新建集群
         </button>
     </div>
 </script>
@@ -54,7 +54,7 @@
         <form class="layui-form" action="">
             <div class="layui-form-item">
                 <div class="layui-col-md1">
-                    <label class="layui-form-label">Cluster Code</label>
+                    <label class="layui-form-label">集群 Code</label>
                 </div>
                 <div class="layui-col-md2">
                     <input type="text" name="code" placeholder="" class="layui-input">
@@ -83,36 +83,21 @@
 <!--日志显示窗口-->
 <div id="newClusterDiv" title="New Cluster" style="display: none;">
     <form class="layui-form" action="javascript:void(0);" style="margin: 10px" lay-filter="newClusterForm">
-        <div class="layui-card-body layui-row layui-col-space10">
+        <div class="layui-card-body layui-row layui-col-space12">
             <div class="layui-col-md1">
-                <label class="layui-form-label form-label">Cluster Code</label>
+                <label class="layui-form-label form-label">集群 Code</label>
             </div>
             <div class="layui-col-md3">
                 <input type="text" name="code" hover placeholder="Cluster Code" autocomplete="off" id="cluster_code" class="layui-input">
             </div>
             <div class="layui-col-md1">
-                <label class="layui-form-label form-label">Cluster Name</label>
+                <label class="layui-form-label form-label">集群名</label>
             </div>
             <div class="layui-col-md3">
                 <input type="text" name="name" hover placeholder="Cluster Name" autocomplete="off" id="cluster_name" class="layui-input">
             </div>
             <div class="layui-col-md1">
-                <label class="layui-form-label form-label">Schedule Type</label>
-            </div>
-            <div class="layui-col-md3">
-                <select name="schedulerType" class="layui-input">
-                    <option value="yarn">Yarn</option>
-                    <option value="k8s">Kubernetes</option>
-                </select>
-            </div>
-            <div class="layui-col-md1">
-                <label class="layui-form-label form-label">Yarn Queue</label>
-            </div>
-            <div class="layui-col-md3">
-                <input type="text" name="yarnQueueName" hover placeholder="集群默认使用队列" autocomplete="off" value="default" class="layui-input">
-            </div>
-            <div class="layui-col-md1">
-                <label class="layui-form-label form-label">Kerberos认证</label>
+                <label class="layui-form-label form-label">Kerberos</label>
             </div>
             <div class="layui-col-md3">
                 <select name="kerberosEnabled" class="layui-input">
@@ -129,16 +114,24 @@
                     <option value="0">关闭</option>
                 </select>
             </div>
+            <div class="layui-col-md1">
+                <label class="layui-form-label form-label">调度类型</label>
+            </div>
+            <div class="layui-col-md3">
+                <select name="schedulerType" lay-filter="schedulerType" id="schedulerType" class="layui-input">
+                    <option value="yarn">Yarn</option>
+                    <option value="k8s">Kubernetes</option>
+                </select>
+            </div>
         </div>
     </form>
 
-    <div class="layui-tab">
+    <div class="layui-tab" lay-filter="config_tabs">
         <ul class="layui-tab-title">
             <li class="layui-this">jobserver.properties</li>
             <li>spark.conf</li>
             <li>core-site.xml</li>
             <li>hdfs-site.xml</li>
-            <li>yarn-site.xml</li>
             <li>hive-site.xml</li>
         </ul>
         <div class="layui-tab-content">
@@ -153,9 +146,6 @@
             </div>
             <div class="layui-tab-item">
                 <div id="hdfsEditor" style="width: 100%;" class="editor"></div>
-            </div>
-            <div class="layui-tab-item">
-                <div id="yarnEditor" style="width: 100%;" class="editor"></div>
             </div>
             <div class="layui-tab-item">
                 <div id="hiveEditor" style="width: 100%;" class="editor"></div>

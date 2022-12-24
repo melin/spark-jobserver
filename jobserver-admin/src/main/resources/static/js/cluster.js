@@ -2,6 +2,7 @@ var Cluster = function () {
     let winWidth, winHeight;
     let table = layui.table;
     let form = layui.form;
+    let element = layui.element;
     let dropdown = layui.dropdown;
     const maxInstanceCount = $("#maxInstanceCount").val();
 
@@ -18,13 +19,10 @@ var Cluster = function () {
     let langTools = ace.require("ace/ext/language_tools");
     langTools.setCompleters([sparkCompleter]);
 
-    let jobserverEditor, sparkEditor, coreEditor, hdfsEditor, yarnEditor, hiveEditor;
+    let jobserverEditor, sparkEditor, coreEditor, hdfsEditor, yarnEditor, hiveEditor, kubenetesEditor;
 
     return {
         init: function () {
-            winWidth = $(window).width() * 0.95;
-            winHeight = $(window).height() * 0.95;
-
             let cols = [
                 [{
                     title: '序号',
@@ -135,9 +133,28 @@ var Cluster = function () {
             sparkEditor = Cluster.getEditor(sparkEditor, "sparkEditor", "ace/mode/properties");
             coreEditor = Cluster.getEditor(coreEditor, "coreEditor", "ace/mode/xml");
             hdfsEditor = Cluster.getEditor(hdfsEditor, "hdfsEditor", "ace/mode/xml");
-            yarnEditor = Cluster.getEditor(yarnEditor, "yarnEditor", "ace/mode/xml");
             hiveEditor = Cluster.getEditor(hiveEditor, "hiveEditor", "ace/mode/xml");
             //let kerberosEditor = Cluster.getEditor(kerberosEditor, "kerberosEditor", "ace/mode/properties");
+
+            form.on('select(schedulerType)', function (data) {
+                Cluster.changeConfigTab(data.value)
+            });
+        },
+
+        changeConfigTab : function (schedulerType) {
+            if (schedulerType === "kubernetes") {
+                element.tabDelete('config_tabs', 'yarn_tab')
+                element.tabDelete('config_tabs', 'kubernetes_tab')
+                element.tabAdd('config_tabs', {id: 'kubernetes_tab', title: 'Kubernetes Config',
+                    content: '<div id="kubenetesEditor" style="width: 100%;" class="editor"></div>'});
+                kubenetesEditor = Cluster.getEditor(kubenetesEditor, "kubenetesEditor", "ace/mode/yaml");
+            } else {
+                element.tabDelete('config_tabs', 'yarn_tab')
+                element.tabDelete('config_tabs', 'kubernetes_tab')
+                element.tabAdd('config_tabs', {id: 'yarn_tab', title: 'yarn-site.xml',
+                    content: '<div id="yarnEditor" style="width: 100%;" class="editor"></div>'});
+                yarnEditor = Cluster.getEditor(yarnEditor, "yarnEditor", "ace/mode/xml");
+            }
         },
 
         getEditor: function(editor, editorId, mode) {
@@ -175,6 +192,9 @@ var Cluster = function () {
         },
 
         newClusterWin : function(clusterId) {
+            winWidth = $(window).width() * 0.95;
+            winHeight = $(window).height() * 0.95;
+
             if (clusterId) {
                 $.ajax({
                     async: true,
@@ -200,19 +220,33 @@ var Cluster = function () {
                             Cluster.setEditorValue(sparkEditor, data.sparkConfig)
                             Cluster.setEditorValue(coreEditor, data.coreConfig)
                             Cluster.setEditorValue(hdfsEditor, data.hdfsConfig)
-                            Cluster.setEditorValue(yarnEditor, data.yarnConfig)
                             Cluster.setEditorValue(hiveEditor, data.hiveConfig)
+
+                            Cluster.changeConfigTab(data.schedulerType)
+                            if (data.schedulerType === "yarn") {
+                                Cluster.setEditorValue(yarnEditor, data.yarnConfig)
+                            } else {
+                                Cluster.setEditorValue(kubenetesEditor, data.kubernetesConfig)
+                            }
                         }
                     }
                 })
+
+                $("#schedulerType").attr("disabled","disabled");
+                form.render('select');
             } else {
                 form.val('newClusterForm', {code: "", name: "", yarnQueueName: "default"});
                 Cluster.setEditorValue(jobserverEditor, $("#confDefaultValue").val())
                 Cluster.setEditorValue(sparkEditor, "")
                 Cluster.setEditorValue(coreEditor, "")
                 Cluster.setEditorValue(hdfsEditor, "")
-                Cluster.setEditorValue(yarnEditor, "")
                 Cluster.setEditorValue(hiveEditor, "")
+
+                Cluster.changeConfigTab("yarn")
+                Cluster.setEditorValue(yarnEditor, "")
+
+                $("#schedulerType").removeAttr("disabled");
+                form.render('select');
             }
 
             var index = layer.open({
@@ -223,7 +257,7 @@ var Cluster = function () {
                 resize: false,
                 btnAlign: 'c',
                 content: $("#newClusterDiv"),
-                btn: ['Save'],
+                btn: ['保存', '取消'],
                 zIndex: 1111,
                 btn1: function(index, layero) {
                     let data = form.val('newClusterForm');

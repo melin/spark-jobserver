@@ -1,6 +1,6 @@
 [{
 		"id": "instance",
-		"title": "Job Admin",
+		"title": "Spark 作业",
 		"icon": "layui-icon layui-icon-console",
 		"type": 1,
 		"openType": "_iframe",
@@ -8,7 +8,7 @@
 	},
 	{
 		"id": "driver",
-		"title": "Driver Admin",
+		"title": "Spark Driver",
 		"icon": "layui-icon layui-icon-component",
 		"type": 1,
 		"openType": "_iframe",
@@ -16,7 +16,7 @@
 	},
 	{
 		"id": "cluster",
-		"title": "Cluster Admin",
+		"title": "Spark Cluster",
 		"icon": "layui-icon layui-icon-component",
 		"type": 1,
 		"openType": "_iframe",
@@ -24,7 +24,7 @@
 	},
 	{
 		"id": "connector",
-		"title": "Connector Admin",
+		"title": "Spark Catalog",
 		"icon": "layui-icon layui-icon-component",
 		"type": 1,
 		"openType": "_iframe",
@@ -32,7 +32,7 @@
 	},
 	{
 		"id": "document",
-		"title": "Document",
+		"title": "文档",
 		"icon": "layui-icon layui-icon-template-1",
 		"type": 1,
 		"openType": "_blank",
