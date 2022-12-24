@@ -8,7 +8,7 @@ import com.gitee.melin.bee.core.enums.jackson.JacksonEnumStringSerializer;
 @JsonSerialize(using = JacksonEnumStringSerializer.class)
 public enum SchedulerType implements BaseStringEnum {
     YARN("yarn"),
-    Kubernetes("k8s");
+    Kubernetes("kubernetes");
 
     private String name;
 
