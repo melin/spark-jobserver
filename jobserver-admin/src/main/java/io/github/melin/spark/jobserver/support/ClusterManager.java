@@ -55,7 +55,7 @@ public class ClusterManager implements InitializingBean {
     @Autowired
     private RestTemplate restTemplate;
 
-    private ScheduledExecutorService executorService;
+    private final ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(5);
 
     /**
      * 不同yarn集群的配置文件
@@ -91,7 +91,7 @@ public class ClusterManager implements InitializingBean {
             downloadClusterConfig(cluster);
             LOGGER.info("========================= load {} end==============================", cluster.getCode());
         }
-        executorService = new ScheduledThreadPoolExecutor(5);
+
         executorService.scheduleWithFixedDelay(() -> {
             try {
                 for (String clusterCode : yarnRMAddrMap.keySet()) {
@@ -166,18 +166,17 @@ public class ClusterManager implements InitializingBean {
         return null;
     }
 
-    private void initYarnRMAddr(String clusterCode, Configuration conf) {
+    private String initYarnAddress(String clusterCode, Configuration conf) {
         if (conf == null) {
-        	return;
+        	return null;
         }
 
         Iterator<Map.Entry<String, String>> iter = conf.iterator();
-        boolean breakFind = false;
-
-        while (iter.hasNext() && !breakFind) {
+        String rmAddress = null;
+        while (iter.hasNext()) {
             Map.Entry<String, String> map = iter.next();
             String name = map.getKey();
-            if (name.startsWith("yarn.resourcemanager.webapp.address")) {
+            if (name.startsWith("yarn.resourcemanager.address")) {
                 String value = map.getValue();
                 String[] items = value.split(":");
                 if (items.length > 1) {
@@ -186,13 +185,20 @@ public class ClusterManager implements InitializingBean {
                     try {
                         new Socket(addr, port);
                         yarnRMAddrMap.put(clusterCode, value);
-                        breakFind = true;
+                        rmAddress = value;
                     } catch (Exception e){
-                        LOGGER.error("unactive resourcemanager webapp address:" + value + "  try next...");
+                        LOGGER.error("unactive resourcemanager address: " + value + ", try next...");
                     }
+                }
+            } else if (StringUtils.startsWith(name, "yarn.resourcemanager.webapp.address")) {
+                String value = map.getValue();
+                if (checkYarnResourceManagerAddress(value)) {
+                    yarnRMWebAppAddrMap.put(clusterCode, value);
                 }
             }
         }
+
+        return rmAddress;
     }
 
     private Configuration initConfiguration(String clusterCode, String confDir) {
@@ -203,42 +209,7 @@ public class ClusterManager implements InitializingBean {
         conf.addResource(new Path(confDir + "/hdfs-site.xml"));
         conf.addResource(new Path(confDir + "/yarn-site.xml"));
 
-        Iterator<Map.Entry<String, String>> iter = conf.iterator();
-        String rmWebappAddress = null;
-        while (iter.hasNext()) {
-            Map.Entry<String, String> map = iter.next();
-            String name = map.getKey();
-            if (StringUtils.startsWith(name, "yarn.resourcemanager.webapp.address")) {
-                String value = map.getValue();
-                if (checkYarnResourceManagerAddress(value)) {
-                    yarnRMWebAppAddrMap.put(clusterCode, value);
-                    rmWebappAddress = value;
-                    break;
-                }
-            }
-        }
-
-        String rmAddr = null;
-        iter = conf.iterator();
-        while (iter.hasNext()) {
-            Map.Entry<String, String> map = iter.next();
-            String name = map.getKey();
-            if (name.startsWith("yarn.resourcemanager.address")) {
-                String value = map.getValue();
-                if (value.split(":").length > 1) {
-                    String hostName = value.split(":")[0];
-                    if (StringUtils.startsWith(rmWebappAddress, hostName)) {
-                        rmAddr = value;
-                        LOGGER.info("rm webapp adddress: 【{}】, rm address: 【{}】", rmWebappAddress, value);
-                    } else {
-                        LOGGER.warn("rm webapp adddress: 【{}】, rm address invalid: 【{}】", rmWebappAddress, value);
-                    }
-                }
-            }
-        }
-
-        initYarnRMAddr(clusterCode, conf);
-
+        String rmAddr = initYarnAddress(clusterCode, conf);
         if (StringUtils.isEmpty(rmAddr)) {
             LOGGER.error("cluster {} can not find yarn.resourcemanager.address", clusterCode);
             return null;
@@ -380,8 +351,8 @@ public class ClusterManager implements InitializingBean {
     private YarnResource getResource(String addr) {
         try {
             String url = "http://" + addr + "/ws/v1/cluster/metrics";
-            String result = restTemplate.getForObject(url, String.class);
-            Map<String, Object> data = MapperUtils.toJavaObject(result, new TypeReference<Map<String, Object>>() {});
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            Map<String, Object> data = MapperUtils.toJavaObject(response.getBody(), new TypeReference<Map<String, Object>>() {});
             LinkedHashMap<String, Object> metrics = (LinkedHashMap<String, Object>) data.get("clusterMetrics");
             int availableMemoryMB = (Integer) metrics.get("availableMB");
             int availableVirtualCores = (Integer) metrics.get("availableVirtualCores");
@@ -393,13 +364,12 @@ public class ClusterManager implements InitializingBean {
     }
 
     private YarnResource getResourceByCluster(String clusterCode) {
-        String addr = yarnRMAddrMap.get(clusterCode);
+        String addr = yarnRMWebAppAddrMap.get(clusterCode);
         YarnResource yarnResource = getResource(addr);
         if (yarnResource == null) {
             Configuration conf = hadoopConfList.get(clusterCode);
-            initYarnRMAddr(clusterCode, conf);
-            addr = yarnRMAddrMap.get(clusterCode);
-            return getResource(addr);
+            String rmAddr = initYarnAddress(clusterCode, conf);
+            return getResource(rmAddr);
         }
         return yarnResource;
     }

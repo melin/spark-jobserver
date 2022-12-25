@@ -7,7 +7,9 @@ import io.github.melin.spark.jobserver.core.exception.SwitchYarnQueueException;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.ipc.RemoteException;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.hadoop.yarn.api.records.QueueInfo;
@@ -82,6 +84,23 @@ public class YarnClientService implements DisposableBean {
             SERVER_LOGGER.error("kill application error: " + appId, e);
             return e.getMessage();
         }
+    }
+
+    @Transactional
+    public boolean handleApplicationNotFoundException(Throwable e, String applicationId) {
+        Throwable rootCause = ExceptionUtils.getRootCause(e);
+        if (rootCause instanceof RemoteException) {
+            RemoteException remoteException = (RemoteException) rootCause;
+            if (ApplicationNotFoundException.class.getName().equals(remoteException.getClassName())) {
+                driverService.deleteJobServerByAppId(applicationId);
+                LOG.warn("yarn application not exists: {}", applicationId);
+                return true;
+            } else {
+                LOG.warn("{} ignored", remoteException.getClassName());
+            }
+        }
+
+        return false;
     }
 
     @Transactional

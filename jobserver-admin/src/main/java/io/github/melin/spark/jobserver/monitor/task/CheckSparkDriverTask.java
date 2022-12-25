@@ -72,8 +72,6 @@ public class CheckSparkDriverTask implements Runnable {
             return;
         }
 
-        LOG.info("check spark driver");
-
         // 清理yarn 上在运行app，但系统已经关闭的driver
         try {
             String appNamePrefix = JobServerUtils.appNamePrefix(profiles);
@@ -105,8 +103,6 @@ public class CheckSparkDriverTask implements Runnable {
                             });
                         } catch (Exception e) {
                             LOG.error(e.getMessage(), e);
-                        } finally {
-                            yarnClient.stop();
                         }
                     }
 
