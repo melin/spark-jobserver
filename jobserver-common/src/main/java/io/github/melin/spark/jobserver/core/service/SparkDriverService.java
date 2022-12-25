@@ -46,6 +46,11 @@ public class SparkDriverService extends BaseServiceImpl<SparkDriver, Long> {
     }
 
     @Transactional(readOnly = true)
+    public long queryDriverCount(String clusterCode) {
+        return this.queryCount("clusterCode", clusterCode);
+    }
+
+    @Transactional(readOnly = true)
     public String queryDriverAddressByAppId(String applicationId) {
         SparkDriver driver = this.queryDriverByAppId(applicationId);
         if (driver != null) {

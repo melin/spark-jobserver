@@ -125,7 +125,7 @@ public class DriverPoolManager implements InitializingBean {
     private void startMinJobServer(Cluster cluster) {
         try {
             int minDriverCount = clusterConfig.getInt(cluster.getCode(), JOBSERVER_DRIVER_MIN_COUNT);
-            long driverCount = driverService.queryCount();
+            long driverCount = driverService.queryDriverCount(cluster.getCode());
             while (minDriverCount > driverCount) {
                 yarnSparkDriverDeployer.buildJobServer(cluster);
                 driverCount = driverService.queryCount();
