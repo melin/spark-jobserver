@@ -48,6 +48,16 @@
     </div>
 </script>
 
+<script type="text/html" id="statusTpl">
+    {{#  if(d.status){ }}
+    <input type="checkbox" name="status" lay-skin="switch" checked lay-text="开启|禁用" value={{ d.id }}
+           lay-filter="status">
+    {{#  } else { }}
+    <input type="checkbox" name="status" lay-skin="switch" lay-text="开启|禁用" value={{ d.id}}
+           lay-filter="status">
+    {{#  } }}
+</script>
+
 <input type="hidden" id="confDefaultValue" th:value="${confDefaultValue}">
 <div class="layui-card">
     <div class="layui-card-body">
@@ -115,7 +125,7 @@
                 </select>
             </div>
             <div class="layui-col-md1">
-                <label class="layui-form-label form-label">调度类型</label>
+                <span class="icon pear-icon pear-icon-prompt" style="font-size: 13px;" id="schedulerTypeTip"></span>&nbsp;调度类型
             </div>
             <div class="layui-col-md3">
                 <select name="schedulerType" lay-filter="schedulerType" id="schedulerType" class="layui-input">

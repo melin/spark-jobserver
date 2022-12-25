@@ -118,9 +118,27 @@ public class ClusterController {
         }
     }
 
-    @RequestMapping("/cluster/closeCluster")
+    @RequestMapping("/cluster/updateStatus")
     @ResponseBody
-    public Result<Void> closeCluster(Long clusterId) {
+    public Result<Void> updateStatus(Long clusterId, Boolean status) {
+        try {
+            if (status == null) {
+                return Result.failureResult("status is null");
+            }
+
+            Cluster cluster = clusterService.getEntity(clusterId);
+            cluster.setStatus(status);
+            clusterService.updateEntity(cluster);
+            return Result.successResult();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Result.failureResult(e.getMessage());
+        }
+    }
+
+    @RequestMapping("/cluster/deleteCluster")
+    @ResponseBody
+    public Result<Void> deleteCluster(Long clusterId) {
         try {
             Cluster cluster = clusterService.getEntity(clusterId);
             clusterService.deleteEntity(cluster);

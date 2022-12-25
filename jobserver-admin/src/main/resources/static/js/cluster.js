@@ -26,6 +26,12 @@ var Cluster = function () {
             winWidth = $(window).width() * 0.95;
             winHeight = $(window).height() * 0.95;
 
+            $('#schedulerTypeTip').on('click', function() {
+                layer.tips('<li>Yarn: 需要填写core-site.xml, hdfs-sitexml, yarn-site.xml配置，hive-site.xml是可选的</li>'
+                    + '<li>Kubenetes: core-site.xml, hdfs-sitexml, yarn-site.xml, hive-site.xml, Kubernetes Config 用于访问k8s 集群配置，必填写</li>',
+                    '#schedulerTypeTip', {time: 2000});
+            });
+
             let cols = [
                 [{
                     title: '序号',
@@ -68,14 +74,7 @@ var Cluster = function () {
                         field: 'status',
                         align: 'left',
                         width: 80,
-                        templet: function(record) {
-                            const status = record.status;
-                            if (status) {
-                                return '<span style="font-weight:bold; color: #5FB878">启用</span>'
-                            } else {
-                                return '<span style="font-weight:bold;color: #FF5722">关闭</span>'
-                            }
-                        }
+                        templet: "#statusTpl"
                     },
                     {
                         title: '更新时间',
@@ -113,7 +112,7 @@ var Cluster = function () {
             table.on('tool(cluster-table)', function(obj) {
                 let data = obj.data;
                 if (obj.event === 'remove') {
-                    Cluster.closeCluster(data.id, data.code)
+                    Cluster.deleteCluster(data.id, data.code)
                 } else if (obj.event === 'edit') {
                     Cluster.newClusterWin(data.id)
                 }
@@ -130,6 +129,31 @@ var Cluster = function () {
                     where: data.field
                 })
                 return false;
+            });
+
+            form.on('switch(status)', function(data){
+                let clusterId = data.value;
+                let status = this.checked;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/cluster/updateStatus',
+                    data: {"clusterId": clusterId, "status": status},
+                    beforeSend:function(){
+                        index = layer.msg('正在切换中，请稍候', {icon: 16,time:false,shade:0.8});
+                    },
+                    error: function(data){
+                        layer.msg('数据异常，操作失败！');
+                    },
+                    success: function(result){
+                        if (result.success) {
+                            layer.msg('操作成功!');
+                        } else {
+                            layer.msg('操作失败: ' + result.message);
+                            Cluster.refresh();
+                        }},
+                    dataType:'JSON'
+                });
             });
 
             jobserverEditor = Cluster.getEditor(jobserverEditor, "jobserverEditor", "ace/mode/properties");
@@ -302,7 +326,7 @@ var Cluster = function () {
             });
         },
 
-        closeCluster : function (clusterId, clusterCode) {
+        deleteCluster : function (clusterId, clusterCode) {
             layer.confirm('确定关闭: ' + clusterCode + " ?", {
                 btn: ['确认','取消'],
                 title: '提示'
@@ -311,7 +335,7 @@ var Cluster = function () {
                 $.ajax({
                     async: true,
                     type : "POST",
-                    url: '/cluster/closeCluster',
+                    url: '/cluster/deleteCluster',
                     data: { clusterId: clusterId },
                     success: function (result) {
                         if (result.success) {

@@ -82,7 +82,7 @@ public class Cluster implements IEntity {
     private String storageConfig;
 
     @Convert(converter = BooleanToIntConverter.class)
-    private boolean status = true;
+    private boolean status = false;
 
     @Column(name = "creater", length = 45)
     private String creater;
