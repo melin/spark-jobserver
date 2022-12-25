@@ -3,6 +3,7 @@ package io.github.melin.spark.jobserver.support;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.gitee.melin.bee.util.MapperUtils;
 import com.google.common.collect.Maps;
+import io.github.melin.spark.jobserver.core.enums.SchedulerType;
 import io.github.melin.spark.jobserver.deployment.dto.YarnResource;
 import io.github.melin.spark.jobserver.api.SparkJobServerException;
 import io.github.melin.spark.jobserver.core.entity.Cluster;
@@ -201,23 +202,36 @@ public class ClusterManager implements InitializingBean {
         return rmAddress;
     }
 
-    private Configuration initConfiguration(String clusterCode, String confDir) {
+    private Configuration initConfiguration(Cluster cluster, boolean yarnEnabled, String confDir) {
+        final String clusterCode = cluster.getCode();
         LOGGER.info("init hadoop config: {}", clusterCode);
         Configuration conf = new Configuration(false);
         conf.clear();
         conf.addResource(new Path(confDir + "/core-site.xml"));
         conf.addResource(new Path(confDir + "/hdfs-site.xml"));
-        conf.addResource(new Path(confDir + "/yarn-site.xml"));
 
-        String rmAddr = initYarnAddress(clusterCode, conf);
-        if (StringUtils.isEmpty(rmAddr)) {
-            LOGGER.error("cluster {} can not find yarn.resourcemanager.address", clusterCode);
-            return null;
+        if (yarnEnabled) {
+            conf.addResource(new Path(confDir + "/yarn-site.xml"));
+
+            String rmAddr = initYarnAddress(clusterCode, conf);
+            if (StringUtils.isEmpty(rmAddr)) {
+                LOGGER.error("cluster {} can not find yarn.resourcemanager.address", clusterCode);
+                return null;
+            }
+            conf.set("yarn.resourcemanager.address", rmAddr);
         }
-        conf.set("yarn.resourcemanager.address", rmAddr);
+
         conf.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
         conf.set("ipc.client.fallback-to-simple-auth-allowed", "true");
         conf.set("yarn.client.failover-max-attempts", "5");
+
+        if (cluster.isKerberosEnabled()) {
+            conf.set("hadoop.security.authentication", "kerberos");
+            conf.set("hadoop.security.authorization", "true");
+        } else {
+            conf.set("hadoop.security.authentication", "simple");
+            conf.set("hadoop.security.authorization", "false");
+        }
 
         LOGGER.info("init hadoop config finished: {}", clusterCode);
         return conf;
@@ -260,36 +274,38 @@ public class ClusterManager implements InitializingBean {
         FileUtils.forceMkdir(new File(destDir));
 
         if (StringUtils.isNotBlank(cluster.getCoreConfig()) &&
-                StringUtils.isNotBlank(cluster.getHdfsConfig()) &&
-                StringUtils.isNotBlank(cluster.getHiveConfig()) &&
-                StringUtils.isNotBlank(cluster.getYarnConfig())) {
+                StringUtils.isNotBlank(cluster.getHdfsConfig())) {
             FileUtils.write(new File(destDir + "/core-site.xml"),
                     cluster.getCoreConfig(), StandardCharsets.UTF_8);
             FileUtils.write(new File(destDir + "/hdfs-site.xml"),
-                    cluster.getHdfsConfig(), StandardCharsets.UTF_8);
-            FileUtils.write(new File(destDir + "/hive-site.xml"),
-                    cluster.getHiveConfig(), StandardCharsets.UTF_8);
-            FileUtils.write(new File(destDir + "/yarn-site.xml"),
-                    cluster.getYarnConfig(), StandardCharsets.UTF_8);
-
+                    cluster.getHdfsConfig(), StandardCharsets.UTF_8);;
             FileUtils.write(new File(destDir + "/spark.conf"),
                     cluster.getSparkConfig(), StandardCharsets.UTF_8);
         } else {
-            LOGGER.error("集群 " + cluster.getCode() + " hadoop config 有空");
+            LOGGER.warn("集群 " + cluster.getCode() + " hadoop config 有空");
         }
 
-        Configuration configuration = initConfiguration(clusterCode, destDir);
+        if (StringUtils.isNotBlank(cluster.getHiveConfig())) {
+            FileUtils.write(new File(destDir + "/hive-site.xml"),
+                    cluster.getHiveConfig(), StandardCharsets.UTF_8);
+        }
+
+        boolean yarnEnabled = false;
+        if (cluster.getSchedulerType() == SchedulerType.YARN) {
+            if (StringUtils.isNotBlank(cluster.getYarnConfig())) {
+                yarnEnabled = true;
+                FileUtils.write(new File(destDir + "/yarn-site.xml"),
+                        cluster.getYarnConfig(), StandardCharsets.UTF_8);
+            }
+        } else {
+            FileUtils.write(new File(destDir + "/kubenetes.conf"),
+                    cluster.getYarnConfig(), StandardCharsets.UTF_8);
+        }
+
+        Configuration configuration = initConfiguration(cluster, yarnEnabled, destDir);
         if (configuration != null) {
             yarnConfigDirLists.put(clusterCode, destDir);
             hadoopConfList.put(clusterCode, configuration);
-
-            if (cluster.isKerberosEnabled()) {
-                configuration.set("hadoop.security.authentication", "kerberos");
-                configuration.set("hadoop.security.authorization", "true");
-            } else {
-                configuration.set("hadoop.security.authentication", "simple");
-                configuration.set("hadoop.security.authorization", "false");
-            }
 
             long updateTime = clusterService.getClusterUpdateTime(clusterCode);
             if (updateTime > 0) {
