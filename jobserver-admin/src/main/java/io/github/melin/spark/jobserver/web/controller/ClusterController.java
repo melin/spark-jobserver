@@ -109,6 +109,8 @@ public class ClusterController {
                 old.setKerberosConfig(cluster.getKerberosConfig());
                 old.setKerberosEnabled(cluster.isKerberosEnabled());
                 old.setKubernetesConfig(cluster.getKubernetesConfig());
+                old.setDriverPodTemplate(cluster.getDriverPodTemplate());
+                old.setExecutorPodTemplate(cluster.getExecutorPodTemplate());
                 clusterService.updateEntity(old);
             }
             return Result.successResult();

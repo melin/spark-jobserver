@@ -19,7 +19,8 @@ var Cluster = function () {
     let langTools = ace.require("ace/ext/language_tools");
     langTools.setCompleters([sparkCompleter]);
 
-    let jobserverEditor, sparkEditor, coreEditor, hdfsEditor, yarnEditor, hiveEditor, kubenetesEditor;
+    let jobserverEditor, sparkEditor, coreEditor, hdfsEditor, yarnEditor, hiveEditor,
+        kubernetesEditor, driverPodTemplateEditor, executorPodTemplateEditor;
 
     return {
         init: function () {
@@ -172,12 +173,26 @@ var Cluster = function () {
             if (schedulerType === "kubernetes") {
                 element.tabDelete('config_tabs', 'yarn_tab')
                 element.tabDelete('config_tabs', 'kubernetes_tab')
+                element.tabDelete('config_tabs', 'driverPodTemplate_tab')
+                element.tabDelete('config_tabs', 'executorPodTemplate_tab')
+
                 element.tabAdd('config_tabs', {id: 'kubernetes_tab', title: 'Kubernetes Config',
-                    content: '<div id="kubenetesEditor" style="width: 100%;" class="editor"></div>'});
-                kubenetesEditor = Cluster.getEditor(kubenetesEditor, "kubenetesEditor", "ace/mode/yaml");
+                    content: '<div id="kubernetesEditor" style="width: 100%;" class="editor"></div>'});
+                kubernetesEditor = Cluster.getEditor(kubernetesEditor, "kubernetesEditor", "ace/mode/yaml");
+
+                element.tabAdd('config_tabs', {id: 'driverPodTemplate_tab', title: 'Driver Pod Template',
+                    content: '<div id="driverPodTemplateEditor" style="width: 100%;" class="editor"></div>'});
+                driverPodTemplateEditor = Cluster.getEditor(driverPodTemplateEditor, "driverPodTemplateEditor", "ace/mode/yaml");
+
+                element.tabAdd('config_tabs', {id: 'executorPodTemplate_tab', title: 'Executor Pod Template',
+                    content: '<div id="executorPodTemplateEditor" style="width: 100%;" class="editor"></div>'});
+                executorPodTemplateEditor = Cluster.getEditor(executorPodTemplateEditor, "executorPodTemplateEditor", "ace/mode/yaml");
             } else {
                 element.tabDelete('config_tabs', 'yarn_tab')
                 element.tabDelete('config_tabs', 'kubernetes_tab')
+                element.tabDelete('config_tabs', 'driverPodTemplate_tab')
+                element.tabDelete('config_tabs', 'executorPodTemplate_tab')
+
                 element.tabAdd('config_tabs', {id: 'yarn_tab', title: 'yarn-site.xml',
                     content: '<div id="yarnEditor" style="width: 100%;" class="editor"></div>'});
                 yarnEditor = Cluster.getEditor(yarnEditor, "yarnEditor", "ace/mode/xml");
@@ -250,7 +265,9 @@ var Cluster = function () {
                             if (data.schedulerType === "yarn") {
                                 Cluster.setEditorValue(yarnEditor, data.yarnConfig)
                             } else {
-                                Cluster.setEditorValue(kubenetesEditor, data.kubernetesConfig)
+                                Cluster.setEditorValue(kubernetesEditor, data.kubernetesConfig)
+                                Cluster.setEditorValue(driverPodTemplateEditor, data.driverPodTemplate)
+                                Cluster.setEditorValue(executorPodTemplateEditor, data.executorPodTemplate)
                             }
                         }
                     }
@@ -298,16 +315,29 @@ var Cluster = function () {
                     let sparkConfig = $.trim(sparkEditor.getValue());
                     let coreConfig = $.trim(coreEditor.getValue());
                     let hdfsConfig = $.trim(hdfsEditor.getValue());
-                    let yarnConfig = $.trim(yarnEditor.getValue());
                     let hiveConfig = $.trim(hiveEditor.getValue());
+
+                    let yarnConfig = "";
+                    let kubernetesConfig = "";
+                    let driverPodTemplate = "";
+                    let executorPodTemplate = "";
+                    if (data.schedulerType === "yarn") {
+                        yarnConfig = $.trim(yarnEditor.getValue());
+                    } else {
+                        kubernetesConfig = $.trim(kubernetesEditor.getValue());
+                        driverPodTemplate = $.trim(driverPodTemplateEditor.getValue());
+                        executorPodTemplate = $.trim(executorPodTemplateEditor.getValue());
+                    }
 
                     data.id = clusterId
                     data.jobserverConfig = jobserverConfig
                     data.sparkConfig = sparkConfig
                     data.coreConfig = coreConfig
                     data.hdfsConfig = hdfsConfig
-                    data.yarnConfig = yarnConfig
                     data.hiveConfig = hiveConfig
+                    data.kubernetesConfig = kubernetesConfig
+                    data.driverPodTemplate = driverPodTemplate
+                    data.executorPodTemplate = executorPodTemplate
                     $.ajax({
                         async: true,
                         type: "POST",

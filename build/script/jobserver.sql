@@ -113,6 +113,8 @@ CREATE TABLE `sjs_cluster` (
     `hive_config` longtext COMMENT 'hive-site配置',
     `yarn_config` longtext COMMENT 'yarn-site配置',
     `kubernetes_config` longtext COMMENT 'kube 配置',
+    `driver_pod_template` longtext COMMENT 'driver pod template',
+    `executor_pod_template` longtext COMMENT 'executor pod template',
     `storage_type` varchar(45) DEFAULT 'HDFS' COMMENT '存储类型:HDFS、OBS、OSS、S3等文件系统',
     `storage_config` longtext COMMENT '对象存储配置',
     `yarn_queue_name` varchar(255) COMMENT '集群Yarn 默认队列',

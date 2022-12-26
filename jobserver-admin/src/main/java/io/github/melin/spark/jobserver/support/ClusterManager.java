@@ -42,7 +42,7 @@ public class ClusterManager implements InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClusterManager.class);
 
-    public static final String LOCAL_HADOOP_CONFIG_DIR = FileUtils.getUserDirectory() + "/tmp/jobserver-config";
+    public static final String LOCAL_CLUSTER_CONFIG_DIR = FileUtils.getUserDirectory() + "/tmp/jobserver-config";
 
     @Autowired
     private ClusterService clusterService;
@@ -83,7 +83,7 @@ public class ClusterManager implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         LOGGER.info("清理本地配置数据");
-        FileUtils.deleteQuietly(new File(LOCAL_HADOOP_CONFIG_DIR));
+        FileUtils.deleteQuietly(new File(LOCAL_CLUSTER_CONFIG_DIR));
 
         List<Cluster> clusters = clusterService.findByNamedParam("status", true);
 
@@ -268,9 +268,9 @@ public class ClusterManager implements InitializingBean {
 
     private void downloadClusterConfig(Cluster cluster) throws IOException {
         String clusterCode = cluster.getCode();
-        String destDir = LOCAL_HADOOP_CONFIG_DIR + "/" + clusterCode;
+        String destDir = LOCAL_CLUSTER_CONFIG_DIR + "/" + clusterCode;
 
-        FileUtils.forceMkdir(new File(LOCAL_HADOOP_CONFIG_DIR));
+        FileUtils.forceMkdir(new File(LOCAL_CLUSTER_CONFIG_DIR));
         FileUtils.forceMkdir(new File(destDir));
 
         if (StringUtils.isNotBlank(cluster.getCoreConfig()) &&
@@ -298,8 +298,19 @@ public class ClusterManager implements InitializingBean {
                         cluster.getYarnConfig(), StandardCharsets.UTF_8);
             }
         } else {
-            FileUtils.write(new File(destDir + "/kubenetes.conf"),
+            FileUtils.write(new File(destDir + "/kubenetes.yml"),
                     cluster.getYarnConfig(), StandardCharsets.UTF_8);
+
+            FileUtils.write(new File(destDir + "/kubenetes.yml"),
+                    cluster.getYarnConfig(), StandardCharsets.UTF_8);
+            if (StringUtils.isNotBlank(cluster.getDriverPodTemplate())) {
+                FileUtils.write(new File(destDir + "/driver-pod-manager.yml"),
+                        cluster.getDriverPodTemplate(), StandardCharsets.UTF_8);
+            }
+            if (StringUtils.isNotBlank(cluster.getExecutorPodTemplate())) {
+                FileUtils.write(new File(destDir + "/executor-pod-manager.yml"),
+                        cluster.getExecutorPodTemplate(), StandardCharsets.UTF_8);
+            }
         }
 
         Configuration configuration = initConfiguration(cluster, yarnEnabled, destDir);
@@ -320,7 +331,7 @@ public class ClusterManager implements InitializingBean {
                 }
 
                 LOGGER.info("load kerberos config: {} -> {}", clusterCode, cluster.getCode());
-                String confDir = LOCAL_HADOOP_CONFIG_DIR + "/" + cluster.getCode();
+                String confDir = LOCAL_CLUSTER_CONFIG_DIR + "/" + cluster.getCode();
                 String keytabFile = confDir + "/" + DEFAULT_KEYTAB_FILE_NAME;
                 FileUtils.forceMkdir(new File(confDir));
 
