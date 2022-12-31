@@ -1,5 +1,6 @@
 ## REST job server for Apache Spark 
 
+job server 来源以前做[大数据平台](https://github.com/melin/superior-sql-parser/tree/master/imgs)的设计，同时支持sql、jar、python 任务提交运行，对比其他常见解决方案：
 ![主流方案对比](imgs/compare.png)
 
 主要特点
@@ -15,11 +16,9 @@
 9. 动态注册jdbc catalog，具体参考 [dynamic-jdbc-catalog.md](docs%2Fdynamic-jdbc-catalog.md)
 10. 支持kerberos 认证
 
-已经有kyuubi，livy，为什么开发jobserver？几年前就开始中台产品工作, DataStudio需要有一个getway 提交作业，spark 往yarn 提交driver会比较慢，为了更好的交互体验，需要预先启动spark driver，类似jdbc connection 管理spark driver，同时需要解决资源隔离问题。那个时候还没有kyuubi。kyuubi目前支持sql，java/scala 任务开发中，缺少python任务能力。工作中遇到大部分任务是python 作业，spark 最开始定位面向AI人员工具，pyspark是最大优势。livy主要为了交互式场景，需要客户端管理sesssionId。spark thrift 没有资源离，一个作业可能就会把所有资源用完，导致其它用户无法使用。
-
 @TODO
 1. 集成k8s
-2. 支持作业定时调度, 可以减少其它调度系统依赖。
+2. 支持作业定时调度, 可以减少其它调度系统依赖。(一个简易的方案，每天凌晨生成当天需要运行的作业实例，再轮训作业实例表，阿里云dataworks 每天千万级别的任务实例，也是轮训数据库方案)
 3. 集成数据权限、数据血缘(借鉴 kyuubi，但不依赖ranger)
 4. 完善调度任务优先级。
 5. spark jar 上传管理
