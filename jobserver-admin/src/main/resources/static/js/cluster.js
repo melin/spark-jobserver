@@ -335,6 +335,7 @@ var Cluster = function () {
                     data.coreConfig = coreConfig
                     data.hdfsConfig = hdfsConfig
                     data.hiveConfig = hiveConfig
+                    data.yarnConfig = yarnConfig
                     data.kubernetesConfig = kubernetesConfig
                     data.driverPodTemplate = driverPodTemplate
                     data.executorPodTemplate = executorPodTemplate

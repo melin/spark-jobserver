@@ -42,6 +42,8 @@ public class JobInstanceInfo {
      */
     private List<JobParam> customParams;
 
+    private String resultCallbackUri;
+
     @Tolerate
     public JobInstanceInfo() {
     }

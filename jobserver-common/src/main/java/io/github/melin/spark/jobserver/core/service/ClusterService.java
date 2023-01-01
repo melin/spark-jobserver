@@ -53,7 +53,12 @@ public class ClusterService extends BaseServiceImpl<Cluster, Long> {
 
     @Transactional(readOnly = true)
     public boolean isKerberosEnabled(String cluserCode) {
-        return this.getClusterByCode(cluserCode).isKerberosEnabled();
+        Cluster cluster = this.getClusterByCode(cluserCode);
+        if (cluster != null) {
+            return cluster.isKerberosEnabled();
+        } else {
+            return false;
+        }
     }
 
     @Transactional(readOnly = true)

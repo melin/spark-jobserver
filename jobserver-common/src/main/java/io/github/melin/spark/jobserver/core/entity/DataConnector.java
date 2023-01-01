@@ -42,7 +42,7 @@ public class DataConnector implements IEntity {
     @JsonIgnore
     private String password;
 
-    @Column(name="jdbc_url")
+    @Column(name = "jdbc_url")
     private String jdbcUrl;
 
     @Column(name = "creater", length = 45)

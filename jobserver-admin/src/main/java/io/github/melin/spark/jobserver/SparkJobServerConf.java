@@ -175,6 +175,13 @@ public class SparkJobServerConf extends BeeConf {
                     .stringConf()
                     .createWithDefault("");
 
+    public static final ConfigEntry<Integer> JOBSERVER_DRIVER_SQL_QUERY_MAX_RECORDS =
+            buildConf("jobserver.driver.sql.query.max.records")
+                    .doc("saprk sql 任务，select 查询语句最大返回记录数量")
+                    .version("3.3.0")
+                    .intConf()
+                    .createWithDefault(1000);
+
     public static String printConfWithDefaultValue() throws IllegalAccessException {
         StringBuilder sb = new StringBuilder();
         Field[] fields = SparkJobServerConf.class.getDeclaredFields();

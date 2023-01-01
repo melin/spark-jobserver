@@ -96,6 +96,9 @@ public class JobInstance implements IEntity {
     @Column(name = "client_name", length = 64)
     private String clientName;
 
+    @Column(name = "result_callback_uri", length = 64)
+    private String resultCallbackUri;
+
     @lombok.Builder.Default
     @Column(name = "gmt_created", nullable = false)
     private Instant gmtCreated = Instant.now();

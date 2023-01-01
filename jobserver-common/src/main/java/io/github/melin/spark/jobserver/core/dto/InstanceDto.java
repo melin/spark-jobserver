@@ -31,4 +31,6 @@ public class InstanceDto {
     private String jobConfig;
 
     private boolean shareDriver;
+
+    private String resultCallbackUri;
 }

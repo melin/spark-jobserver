@@ -87,6 +87,7 @@ public class JobServerServiceImpl implements InitializingBean {
                 .setStatus(InstanceStatus.WAITING)
                 .setScheduleTime(Instant.ofEpochSecond(request.getScheduleTime()))
                 .setClientName(request.getClientName())
+                .setResultCallbackUri(request.getResultCallbackUri())
                 .setCreater(request.getOwner())
                 .setGmtCreated(Instant.now());
 

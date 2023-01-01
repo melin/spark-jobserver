@@ -23,6 +23,7 @@ CREATE TABLE `sjs_job_instance` (
   `failure_count` int DEFAULT NULL COMMENT '失败次数',
   `application_id` varchar(128)  DEFAULT 'spark app id',
   `client_name` varchar(128)  DEFAULT '实例创建客户端名',
+  `result_callback_uri` varchar(512) DEFAULT NULL,
   `gmt_created` datetime NOT NULL,
   `gmt_modified` datetime DEFAULT NULL,
   `creater` varchar(45)  NOT NULL,

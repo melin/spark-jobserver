@@ -278,7 +278,7 @@ public class ClusterManager implements InitializingBean {
             FileUtils.write(new File(destDir + "/core-site.xml"),
                     cluster.getCoreConfig(), StandardCharsets.UTF_8);
             FileUtils.write(new File(destDir + "/hdfs-site.xml"),
-                    cluster.getHdfsConfig(), StandardCharsets.UTF_8);;
+                    cluster.getHdfsConfig(), StandardCharsets.UTF_8);
             FileUtils.write(new File(destDir + "/spark.conf"),
                     cluster.getSparkConfig(), StandardCharsets.UTF_8);
         } else {

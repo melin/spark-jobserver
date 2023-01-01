@@ -94,6 +94,7 @@ public class StartJobInstanceScheduler {
                 .setYarnQueue(instance.getYarnQueue())
                 .setScheduleTime(instance.getScheduleTime())
                 .setOwner(instance.getOwner())
+                .setResultCallbackUri(instance.getResultCallbackUri())
                 .build();
     }
 

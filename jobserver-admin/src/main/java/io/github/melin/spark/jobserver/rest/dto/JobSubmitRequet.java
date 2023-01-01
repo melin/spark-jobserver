@@ -46,6 +46,13 @@ public class JobSubmitRequet {
 
     private String[] dependentCodes;
 
+    /**
+     * sql 任务，select/show/explain等语句查询结果，通过resultCallbackUri 返回给客户端。
+     * 如果任务中有多个select/show/explain 语句，每个语句触发一次调用。
+     * 要求支持POST
+     */
+    private String resultCallbackUri;
+
     private String callbackUri;
 
     // 请求客户端名，确定后不要修改
