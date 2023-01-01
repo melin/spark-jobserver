@@ -62,6 +62,7 @@ public class SparkDriverContext {
         driver.setGmtCreated(nowDate);
         driver.setGmtModified(nowDate);
         driverService.updateEntity(driver);
+        LOGGER.info("spark driver init finished");
     }
 
     public void startDriver() {

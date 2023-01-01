@@ -63,7 +63,7 @@ public class SparkSqlTask extends AbstractSparkTask {
 
                     Dataset<Row> dataSet = SparkDriverEnv.sql(sql);
                     if (dataSet.schema().fields().length > 0) {
-                        if (StringUtils.isNotBlank(resultCallbackUri)) {
+                        if (StringUtils.isBlank(resultCallbackUri)) {
                             String result = dataSet.showString(20, 20, false);
                             LogUtils.stdout("query result:\n" + result);
                         } else {
@@ -72,7 +72,7 @@ public class SparkSqlTask extends AbstractSparkTask {
                     }
                 } else if (StatementType.EXPLAIN == type) {
                     Dataset<Row> dataSet = SparkDriverEnv.sql(sql);
-                    if (StringUtils.isNotBlank(resultCallbackUri)) {
+                    if (StringUtils.isBlank(resultCallbackUri)) {
                         List<Row> rows = dataSet.collectAsList();
                         if (rows.size() > 0) {
                             String plan = rows.get(0).getString(0);
@@ -83,7 +83,7 @@ public class SparkSqlTask extends AbstractSparkTask {
                     }
                 } else if (CALL == type || SHOW == type) {
                     Dataset<Row> dataSet = SparkDriverEnv.sql(sql);
-                    if (StringUtils.isNotBlank(resultCallbackUri)) {
+                    if (StringUtils.isBlank(resultCallbackUri)) {
                         String result = dataSet.showString(20, 20, false);
                         LogUtils.stdout("query result:\n" + result);
                     } else {
