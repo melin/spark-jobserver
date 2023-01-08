@@ -106,7 +106,7 @@ var Driver = function () {
                         title: '创建时间',
                         field: 'gmtCreated',
                         align: 'left',
-                        width: 130
+                        width: 150
                     },
                     {
                         title: 'CPU',
@@ -134,7 +134,7 @@ var Driver = function () {
                         title: '运行实例',
                         align: 'left',
                         field: 'instanceCode',
-                        width: 100,
+                        width: 180,
                     },
                     {
                         title: '操作',

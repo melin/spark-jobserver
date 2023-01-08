@@ -7,6 +7,7 @@ import io.github.melin.spark.jobserver.core.service.ClusterService;
 import com.gitee.melin.bee.core.support.Pagination;
 import com.gitee.melin.bee.core.support.Result;
 import com.google.common.collect.Lists;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.Order;
 import org.slf4j.Logger;
@@ -19,8 +20,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class ClusterController {
@@ -79,13 +85,18 @@ public class ClusterController {
 
     @RequestMapping("/cluster/saveCluster")
     @ResponseBody
-    public Result<Void> saveCluster(Cluster cluster) {
+    public Result<Void> saveCluster(Cluster cluster, String keytabBase64) {
         if (SchedulerType.YARN == cluster.getSchedulerType()) {
             if (!StringUtils.contains(cluster.getYarnConfig(), "yarn.resourcemanager.webapp.address")
                     || !StringUtils.contains(cluster.getYarnConfig(), "yarn.resourcemanager.address")) {
                 String msg = "yarn-site.xml 缺少 yarn.resourcemanager.webapp.address & yarn.resourcemanager.address 参数配置";
                 return Result.failureResult(msg);
             }
+        }
+
+        if (cluster.isKerberosEnabled() && StringUtils.isNotBlank(keytabBase64)) {
+            byte[] bytes = keytabBytes(keytabBase64);
+            cluster.setKerberosKeytab(bytes);
         }
 
         try {
@@ -111,12 +122,29 @@ public class ClusterController {
                 old.setKubernetesConfig(cluster.getKubernetesConfig());
                 old.setDriverPodTemplate(cluster.getDriverPodTemplate());
                 old.setExecutorPodTemplate(cluster.getExecutorPodTemplate());
+                old.setKerberosEnabled(cluster.isKerberosEnabled());
+                old.setKerberosUser(cluster.getKerberosUser());
+                old.setKerberosConfig(cluster.getKerberosConfig());
+                old.setKerberosKeytab(cluster.getKerberosKeytab());
+                old.setKerberosFileName(cluster.getKerberosFileName());
                 clusterService.updateEntity(old);
             }
             return Result.successResult();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return Result.failureResult(e.getMessage());
+        }
+    }
+
+    private byte[] keytabBytes(String keytabBase64) {
+        byte[] keytabBytes = null;
+        try {
+            if (StringUtils.isNotBlank(keytabBase64)) {
+                keytabBytes = Base64.getDecoder().decode(keytabBase64);
+            }
+            return keytabBytes;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -148,6 +176,31 @@ public class ClusterController {
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return Result.failureResult(e.getMessage());
+        }
+    }
+
+    @RequestMapping("/cluster/downloadKeytab")
+    public void downloadKeytab(HttpServletResponse response, Long clusterId) throws IOException {
+        Cluster cluster = clusterService.getEntity(clusterId);
+        if (Objects.isNull(cluster)) {
+            throw new RuntimeException("集群不存在");
+        }
+
+        OutputStream outputStream = null;
+        try {
+            String downloadFilename = cluster.getKerberosFileName();
+            response.setContentType("application/x-download");
+            response.setHeader("Location", downloadFilename);
+            response.setHeader("Content-Disposition", "attachment; filename=" + downloadFilename);
+            outputStream = response.getOutputStream();
+            IOUtils.write(cluster.getKerberosKeytab(), outputStream);
+        } catch (IOException e) {
+            LOG.error("下载keytab 失败: " + e.getMessage(), e);
+        } finally {
+            if (outputStream != null) {
+                outputStream.flush();
+                IOUtils.closeQuietly(outputStream);
+            }
         }
     }
 }

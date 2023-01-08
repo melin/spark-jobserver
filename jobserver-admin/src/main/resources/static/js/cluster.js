@@ -5,6 +5,7 @@ var Cluster = function () {
     let element = layui.element;
     let dropdown = layui.dropdown;
     const maxInstanceCount = $("#maxInstanceCount").val();
+    let editClusterId;
 
     let sparkCompleter = {
         identifierRegexps: [/[a-zA-Z_0-9\.\$\-\u00A2-\uFFFF]/], //解决输入点启动提示
@@ -20,7 +21,26 @@ var Cluster = function () {
     langTools.setCompleters([sparkCompleter]);
 
     let jobserverEditor, sparkEditor, coreEditor, hdfsEditor, yarnEditor, hiveEditor,
-        kubernetesEditor, driverPodTemplateEditor, executorPodTemplateEditor;
+        kubernetesEditor, driverPodTemplateEditor, executorPodTemplateEditor, krb5ConfEditor;
+
+    let keytabBase64 = "";
+    let kerberosFileName = "";
+    var handleFileSelect = function(evt) {
+        var files = evt.target.files;
+        var file = files[0];
+        kerberosFileName = file.name;
+        alert(kerberosFileName)
+
+        if (files && file) {
+            var reader = new FileReader();
+            reader.onload = function(readerEvt) {
+                console.info(readerEvt)
+                var binaryString = readerEvt.target.result;
+                keytabBase64 = btoa(binaryString);
+            };
+            reader.readAsBinaryString(file);
+        }
+    };
 
     return {
         init: function () {
@@ -162,21 +182,31 @@ var Cluster = function () {
             coreEditor = Cluster.getEditor(coreEditor, "coreEditor", "ace/mode/xml");
             hdfsEditor = Cluster.getEditor(hdfsEditor, "hdfsEditor", "ace/mode/xml");
             hiveEditor = Cluster.getEditor(hiveEditor, "hiveEditor", "ace/mode/xml");
-            //let kerberosEditor = Cluster.getEditor(kerberosEditor, "kerberosEditor", "ace/mode/properties");
 
             form.on('select(schedulerType)', function (data) {
-                Cluster.changeConfigTab(data.value)
+                Cluster.changeSchedulerTypeTab(data.value)
             });
+
+            form.on('select(kerberosEnabled)', function (data) {
+                Cluster.changeKerberosTab(data.value)
+            });
+
+            if (window.File && window.FileReader && window.FileList && window.Blob) {
+                document.getElementById('kerberosKeytab')
+                    .addEventListener('change', handleFileSelect, false);
+            } else {
+                alert('The File APIs are not fully supported in this browser.');
+            }
         },
 
-        changeConfigTab : function (schedulerType) {
+        changeSchedulerTypeTab : function (schedulerType) {
             if (schedulerType === "kubernetes") {
                 element.tabDelete('config_tabs', 'yarn_tab')
                 element.tabDelete('config_tabs', 'kubernetes_tab')
                 element.tabDelete('config_tabs', 'driverPodTemplate_tab')
                 element.tabDelete('config_tabs', 'executorPodTemplate_tab')
 
-                element.tabAdd('config_tabs', {id: 'kubernetes_tab', title: 'Kubernetes Config',
+                element.tabAdd('config_tabs', {id: 'kubernetes_tab', title: 'K8s.conf',
                     content: '<div id="kubernetesEditor" style="width: 100%;" class="editor"></div>'});
                 kubernetesEditor = Cluster.getEditor(kubernetesEditor, "kubernetesEditor", "ace/mode/yaml");
 
@@ -196,6 +226,20 @@ var Cluster = function () {
                 element.tabAdd('config_tabs', {id: 'yarn_tab', title: 'yarn-site.xml',
                     content: '<div id="yarnEditor" style="width: 100%;" class="editor"></div>'});
                 yarnEditor = Cluster.getEditor(yarnEditor, "yarnEditor", "ace/mode/xml");
+            }
+        },
+
+        changeKerberosTab : function (kerberosEnabled) {
+            if (kerberosEnabled === "true") {
+                element.tabDelete('config_tabs', 'kerberos_tab')
+                element.tabAdd('config_tabs', {id: 'kerberos_tab', title: 'Krb5.conf',
+                    content: '<div id="krb5ConfEditor" style="width: 100%;" class="editor"></div>'});
+                krb5ConfEditor = Cluster.getEditor(krb5ConfEditor, "krb5ConfEditor", "ace/mode/properties");
+
+                $(".kerberos_span").show()
+            } else {
+                element.tabDelete('config_tabs', 'kerberos_tab')
+                $(".kerberos_span").hide()
             }
         },
 
@@ -235,6 +279,7 @@ var Cluster = function () {
 
         newClusterWin : function(clusterId) {
             if (clusterId) {
+                editClusterId = clusterId;
                 $.ajax({
                     async: true,
                     type : "GET",
@@ -244,14 +289,19 @@ var Cluster = function () {
                         if (result.success) {
                             let data = result.data;
                             if (data.kerberosEnabled) {
-                                data.kerberosEnabled = 1;
+                                Cluster.changeKerberosTab("true")
+                                Cluster.setEditorValue(krb5ConfEditor, data.kerberosConfig)
+                                data.kerberosEnabled = "true";
+                                $("#kerberosDown").html(data.kerberosFileName);
                             } else {
-                                data.kerberosEnabled = 0;
+                                Cluster.changeKerberosTab("false")
+                                data.kerberosEnabled = "false";
                             }
+
                             if (data.status) {
-                                data.status = 1;
+                                data.status = "true";
                             } else {
-                                data.status = 0;
+                                data.status = "false";
                             }
 
                             form.val('newClusterForm', data);
@@ -261,7 +311,7 @@ var Cluster = function () {
                             Cluster.setEditorValue(hdfsEditor, data.hdfsConfig)
                             Cluster.setEditorValue(hiveEditor, data.hiveConfig)
 
-                            Cluster.changeConfigTab(data.schedulerType)
+                            Cluster.changeSchedulerTypeTab(data.schedulerType)
                             if (data.schedulerType === "yarn") {
                                 Cluster.setEditorValue(yarnEditor, data.yarnConfig)
                             } else {
@@ -283,8 +333,9 @@ var Cluster = function () {
                 Cluster.setEditorValue(hdfsEditor, "")
                 Cluster.setEditorValue(hiveEditor, "")
 
-                Cluster.changeConfigTab("yarn")
+                Cluster.changeSchedulerTypeTab("yarn")
                 Cluster.setEditorValue(yarnEditor, "")
+                Cluster.changeKerberosTab("false")
 
                 $("#schedulerType").removeAttr("disabled");
                 form.render('select');
@@ -339,6 +390,13 @@ var Cluster = function () {
                     data.kubernetesConfig = kubernetesConfig
                     data.driverPodTemplate = driverPodTemplate
                     data.executorPodTemplate = executorPodTemplate
+                    data.keytabBase64 = keytabBase64
+                    data.kerberosFileName = kerberosFileName
+
+                    if (data.kerberosEnabled) {
+                        data.kerberosConfig = $.trim(krb5ConfEditor.getValue());
+                    }
+
                     $.ajax({
                         async: true,
                         type: "POST",
@@ -378,6 +436,11 @@ var Cluster = function () {
                     }
                 })
             })
+        },
+
+        downloadKeytab: function () {
+            var url = "/cluster/downloadKeytab?clusterId=" + editClusterId;
+            window.open(url, '_blank');
         },
 
         refresh : function() {

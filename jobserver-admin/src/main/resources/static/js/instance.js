@@ -35,7 +35,8 @@ var Instance = function () {
                     {
                         title: '实例Code',
                         field: 'code',
-                        align: 'center'
+                        align: 'center',
+                        width: 180,
                     },
                     {
                         title: '实例名称',
@@ -91,17 +92,20 @@ var Instance = function () {
                     {
                         title: '调度时间',
                         field: 'scheduleTime',
-                        align: 'right'
+                        align: 'right',
+                        width: 150,
                     },
                     {
                         title: '开始时间',
                         field: 'startTime',
-                        align: 'right'
+                        align: 'right',
+                        width: 150,
                     },
                     {
                         title: '结束时间',
                         field: 'endTime',
-                        align: 'right'
+                        align: 'right',
+                        width: 150,
                     },
                     {
                         title: '状态',

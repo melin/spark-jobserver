@@ -1,5 +1,6 @@
 package io.github.melin.spark.jobserver.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gitee.melin.bee.core.hibernate5.type.BooleanToIntConverter;
 import io.github.melin.spark.jobserver.core.enums.SchedulerType;
 import io.github.melin.spark.jobserver.core.enums.StorageType;
@@ -45,6 +46,7 @@ public class Cluster implements IEntity {
     @Column(name = "kerberos_enabled")
     private boolean kerberosEnabled = false;
 
+    @JsonIgnore
     @Column(name = "kerberos_keytab")
     private byte[] kerberosKeytab;
 
