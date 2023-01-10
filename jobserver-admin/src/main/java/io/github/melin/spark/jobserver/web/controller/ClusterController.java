@@ -94,7 +94,10 @@ public class ClusterController {
             }
         }
 
-        if (cluster.isKerberosEnabled() && StringUtils.isNotBlank(keytabBase64)) {
+        if (cluster.isKerberosEnabled()) {
+            if (StringUtils.isBlank(keytabBase64) || StringUtils.isBlank(cluster.getKerberosConfig())) {
+                throw new IllegalArgumentException("kerberos 配置不能为空");
+            }
             byte[] bytes = keytabBytes(keytabBase64);
             cluster.setKerberosKeytab(bytes);
         }
@@ -127,6 +130,7 @@ public class ClusterController {
                 old.setKerberosConfig(cluster.getKerberosConfig());
                 old.setKerberosKeytab(cluster.getKerberosKeytab());
                 old.setKerberosFileName(cluster.getKerberosFileName());
+                old.setGmtModified(Instant.now());
                 clusterService.updateEntity(old);
             }
             return Result.successResult();

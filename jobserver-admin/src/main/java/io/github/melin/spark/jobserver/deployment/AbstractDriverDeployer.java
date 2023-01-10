@@ -3,6 +3,7 @@ package io.github.melin.spark.jobserver.deployment;
 import io.github.melin.spark.jobserver.ConfigProperties;
 import io.github.melin.spark.jobserver.support.ClusterConfig;
 import io.github.melin.spark.jobserver.support.ClusterManager;
+import io.github.melin.spark.jobserver.support.KerberosInfo;
 import io.github.melin.spark.jobserver.support.YarnClientService;
 import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
 import io.github.melin.spark.jobserver.util.FSUtils;
@@ -270,23 +271,28 @@ public abstract class AbstractDriverDeployer {
             sparkExecutorExtraJavaOptionsConf += " -Dlog4j.configuration=log4j.properties ";
         }
 
-        boolean isKerberosEnabled = clusterManager.isKerberosEnabled(clusterCode);
-        setSparkConf(clusterCode, sparkLauncher, hadoopConf, defaultFS, yarnQueue, driverHome, isKerberosEnabled);
+        setSparkConf(clusterCode, sparkLauncher, hadoopConf, defaultFS, yarnQueue, driverHome);
 
         String conf = Base64.getEncoder().encodeToString("{}".getBytes(StandardCharsets.UTF_8));
+        KerberosInfo kerberosInfo = clusterManager.getKerberosInfo(clusterCode);
+        boolean kerberosEnabled = false;
+        if (kerberosInfo != null && kerberosInfo.isEnabled()) {
+            kerberosEnabled = true;
+        }
 
-        //driverJar 包 hdfs 地址
-        String driverJarFile = driverHome + "/" +
-                clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_JAR_NAME);
-        LOG.info("driver kerberos enabled: {}, hive enabled: {}", isKerberosEnabled, hiveEnabled);
-
+        LOG.info("driver kerberos enabled: {}, hive enabled: {}", kerberosEnabled, hiveEnabled);
         List<String> programArgs = Lists.newArrayList("-j", String.valueOf(driverId),
-                "-type", "driverserver", "-conf", conf);
+                "-type", "driverserver",
+                "-conf", conf,
+                "-k", String.valueOf(kerberosEnabled));
         if (hiveEnabled) {
             programArgs.add("-hive");
         }
 
         pythonEnvConf(sparkLauncher, clusterCode);
+        //driverJar 包 hdfs 地址
+        String driverJarFile = driverHome + "/" +
+                clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_JAR_NAME);
 
         LOG.info("directory: {}", sparkHome);
         String appName = JobServerUtils.appName(profiles);
@@ -341,7 +347,7 @@ public abstract class AbstractDriverDeployer {
      * 设置spark.yarn.jars 参数
      */
     private void setSparkConf(String clusterCode, SparkLauncher sparkLauncher, Configuration hadoopConf,
-                              String defaultFS, String yarnQueue, String driverHome, boolean isKerberosEnabled) throws Exception {
+                              String defaultFS, String yarnQueue, String driverHome) throws Exception {
         //设置队列
         if (StringUtils.isNotBlank(yarnQueue)) {
             sparkLauncher.setConf("spark.yarn.queue", yarnQueue);
@@ -350,9 +356,14 @@ public abstract class AbstractDriverDeployer {
             sparkLauncher.setConf("spark.yarn.queue", yarnQueue);
         }
 
-        if (isKerberosEnabled) {
-            LOG.info("启动 kerberos 认证}");
-            // @TODO
+        KerberosInfo kerberosInfo = clusterManager.getKerberosInfo(clusterCode);
+        if (kerberosInfo != null && kerberosInfo.isEnabled()) {
+            String kerberosUser = kerberosInfo.getPrincipal();
+            String keytab = kerberosInfo.getKeytabFile();
+
+            LOG.info("启动 kerberos 认证, kerberosUser: {}, keytab: {}", kerberosUser, keytab);
+            sparkLauncher.setConf("spark.kerberos.principal", kerberosUser);
+            sparkLauncher.setConf("spark.kerberos.keytab", keytab);
         }
 
         // 注意不要删除参数，避免分区表丢失数据

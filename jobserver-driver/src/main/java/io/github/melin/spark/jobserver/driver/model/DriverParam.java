@@ -18,9 +18,6 @@ public class DriverParam {
     @Parameter(names = "-k", description = "kerberos enabled", required = false, arity = 1)
     private boolean kerberosEnabled = false;
 
-    @Parameter(names = "-ku", description = "kerberos user", required = false)
-    private String kerberosUser;
-
     @Parameter(names = "-hive", description = "hive enabled", required = false)
     private boolean hiveEnable = false;
 
@@ -54,14 +51,6 @@ public class DriverParam {
 
     public void setKerberosEnabled(boolean kerberosEnabled) {
         this.kerberosEnabled = kerberosEnabled;
-    }
-
-    public String getKerberosUser() {
-        return kerberosUser;
-    }
-
-    public void setKerberosUser(String kerberosUser) {
-        this.kerberosUser = kerberosUser;
     }
 
     public boolean isHiveEnable() {
