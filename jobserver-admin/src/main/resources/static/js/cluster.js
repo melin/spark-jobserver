@@ -83,7 +83,7 @@ var Cluster = function () {
                         width: 100,
                         templet: function(record) {
                             const kerberosEnabled = record.kerberosEnabled;
-                            if (kerberosEnabled === 1) {
+                            if (kerberosEnabled) {
                                 return '<span style="font-weight:bold; color: #5FB878">启用</span>'
                             } else {
                                 return '<span style="font-weight:bold;color: #FF5722">关闭</span>'
