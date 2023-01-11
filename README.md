@@ -1,4 +1,4 @@
-## REST job server for Apache Spark 
+## REST job server for Apache Spark (Spark as a Service)
 
 job server 来源以前做[大数据平台](https://github.com/melin/superior-sql-parser/tree/master/imgs)的设计，同时支持sql、jar、python 任务提交运行，对比其他常见解决方案：
 ![主流方案对比](imgs/compare.png)
