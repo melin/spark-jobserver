@@ -261,49 +261,37 @@ public class ClusterManager implements InitializingBean {
 
         if (StringUtils.isNotBlank(cluster.getCoreConfig()) &&
                 StringUtils.isNotBlank(cluster.getHdfsConfig())) {
-            FileUtils.write(new File(destDir + "/core-site.xml"),
-                    cluster.getCoreConfig(), StandardCharsets.UTF_8);
-            FileUtils.write(new File(destDir + "/hdfs-site.xml"),
-                    cluster.getHdfsConfig(), StandardCharsets.UTF_8);
-            FileUtils.write(new File(destDir + "/spark.conf"),
-                    cluster.getSparkConfig(), StandardCharsets.UTF_8);
+            FileUtils.write(new File(destDir + "/core-site.xml"), cluster.getCoreConfig(), StandardCharsets.UTF_8);
+            FileUtils.write(new File(destDir + "/hdfs-site.xml"), cluster.getHdfsConfig(), StandardCharsets.UTF_8);
+            FileUtils.write(new File(destDir + "/spark.conf"), cluster.getSparkConfig(), StandardCharsets.UTF_8);
         } else {
             LOGGER.warn("集群 " + cluster.getCode() + " hadoop config 有空");
         }
 
         if (StringUtils.isNotBlank(cluster.getHiveConfig())) {
-            FileUtils.write(new File(destDir + "/hive-site.xml"),
-                    cluster.getHiveConfig(), StandardCharsets.UTF_8);
+            FileUtils.write(new File(destDir + "/hive-site.xml"), cluster.getHiveConfig(), StandardCharsets.UTF_8);
         }
 
         boolean yarnEnabled = false;
         if (cluster.getSchedulerType() == SchedulerType.YARN) {
             if (StringUtils.isNotBlank(cluster.getYarnConfig())) {
                 yarnEnabled = true;
-                FileUtils.write(new File(destDir + "/yarn-site.xml"),
-                        cluster.getYarnConfig(), StandardCharsets.UTF_8);
+                FileUtils.write(new File(destDir + "/yarn-site.xml"), cluster.getYarnConfig(), StandardCharsets.UTF_8);
             }
         } else {
-            FileUtils.write(new File(destDir + "/kubenetes.yml"),
-                    cluster.getYarnConfig(), StandardCharsets.UTF_8);
+            FileUtils.write(new File(destDir + "/kubenetes.yml"), cluster.getYarnConfig(), StandardCharsets.UTF_8);
 
-            FileUtils.write(new File(destDir + "/kubenetes.yml"),
-                    cluster.getYarnConfig(), StandardCharsets.UTF_8);
+            FileUtils.write(new File(destDir + "/kubenetes.yml"), cluster.getYarnConfig(), StandardCharsets.UTF_8);
             if (StringUtils.isNotBlank(cluster.getDriverPodTemplate())) {
-                FileUtils.write(new File(destDir + "/driver-pod-manager.yml"),
-                        cluster.getDriverPodTemplate(), StandardCharsets.UTF_8);
+                FileUtils.write(new File(destDir + "/driver-pod-manager.yml"), cluster.getDriverPodTemplate(), StandardCharsets.UTF_8);
             }
             if (StringUtils.isNotBlank(cluster.getExecutorPodTemplate())) {
-                FileUtils.write(new File(destDir + "/executor-pod-manager.yml"),
-                        cluster.getExecutorPodTemplate(), StandardCharsets.UTF_8);
+                FileUtils.write(new File(destDir + "/executor-pod-manager.yml"), cluster.getExecutorPodTemplate(), StandardCharsets.UTF_8);
             }
         }
 
         Configuration configuration = initConfiguration(cluster, yarnEnabled, destDir);
         if (configuration != null) {
-            yarnConfigDirLists.put(clusterCode, destDir);
-            hadoopConfList.put(clusterCode, configuration);
-
             long updateTime = clusterService.getClusterUpdateTime(clusterCode);
             if (updateTime > 0) {
                 clusterUpdateTimeMap.put(clusterCode, updateTime);
@@ -314,6 +302,16 @@ public class ClusterManager implements InitializingBean {
                 LOGGER.info("load kerberos config: {}", clusterCode);
                 String krb5File = destDir + "/krb5.conf";
                 String keytabFile = destDir + "/kerberos.keytab";
+
+                if (StringUtils.isBlank(cluster.getKerberosConfig())) {
+                    LOGGER.error("cluster {} kerberos enabled, krb5 conf is blank", clusterCode);
+                    return;
+                }
+                if (cluster.getKerberosKeytab() == null || cluster.getKerberosKeytab().length == 0) {
+                    LOGGER.error("cluster {} kerberos enabled, Keytab file is blank", clusterCode);
+                    return;
+                }
+
                 FileUtils.write(new File(krb5File), cluster.getKerberosConfig(), StandardCharsets.UTF_8);
                 FileUtils.writeByteArrayToFile(new File(keytabFile), cluster.getKerberosKeytab());
 
@@ -322,6 +320,9 @@ public class ClusterManager implements InitializingBean {
                         .keytabFile(keytabFile)
                         .principal(cluster.getKerberosUser()).build();
                 CLUSTER_KERBEROS_INFO_MAP.put(clusterCode, kerberosInfo);
+
+                yarnConfigDirLists.put(clusterCode, destDir);
+                hadoopConfList.put(clusterCode, configuration);
             }
         }
     }
