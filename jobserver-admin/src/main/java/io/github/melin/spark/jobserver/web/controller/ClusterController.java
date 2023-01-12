@@ -89,6 +89,7 @@ public class ClusterController {
         if (SchedulerType.YARN == cluster.getSchedulerType()) {
             if (!StringUtils.contains(cluster.getYarnConfig(), "yarn.resourcemanager.webapp.address")
                     || !StringUtils.contains(cluster.getYarnConfig(), "yarn.resourcemanager.address")) {
+
                 String msg = "yarn-site.xml 缺少 yarn.resourcemanager.webapp.address & yarn.resourcemanager.address 参数配置";
                 return Result.failureResult(msg);
             }
@@ -96,8 +97,16 @@ public class ClusterController {
 
         if (cluster.isKerberosEnabled()) {
             if (StringUtils.isBlank(keytabBase64) || StringUtils.isBlank(cluster.getKerberosConfig())) {
-                throw new IllegalArgumentException("kerberos 配置不能为空");
+                return Result.failureResult("kerberos 配置不能为空");
             }
+
+            if (StringUtils.isNotBlank(cluster.getHdfsConfig())) {
+                if (!StringUtils.contains(cluster.getHdfsConfig(), "dfs.namenode.kerberos.principal")) {
+                    String msg = "开启kerberos 认证，hdfs-site.xml 缺少 dfs.namenode.kerberos.principal 参数配置";
+                    return Result.failureResult(msg);
+                }
+            }
+
             byte[] bytes = keytabBytes(keytabBase64);
             cluster.setKerberosKeytab(bytes);
         }
