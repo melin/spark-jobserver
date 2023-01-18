@@ -29,7 +29,6 @@ var Cluster = function () {
         var files = evt.target.files;
         var file = files[0];
         kerberosFileName = file.name;
-        alert(kerberosFileName)
 
         if (files && file) {
             var reader = new FileReader();
