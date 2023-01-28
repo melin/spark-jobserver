@@ -33,7 +33,6 @@ var Cluster = function () {
         if (files && file) {
             var reader = new FileReader();
             reader.onload = function(readerEvt) {
-                console.info(readerEvt)
                 var binaryString = readerEvt.target.result;
                 keytabBase64 = btoa(binaryString);
             };
