@@ -32,7 +32,7 @@
 	},
 	{
 		"id": "document",
-		"title": "文档",
+		"title": "API Docs",
 		"icon": "layui-icon layui-icon-template-1",
 		"type": 1,
 		"openType": "_blank",
