@@ -12,7 +12,7 @@ import lombok.ToString;
 public class KerberosInfo {
     private boolean enabled;
 
-    private boolean tempKerberos = false;
+    private boolean tempKerberos;
 
     private String principal;
 

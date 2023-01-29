@@ -1,8 +1,8 @@
 package io.github.melin.spark.jobserver.monitor;
 
-import io.github.melin.spark.jobserver.ConfigProperties;
 import io.github.melin.spark.jobserver.deployment.YarnSparkDriverDeployer;
 import io.github.melin.spark.jobserver.support.ClusterConfig;
+import io.github.melin.spark.jobserver.support.ClusterManager;
 import io.github.melin.spark.jobserver.support.YarnClientService;
 import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
 import io.github.melin.spark.jobserver.core.entity.Cluster;
@@ -37,7 +37,7 @@ public class DriverPoolManager implements InitializingBean {
     private RedisLeaderElection redisLeaderElection;
 
     @Autowired
-    private ConfigProperties configProperties;
+    private ClusterManager clusterManager;
 
     @Autowired
     private SparkDriverService driverService;
@@ -127,7 +127,11 @@ public class DriverPoolManager implements InitializingBean {
             int minDriverCount = clusterConfig.getInt(cluster.getCode(), JOBSERVER_DRIVER_MIN_COUNT);
             long driverCount = driverService.queryDriverCount(cluster.getCode());
             while (minDriverCount > driverCount) {
-                yarnSparkDriverDeployer.buildJobServer(cluster);
+                clusterManager.runSecured(cluster.getCode(), () -> {
+                    yarnSparkDriverDeployer.buildJobServer(cluster);
+                    return null;
+                });
+
                 driverCount = driverService.queryCount();
             }
         } catch (Throwable e) {

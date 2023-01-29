@@ -111,11 +111,9 @@ public class YarnSparkDriverDeployer extends AbstractDriverDeployer {
             sparkAppHandle = startApplication(jobInstanceInfo, driverId, yarnQueue);
             long appSubmitTime = System.currentTimeMillis();
             SparkAppHandle.State state = sparkAppHandle.getState();
-            String applicationId = "";
-            boolean updateApplicationId = false;
             int driverSubmitTimeOut = config.getDriverSubmitTimeOutSeconds();
             while (state != SparkAppHandle.State.RUNNING) {
-                applicationId = sparkAppHandle.getAppId();
+                String applicationId = sparkAppHandle.getAppId();
                 if (System.currentTimeMillis() - appSubmitTime > (driverSubmitTimeOut * 1000L)) {
                     sparkAppHandle.kill();
                     if (StringUtils.isNotBlank(applicationId)) {
@@ -152,22 +150,11 @@ public class YarnSparkDriverDeployer extends AbstractDriverDeployer {
                     }
                 }
 
-                if (!updateApplicationId && StringUtils.isNotBlank(applicationId)) {
-                    SparkDriver driver = driverService.getEntity(driverId);
-                    if (driver != null) {
-                        driver.setApplicationId(applicationId);
-                        driverService.updateEntity(driver);
-                    }
-                    updateApplicationId = true;
-                }
-
                 Thread.sleep(3000);
                 state = sparkAppHandle.getState();
             }
 
-            applicationId = sparkAppHandle.getAppId();
-            LOG.info("start share jobserver: {}", applicationId);
-
+            LOG.info("start share jobserver: {}", sparkAppHandle.getAppId());
             DriverController.sparkLauncherFailedMsg = "";
         } catch (Exception e) {
             LOG.info("启动jobserver 失败" + e.getMessage(), e);

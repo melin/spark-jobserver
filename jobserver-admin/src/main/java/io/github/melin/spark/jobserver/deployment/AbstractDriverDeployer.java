@@ -101,10 +101,8 @@ public abstract class AbstractDriverDeployer {
         SparkAppHandle sparkAppHandle = startApplication(job, driverId, yarnQueue);
         long appSubmitTime = System.currentTimeMillis();
         SparkAppHandle.State state = sparkAppHandle.getState();
-        String applicationId;
-        boolean updateApplicationId = false;
         while (state != SparkAppHandle.State.RUNNING) {
-            applicationId = sparkAppHandle.getAppId();
+            String applicationId = sparkAppHandle.getAppId();
             if (System.currentTimeMillis() - appSubmitTime > (submitTimeOut * 1000L)) {
                 sparkAppHandle.kill();
                 if (StringUtils.isNotBlank(applicationId)) {
@@ -141,20 +139,11 @@ public abstract class AbstractDriverDeployer {
                 }
             }
 
-            if (!updateApplicationId && StringUtils.isNotBlank(applicationId)) {
-                SparkDriver driver = driverService.getEntity(driverId);
-                if (driver != null) {
-                    driver.setApplicationId(applicationId);
-                    driverService.updateEntity(driver);
-                }
-                updateApplicationId = true;
-            }
-
             Thread.sleep(3000);
             state = sparkAppHandle.getState();
         }
 
-        applicationId = sparkAppHandle.getAppId();
+        String applicationId = sparkAppHandle.getAppId();
         sparkAppHandle.kill();
 
         String msg = "driver application " + applicationId + " 提交 yarn 耗时: "
