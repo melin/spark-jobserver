@@ -31,7 +31,7 @@
         <spotbugs.version>4.6.0</spotbugs.version>
         <aspectj.version>1.9.9.1</aspectj.version>
         <iceberg.version>0.14.0</iceberg.version>
-        <bee.version>1.5.1</bee.version>
+        <bee.version>1.5.3</bee.version>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <kafka.version>3.3.1</kafka.version>
         <hudi.version>0.12.1</hudi.version>

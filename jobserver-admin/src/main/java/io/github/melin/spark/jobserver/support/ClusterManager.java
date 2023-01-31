@@ -1,7 +1,7 @@
 package io.github.melin.spark.jobserver.support;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.gitee.melin.bee.util.MapperUtils;
+import com.gitee.melin.bee.util.JsonUtils;
 import com.google.common.collect.Maps;
 import io.github.melin.spark.jobserver.core.enums.SchedulerType;
 import io.github.melin.spark.jobserver.deployment.dto.YarnResource;
@@ -228,7 +228,7 @@ public class ClusterManager implements InitializingBean {
             String url = "http://" + rmAddress + "/ws/v1/cluster/info";
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             if (HttpStatus.OK == response.getStatusCode()) {
-                HashMap<String, Object> root = (HashMap<String, Object>) MapperUtils.toJavaMap(response.getBody());
+                HashMap<String, Object> root = (HashMap<String, Object>) JsonUtils.toJavaMap(response.getBody());
                 HashMap<String, Object> clusterinfo = (LinkedHashMap<String, Object>) root.get("clusterInfo");
 
                 long startedOn = (long) clusterinfo.get("startedOn");
@@ -361,7 +361,7 @@ public class ClusterManager implements InitializingBean {
         try {
             String url = "http://" + addr + "/ws/v1/cluster/metrics";
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            Map<String, Object> data = MapperUtils.toJavaObject(response.getBody(), new TypeReference<Map<String, Object>>() {});
+            Map<String, Object> data = JsonUtils.toJavaObject(response.getBody(), new TypeReference<Map<String, Object>>() {});
             LinkedHashMap<String, Object> metrics = (LinkedHashMap<String, Object>) data.get("clusterMetrics");
             int availableMemoryMB = (Integer) metrics.get("availableMB");
             int availableVirtualCores = (Integer) metrics.get("availableVirtualCores");

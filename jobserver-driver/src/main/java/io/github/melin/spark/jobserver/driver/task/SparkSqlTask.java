@@ -1,6 +1,6 @@
 package io.github.melin.spark.jobserver.driver.task;
 
-import com.gitee.melin.bee.util.MapperUtils;
+import com.gitee.melin.bee.util.JsonUtils;
 import com.github.melin.superior.sql.parser.SQLParserException;
 import com.github.melin.superior.sql.parser.model.TableData;
 import io.github.melin.spark.jobserver.core.util.CommonUtils;
@@ -131,7 +131,7 @@ public class SparkSqlTask extends AbstractSparkTask {
                         if (fieldType.contains("map") || fieldType.contains("array")
                                 || fieldType.contains("struct")) {
 
-                            value = MapperUtils.toJSONString(obj);
+                            value = JsonUtils.toJSONString(obj);
                         } else {
                             value = obj.toString();
                         }
@@ -147,7 +147,7 @@ public class SparkSqlTask extends AbstractSparkTask {
             result.put("data", data);
             result.put("typeNames", typeNames);
             result.put("command", sql);
-            String content = MapperUtils.toJSONString(result);
+            String content = JsonUtils.toJSONString(result);
 
             HttpClientUtils.postRequet(resultCallbackUri + "/innerApi/v1/receiveJobResult",
                     "instanceCode", instanceCode, "result", content);

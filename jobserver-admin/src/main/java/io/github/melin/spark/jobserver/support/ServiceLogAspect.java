@@ -1,7 +1,7 @@
 package io.github.melin.spark.jobserver.support;
 
 import io.github.melin.spark.jobserver.util.DateUtils;
-import com.gitee.melin.bee.util.MapperUtils;
+import com.gitee.melin.bee.util.JsonUtils;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -47,12 +47,12 @@ public class ServiceLogAspect {
         json.put("requetTime", DateUtils.getCurrentDateTime());
         json.put("execTime", stopWatch.getTotalTimeMillis());
         json.put("success", success);
-        json.put("params", MapperUtils.toJSONString(joinPoint.getArgs()));
+        json.put("params", JsonUtils.toJSONString(joinPoint.getArgs()));
         if (!success) {
             String rootMsg = ExceptionUtils.getRootCauseMessage(ex);
             json.put("exception", rootMsg);
         }
-        LOG.info(MapperUtils.toJSONString(json));
+        LOG.info(JsonUtils.toJSONString(json));
 
         if (!success) {
             throw ex;

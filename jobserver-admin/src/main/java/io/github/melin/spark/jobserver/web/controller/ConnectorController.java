@@ -1,6 +1,6 @@
 package io.github.melin.spark.jobserver.web.controller;
 
-import com.gitee.melin.bee.core.jdbc.JDBCDataSourceInfo;
+import com.gitee.melin.bee.core.jdbc.DataSourceInfo;
 import com.gitee.melin.bee.core.support.Pagination;
 import com.gitee.melin.bee.core.support.Result;
 import com.google.common.collect.Lists;
@@ -83,7 +83,7 @@ public class ConnectorController {
 
     @PostMapping("/connector/testConnection")
     @ResponseBody
-    public Result<JDBCDataSourceInfo> testConnection(DataConnector dataConnector) {
+    public Result<DataSourceInfo> testConnection(DataConnector dataConnector) {
         /*String hostName = connector.get();
         int port = connector.getPort();
         SocketAddress socketAddress = new InetSocketAddress(hostName, port);
@@ -98,7 +98,7 @@ public class ConnectorController {
         }*/
 
         try {
-            JDBCDataSourceInfo sourceInfo = connectorService.testConnection(dataConnector);
+            DataSourceInfo sourceInfo = connectorService.testConnection(dataConnector);
             return Result.successDataResult(sourceInfo);
         } catch (Exception e) {
             LOG.info(e.getMessage(), e);

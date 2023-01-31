@@ -1,8 +1,8 @@
 package io.github.melin.spark.jobserver.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.gitee.melin.bee.core.jdbc.Connector;
-import com.gitee.melin.bee.core.jdbc.DataConnectorType;
+import com.gitee.melin.bee.core.jdbc.ConnectionDesc;
+import com.gitee.melin.bee.core.jdbc.DataSourceType;
 import com.gitee.melin.bee.model.IEntity;
 import io.github.melin.spark.jobserver.core.util.AESUtils;
 import lombok.Getter;
@@ -31,11 +31,11 @@ public class DataConnector implements IEntity {
 
     private String name;
 
-    @Column(name = "connector_type")
+    @Column(name = "ds_type")
     @Type(type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClass",
-                    value = "com.gitee.melin.bee.core.jdbc.DataConnectorType")})
-    private DataConnectorType connectorType;
+                    value = "com.gitee.melin.bee.core.jdbc.DataSourceType")})
+    private DataSourceType dataSourceType;
 
     private String username;
 
@@ -57,17 +57,17 @@ public class DataConnector implements IEntity {
     @Column(name = "gmt_modified")
     private Instant gmtModified;
 
-    public Connector buildDataConnector() {
-        Connector connector = new Connector();
-        connector.setCode(code);
-        connector.setConnectorType(connectorType);
-        connector.setUsername(username);
+    public ConnectionDesc buildDataConnector() {
         String decrypt = AESUtils.decrypt(password);
         if (decrypt == null) {
             decrypt = password;
         }
-        connector.setPassword(decrypt);
-        connector.setJdbcUrl(jdbcUrl);
-        return connector;
+
+        return ConnectionDesc.builder()
+                .withDataSourceType(dataSourceType)
+                .withUsername(username)
+                .withPassword(decrypt)
+                .withJdbcUrl(jdbcUrl)
+                .build();
     }
 }

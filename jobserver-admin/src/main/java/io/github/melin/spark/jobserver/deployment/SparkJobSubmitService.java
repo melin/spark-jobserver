@@ -20,7 +20,7 @@ import io.github.melin.spark.jobserver.core.exception.SwitchYarnQueueException;
 import io.github.melin.spark.jobserver.core.service.JobInstanceService;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
 import com.gitee.melin.bee.core.support.Result;
-import com.gitee.melin.bee.util.MapperUtils;
+import com.gitee.melin.bee.util.JsonUtils;
 import com.gitee.melin.bee.util.RestTemplateUtils;
 import io.github.melin.spark.jobserver.deployment.dto.DriverInfo;
 import io.github.melin.spark.jobserver.deployment.dto.JobInstanceInfo;
@@ -283,7 +283,7 @@ public class SparkJobSubmitService implements InitializingBean {
 
             instanceDto.setJobText(null);
             LOG.info("requet execute job times: {}ms, url : {}, params: {}",
-                    watch.getTime(), url, MapperUtils.toJSONString(instanceDto));
+                    watch.getTime(), url, JsonUtils.toJSONString(instanceDto));
         } catch (Exception e) {
             instanceService.unLockInstance(instanceCode);
             throw new SparkJobServerException("提交作业到 " + applicationId + " 失败: " + e.getMessage());

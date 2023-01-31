@@ -24,7 +24,7 @@ var Connector = function () {
                     },
                     {
                         title: 'Type',
-                        field: 'connectorType',
+                        field: 'dataSourceType',
                         align: 'left',
                         width: 100
                     },
@@ -107,14 +107,14 @@ var Connector = function () {
                             let data = result.data;
                             form.val('connectorForm', data);
 
-                            $("#connectorType").attr("readonly", "readonly");
+                            $("#dataSourceType").attr("readonly", "readonly");
                             $("#code").attr("readonly", "readonly");
                         }
                     }
                 })
             } else {
                 form.val('newClusterForm', {});
-                $("#connectorType").attr("readonly", false);
+                $("#dataSourceType").attr("readonly", false);
                 $("#code").attr("readonly", false);
             }
 

@@ -1,6 +1,6 @@
 package io.github.melin.spark.jobserver.service;
 
-import com.gitee.melin.bee.util.MapperUtils;
+import com.gitee.melin.bee.util.JsonUtils;
 import io.github.melin.spark.jobserver.ConfigProperties;
 import io.github.melin.spark.jobserver.util.DateUtils;
 import io.github.melin.spark.jobserver.util.JobServerUtils;
@@ -63,7 +63,7 @@ public class JobServerServiceImpl implements InitializingBean {
     }
 
     public String submitJobInstance(JobSubmitRequet request) {
-        LOG.info("submit job: {}", MapperUtils.toJSONString(request));
+        LOG.info("submit job: {}", JsonUtils.toJSONString(request));
 
         String jobText = request.getJobText();
         if (StringUtils.isBlank(jobText)) {

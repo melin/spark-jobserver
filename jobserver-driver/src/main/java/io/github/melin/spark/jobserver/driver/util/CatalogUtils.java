@@ -1,6 +1,6 @@
 package io.github.melin.spark.jobserver.driver.util;
 
-import com.gitee.melin.bee.core.jdbc.DataConnectorType;
+import com.gitee.melin.bee.core.jdbc.DataSourceType;
 import com.google.common.collect.Maps;
 import io.github.melin.spark.jobserver.core.entity.DataConnector;
 import io.github.melin.spark.jobserver.core.util.AESUtils;
@@ -20,7 +20,7 @@ public class CatalogUtils {
 
     public static CatalogPlugin buildJdbcCatalogPlugin(DataConnector connector,
                                                        String catalogName) {
-        DataConnectorType connectorType = connector.getConnectorType();
+        DataSourceType dataSourceType = connector.getDataSourceType();
 
         String user = connector.getUsername();
         String password = AESUtils.decrypt(connector.getPassword());
@@ -34,20 +34,20 @@ public class CatalogUtils {
             throw new IllegalArgumentException(catalogName + " 数据源没有配置 password");
         }
 
-        if (DataConnectorType.MYSQL == connectorType || DataConnectorType.TIDB == connectorType
-                || DataConnectorType.DORIS == connectorType || DataConnectorType.STARROCKS == connectorType) {
+        if (DataSourceType.MYSQL == dataSourceType || DataSourceType.TIDB == dataSourceType
+                || DataSourceType.DORIS == dataSourceType || DataSourceType.STARROCKS == dataSourceType) {
             driverClass = "com.mysql.cj.jdbc.Driver";
-        } else if (DataConnectorType.ORACLE == connectorType) {
+        } else if (DataSourceType.ORACLE == dataSourceType) {
             driverClass = "oracle.jdbc.OracleDriver";
-        } else if (DataConnectorType.DB2 == connectorType) {
+        } else if (DataSourceType.DB2 == dataSourceType) {
             driverClass = "com.ibm.db2.jcc.DB2Driver";
-        } else if (DataConnectorType.POSTGRESQL == connectorType || DataConnectorType.GAUSS == connectorType) {
+        } else if (DataSourceType.POSTGRESQL == dataSourceType || DataSourceType.GAUSS == dataSourceType) {
             driverClass = "org.postgresql.Driver";
-        } else if (DataConnectorType.SQLSERVER == connectorType) {
+        } else if (DataSourceType.SQLSERVER == dataSourceType) {
             driverClass = "org.postgresql.Driver";
-        } else if (DataConnectorType.HANA == connectorType) {
+        } else if (DataSourceType.HANA == dataSourceType) {
             driverClass = "com.sap.db.jdbc.Driver";
-        } else if (DataConnectorType.GREENPLUM == connectorType) {
+        } else if (DataSourceType.GREENPLUM == dataSourceType) {
             driverClass = "com.pivotal.jdbc.GreenplumDriver";
         }
 
@@ -60,8 +60,8 @@ public class CatalogUtils {
         CatalogPlugin catalog = new JDBCTableCatalog();
         catalog.initialize(catalogName, new CaseInsensitiveStringMap(options));
 
-        LOG.info("init {} catalog: {}", connectorType.getValue(), catalogName);
-        LogUtils.info("init {} catalog: {}", connectorType.getValue(), catalogName);
+        LOG.info("init {} catalog: {}", dataSourceType.getValue(), catalogName);
+        LogUtils.info("init {} catalog: {}", dataSourceType.getValue(), catalogName);
 
         return catalog;
     }
