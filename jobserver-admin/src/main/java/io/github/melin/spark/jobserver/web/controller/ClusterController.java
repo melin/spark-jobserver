@@ -7,6 +7,7 @@ import io.github.melin.spark.jobserver.core.service.ClusterService;
 import com.gitee.melin.bee.core.support.Pagination;
 import com.gitee.melin.bee.core.support.Result;
 import com.google.common.collect.Lists;
+import io.github.melin.spark.jobserver.core.service.SparkDriverService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.Order;
@@ -35,6 +36,9 @@ public class ClusterController {
 
     @Autowired
     private ClusterService clusterService;
+
+    @Autowired
+    private SparkDriverService driverService;
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -184,6 +188,12 @@ public class ClusterController {
     public Result<Void> deleteCluster(Long clusterId) {
         try {
             Cluster cluster = clusterService.getEntity(clusterId);
+            long appDriverCount = driverService.queryDriverCount(cluster.getCode());
+
+            if (appDriverCount > 0) {
+                return Result.failureResult("The cluster " + cluster.getCode() + " is used and cannot be deleted");
+            }
+
             clusterService.deleteEntity(cluster);
             return Result.successResult();
         } catch (Exception e) {
