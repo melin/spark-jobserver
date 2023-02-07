@@ -1,19 +1,15 @@
 package io.github.melin.spark.jobserver.driver.util;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sparkproject.guava.hash.HashCodes;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.net.URLStreamHandler;
 import java.net.URLStreamHandlerFactory;
 import java.security.SecureRandom;
 import java.util.List;
@@ -27,19 +23,6 @@ public class DriverUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(DriverUtils.class);
 
     public static final String CURRENT_PATH = new File("").getAbsolutePath();
-
-    public static void exist(String location) {
-        try {
-            Configuration conf = SparkSession.active().sparkContext().hadoopConfiguration();
-            FileSystem fs = FileSystem.get(conf);
-            Path path = new Path(location);
-            if (!fs.exists(path)) {
-                throw new IllegalArgumentException("location not exist: " + path);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public static void setURLStreamHandlerFactory(URLStreamHandlerFactory factory) throws Exception {
         try {
@@ -106,4 +89,29 @@ public class DriverUtils {
                 })
                 .toArray(Object[]::new);
     }
+
+    private abstract static class ParentAwareURLStreamHandlerFactory implements URLStreamHandlerFactory{
+
+        protected URLStreamHandlerFactory parentFactory;
+
+        public void setParentFactory(URLStreamHandlerFactory factory){
+            this.parentFactory = factory;
+        }
+
+        public URLStreamHandlerFactory getParent(){
+            return parentFactory;
+        }
+
+        @Override
+        public URLStreamHandler createURLStreamHandler(String protocol) {
+            URLStreamHandler handler = this.create(protocol);
+            if (handler == null && this.parentFactory != null) {
+                handler = this.parentFactory.createURLStreamHandler(protocol);
+            }
+            return handler;
+        }
+
+        protected abstract URLStreamHandler create(String protocol);
+    }
+
 }

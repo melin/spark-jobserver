@@ -9,7 +9,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 /**
- * Updated by admin 优先加载从SparkClassLoader 加载className
+ * 优先加载从SparkClassLoader 加载className
  */
 public class SparkClassLoader extends URLClassLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(SparkClassLoader.class);
