@@ -1,530 +1,170 @@
 let SPARK_CONFIG_OPTIONS = [ {
-    "caption" : "spark.buffer.size",
-    "value" : "spark.buffer.size = 65536",
-    "meta" : "default: 65536",
-    "version" : "0.5.0"
+    "caption" : "spark.shuffle.push.mergersMinStaticThreshold",
+    "value" : "spark.shuffle.push.mergersMinStaticThreshold = 5",
+    "meta" : "default: 5",
+    "version" : "3.2.0",
+    "docHTML" : "The static threshold for number of shuffle push merger locations should be available in order to enable push-based shuffle for a stage. Note this config works in conjunction with spark.shuffle.push.mergersMinThresholdRatio. Maximum of spark.shuffle.push.mergersMinStaticThreshold and spark.shuffle.push.mergersMinThresholdRatio ratio number of mergers needed to enable push-based shuffle for a stage. For eg: with 1000 partitions for the child stage with spark.shuffle.push.mergersMinStaticThreshold as 5 and spark.shuffle.push.mergersMinThresholdRatio set to 0.05, we would need at least 50 mergers to enable push-based shuffle for that stage."
 }, {
-    "caption" : "spark.driver.cores",
-    "value" : "spark.driver.cores = 1",
-    "meta" : "default: 1",
-    "version" : "1.3.0",
-    "docHTML" : "Number of cores to use for the driver process, only in cluster mode."
+    "caption" : "spark.eventLog.gcMetrics.youngGenerationGarbageCollectors",
+    "value" : "spark.eventLog.gcMetrics.youngGenerationGarbageCollectors = ",
+    "version" : "3.0.0",
+    "docHTML" : "Names of supported young generation garbage collector. A name usually is  the return of GarbageCollectorMXBean.getName. The built-in young generation garbage collectors are List(Copy, PS Scavenge, ParNew, G1 Young Generation)"
 }, {
-    "caption" : "spark.driver.memory",
-    "value" : "spark.driver.memory = 1g",
-    "meta" : "default: 1g",
-    "version" : "1.1.1",
-    "docHTML" : "Amount of memory to use for the driver process, in MiB unless otherwise specified."
+    "caption" : "spark.eventLog.gcMetrics.oldGenerationGarbageCollectors",
+    "value" : "spark.eventLog.gcMetrics.oldGenerationGarbageCollectors = ",
+    "version" : "3.0.0",
+    "docHTML" : "Names of supported old generation garbage collector. A name usually is the return of GarbageCollectorMXBean.getName. The built-in old generation garbage collectors are List(MarkSweepCompact, PS MarkSweep, ConcurrentMarkSweep, G1 Old Generation)"
 }, {
-    "caption" : "spark.driver.log.persistToDfs.enabled",
-    "value" : "spark.driver.log.persistToDfs.enabled = false",
-    "meta" : "default: false",
+    "caption" : "spark.executor.heartbeat.dropZeroAccumulatorUpdates",
+    "value" : "spark.executor.heartbeat.dropZeroAccumulatorUpdates = true",
+    "meta" : "default: true",
     "version" : "3.0.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.driver.log.allowErasureCoding",
-    "value" : "spark.driver.log.allowErasureCoding = false",
+    "caption" : "spark.storage.decommission.shuffleBlocks.enabled",
+    "value" : "spark.storage.decommission.shuffleBlocks.enabled = false",
     "meta" : "default: false",
-    "version" : "3.0.0",
+    "version" : "3.1.0",
+    "docHTML" : "Whether to transfer shuffle blocks during block manager decommissioning. Requires a migratable shuffle resolver (like sort based shuffle)"
+}, {
+    "caption" : "spark.storage.decommission.maxReplicationFailuresPerBlock",
+    "value" : "spark.storage.decommission.maxReplicationFailuresPerBlock = 3",
+    "meta" : "default: 3",
+    "version" : "3.1.0",
+    "docHTML" : "Maximum number of failures which can be handled for the replication of one RDD block when block manager is decommissioning and trying to move its existing blocks."
+}, {
+    "caption" : "spark.storage.decommission.replicationReattemptInterval",
+    "value" : "spark.storage.decommission.replicationReattemptInterval = 30s",
+    "meta" : "default: 30s",
+    "version" : "3.1.0",
+    "docHTML" : "The interval of time between consecutive cache block replication reattempts happening on each decommissioning executor (due to storage decommissioning)."
+}, {
+    "caption" : "spark.storage.decommission.fallbackStorage.cleanUp",
+    "value" : "spark.storage.decommission.fallbackStorage.cleanUp = false",
+    "meta" : "default: false",
+    "version" : "3.2.0",
+    "docHTML" : "If true, Spark cleans up its fallback storage data during shutting down."
+}, {
+    "caption" : "spark.storage.blockManagerMasterDriverHeartbeatTimeoutMs",
+    "value" : "spark.storage.blockManagerMasterDriverHeartbeatTimeoutMs = 10m",
+    "meta" : "default: 10m",
+    "version" : "3.2.0",
+    "docHTML" : "A timeout used for block manager master's driver heartbeat endpoint."
+}, {
+    "caption" : "spark.storage.cleanupFilesAfterExecutorExit",
+    "value" : "spark.storage.cleanupFilesAfterExecutorExit = true",
+    "meta" : "default: true",
+    "version" : "2.4.0",
+    "docHTML" : "Whether or not cleanup the files not served by the external shuffle service on executor exits."
+}, {
+    "caption" : "spark.dynamicAllocation.cachedExecutorIdleTimeout",
+    "value" : "spark.dynamicAllocation.cachedExecutorIdleTimeout = 2147483647000ms",
+    "meta" : "default: 2147483647000ms",
+    "version" : "1.4.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.eventLog.enabled",
-    "value" : "spark.eventLog.enabled = false",
-    "meta" : "default: false",
-    "version" : "1.0.0",
+    "caption" : "spark.dynamicAllocation.sustainedSchedulerBacklogTimeout",
+    "version" : "1.2.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.eventLog.dir",
-    "value" : "spark.eventLog.dir = /tmp/spark-events",
-    "meta" : "default: /tmp/spark-events",
-    "version" : "1.0.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.eventLog.compress",
-    "value" : "spark.eventLog.compress = false",
+    "caption" : "spark.files.fetchFailure.unRegisterOutputOnHost",
+    "value" : "spark.files.fetchFailure.unRegisterOutputOnHost = false",
     "meta" : "default: false",
-    "version" : "1.0.0",
-    "docHTML" : ""
+    "version" : "2.3.0",
+    "docHTML" : "Whether to un-register all the outputs on the host in condition that we receive  a FetchFailure. This is set default to false, which means, we only un-register the  outputs related to the exact executor(instead of the host) on a FetchFailure."
 }, {
-    "caption" : "spark.eventLog.logBlockUpdates.enabled",
-    "value" : "spark.eventLog.logBlockUpdates.enabled = false",
-    "meta" : "default: false",
+    "caption" : "spark.scheduler.listenerbus.metrics.maxListenerClassesTimed",
+    "value" : "spark.scheduler.listenerbus.metrics.maxListenerClassesTimed = 128",
+    "meta" : "default: 128",
     "version" : "2.3.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.eventLog.erasureCoding.enabled",
-    "value" : "spark.eventLog.erasureCoding.enabled = false",
-    "meta" : "default: false",
+    "caption" : "spark.scheduler.listenerbus.logSlowEvent.threshold",
+    "value" : "spark.scheduler.listenerbus.logSlowEvent.threshold = 1s",
+    "meta" : "default: 1s",
     "version" : "3.0.0",
-    "docHTML" : ""
+    "docHTML" : "The time threshold of whether a event is considered to be taking too much time to process. Log the event if spark.scheduler.listenerbus.logSlowEvent is true."
 }, {
-    "caption" : "spark.eventLog.testing",
-    "value" : "spark.eventLog.testing = false",
+    "caption" : "spark.taskMetrics.trackUpdatedBlockStatuses",
+    "value" : "spark.taskMetrics.trackUpdatedBlockStatuses = false",
     "meta" : "default: false",
-    "version" : "1.0.1",
-    "docHTML" : ""
+    "version" : "2.3.0",
+    "docHTML" : "Enable tracking of updatedBlockStatuses in the TaskMetrics. Off by default since tracking the block statuses can use a lot of memory and its not used anywhere within spark."
 }, {
-    "caption" : "spark.eventLog.overwrite",
-    "value" : "spark.eventLog.overwrite = false",
-    "meta" : "default: false",
-    "version" : "1.0.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.eventLog.rolling.enabled",
-    "value" : "spark.eventLog.rolling.enabled = false",
-    "meta" : "default: false",
-    "version" : "3.0.0",
-    "docHTML" : "Whether rolling over event log files is enabled. If set to true, it cuts down each event log file to the configured size."
-}, {
-    "caption" : "spark.executor.cores",
-    "value" : "spark.executor.cores = 1",
-    "meta" : "default: 1",
-    "version" : "1.0.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.executor.memory",
-    "value" : "spark.executor.memory = 1g",
-    "meta" : "default: 1g",
-    "version" : "0.7.0",
-    "docHTML" : "Amount of memory to use per executor process, in MiB unless otherwise specified."
-}, {
-    "caption" : "spark.memory.offHeap.enabled",
-    "value" : "spark.memory.offHeap.enabled = false",
-    "meta" : "default: false",
-    "version" : "1.6.0",
-    "docHTML" : "If true, Spark will attempt to use off-heap memory for certain operations. If off-heap memory use is enabled, then spark.memory.offHeap.size must be positive."
-}, {
-    "caption" : "spark.memory.offHeap.size",
-    "value" : "spark.memory.offHeap.size = 0b",
-    "meta" : "default: 0b",
-    "version" : "1.6.0",
-    "docHTML" : "The absolute amount of memory which can be used for off-heap allocation,  in bytes unless otherwise specified. This setting has no impact on heap memory usage, so if your executors' total memory consumption must fit within some hard limit then be sure to shrink your JVM heap size accordingly. This must be set to a positive value when spark.memory.offHeap.enabled=true."
-}, {
-    "caption" : "spark.memory.storageFraction",
-    "value" : "spark.memory.storageFraction = 0.5",
-    "meta" : "default: 0.5",
-    "version" : "1.6.0",
-    "docHTML" : "Amount of storage memory immune to eviction, expressed as a fraction of the size of the region set aside by spark.memory.fraction. The higher this is, the less working memory may be available to execution and tasks may spill to disk more often. Leaving this at the default value is recommended. "
-}, {
-    "caption" : "spark.memory.fraction",
-    "value" : "spark.memory.fraction = 0.6",
-    "meta" : "default: 0.6",
-    "version" : "1.6.0",
-    "docHTML" : "Fraction of (heap space - 300MB) used for execution and storage. The lower this is, the more frequently spills and cached data eviction occur. The purpose of this config is to set aside memory for internal metadata, user data structures, and imprecise size estimation in the case of sparse, unusually large records. Leaving this at the default value is recommended.  "
-}, {
-    "caption" : "spark.storage.cachedPeersTtl",
-    "value" : "spark.storage.cachedPeersTtl = 60000",
-    "meta" : "default: 60000",
-    "version" : "1.1.1",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.yarn.isPython",
-    "value" : "spark.yarn.isPython = false",
-    "meta" : "default: false",
-    "version" : "1.5.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.task.cpus",
-    "value" : "spark.task.cpus = 1",
-    "meta" : "default: 1",
-    "version" : "0.5.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.dynamicAllocation.enabled",
-    "value" : "spark.dynamicAllocation.enabled = false",
-    "meta" : "default: false",
-    "version" : "1.2.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.dynamicAllocation.testing",
-    "value" : "spark.dynamicAllocation.testing = false",
-    "meta" : "default: false",
-    "version" : "1.2.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.locality.wait",
-    "value" : "spark.locality.wait = 3s",
-    "meta" : "default: 3s",
-    "version" : "0.5.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.shuffle.service.enabled",
-    "value" : "spark.shuffle.service.enabled = false",
-    "meta" : "default: false",
-    "version" : "1.2.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.shuffle.service.port",
-    "value" : "spark.shuffle.service.port = 7337",
-    "meta" : "default: 7337",
-    "version" : "1.2.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.shuffle.service.name",
-    "value" : "spark.shuffle.service.name = spark_shuffle",
-    "meta" : "default: spark_shuffle",
-    "version" : "3.2.0",
-    "docHTML" : "The configured name of the Spark shuffle service the client should communicate with. This must match the name used to configure the Shuffle within the YARN NodeManager configuration (`yarn.nodemanager.aux-services`). Only takes effect when ConfigEntry(key=spark.shuffle.service.enabled, defaultValue=false, doc=, public=true, version=1.2.0) is set to true."
-}, {
-    "caption" : "spark.kerberos.relogin.period",
-    "value" : "spark.kerberos.relogin.period = 1m",
-    "meta" : "default: 1m",
-    "version" : "3.0.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.task.maxFailures",
-    "value" : "spark.task.maxFailures = 4",
-    "meta" : "default: 4",
-    "version" : "0.8.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.task.reaper.enabled",
-    "value" : "spark.task.reaper.enabled = false",
-    "meta" : "default: false",
-    "version" : "2.0.3",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.task.reaper.killTimeout",
-    "value" : "spark.task.reaper.killTimeout = -1ms",
-    "meta" : "default: -1ms",
-    "version" : "2.0.3",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.task.reaper.threadDump",
-    "value" : "spark.task.reaper.threadDump = true",
-    "meta" : "default: true",
-    "version" : "2.0.3",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.excludeOnFailure.application.maxFailedTasksPerExecutor",
-    "value" : "spark.excludeOnFailure.application.maxFailedTasksPerExecutor = 2",
-    "meta" : "default: 2",
-    "version" : "3.1.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.excludeOnFailure.application.maxFailedExecutorsPerNode",
-    "value" : "spark.excludeOnFailure.application.maxFailedExecutorsPerNode = 2",
-    "meta" : "default: 2",
-    "version" : "3.1.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.history.ui.maxApplications",
-    "value" : "spark.history.ui.maxApplications = 2147483647",
+    "caption" : "spark.shuffle.spill.numElementsForceSpillThreshold",
+    "value" : "spark.shuffle.spill.numElementsForceSpillThreshold = 2147483647",
     "meta" : "default: 2147483647",
-    "version" : "2.0.1",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.io.encryption.enabled",
-    "value" : "spark.io.encryption.enabled = false",
-    "meta" : "default: false",
-    "version" : "2.1.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.driver.host",
-    "value" : "spark.driver.host = 172.18.2.69",
-    "meta" : "default: 172.18.2.69",
-    "version" : "0.7.0",
-    "docHTML" : "Address of driver endpoints."
-}, {
-    "caption" : "spark.driver.port",
-    "value" : "spark.driver.port = 0",
-    "meta" : "default: 0",
-    "version" : "0.7.0",
-    "docHTML" : "Port of driver endpoints."
-}, {
-    "caption" : "spark.driver.supervise",
-    "value" : "spark.driver.supervise = false",
-    "meta" : "default: false",
-    "version" : "1.3.0",
-    "docHTML" : "If true, restarts the driver automatically if it fails with a non-zero exit status. Only has effect in Spark standalone mode or Mesos cluster deploy mode."
-}, {
-    "caption" : "spark.driver.bindAddress",
-    "version" : "2.1.0",
-    "docHTML" : "Address where to bind network listen sockets on the driver."
-}, {
-    "caption" : "spark.blockManager.port",
-    "value" : "spark.blockManager.port = 0",
-    "meta" : "default: 0",
-    "version" : "1.1.0",
-    "docHTML" : "Port to use for the block manager when a more specific setting is not provided."
-}, {
-    "caption" : "spark.files.ignoreCorruptFiles",
-    "value" : "spark.files.ignoreCorruptFiles = false",
-    "meta" : "default: false",
-    "version" : "2.1.0",
-    "docHTML" : "Whether to ignore corrupt files. If true, the Spark jobs will continue to run when encountering corrupted or non-existing files and contents that have been read will still be returned."
-}, {
-    "caption" : "spark.files.ignoreMissingFiles",
-    "value" : "spark.files.ignoreMissingFiles = false",
-    "meta" : "default: false",
-    "version" : "2.4.0",
-    "docHTML" : "Whether to ignore missing files. If true, the Spark jobs will continue to run when encountering missing files and the contents that have been read will still be returned."
-}, {
-    "caption" : "spark.files.openCostInBytes",
-    "value" : "spark.files.openCostInBytes = 4194304b",
-    "meta" : "default: 4194304b",
-    "version" : "2.1.0",
-    "docHTML" : "The estimated cost to open a file, measured by the number of bytes could be scanned in the same time. This is used when putting multiple files into a partition. It's better to over estimate, then the partitions with small files will be faster than partitions with bigger files."
-}, {
-    "caption" : "spark.redaction.regex",
-    "value" : "spark.redaction.regex",
-    "version" : "2.1.2",
-    "docHTML" : "Regex to decide which Spark configuration properties and environment variables in driver and executor environments contain sensitive information. When this regex matches a property key or value, the value is redacted from the environment UI and various logs like YARN and event logs."
-}, {
-    "caption" : "spark.authenticate.secretBitLength",
-    "value" : "spark.authenticate.secretBitLength = 256",
-    "meta" : "default: 256",
     "version" : "1.6.0",
-    "docHTML" : ""
+    "docHTML" : "The maximum number of elements in memory before forcing the shuffle sorter to spill. By default it's Integer.MAX_VALUE, which means we never force the sorter to spill, until we reach some limitations, like the max page size limitation for the pointer array in the sorter."
 }, {
-    "caption" : "spark.authenticate",
-    "value" : "spark.authenticate = false",
-    "meta" : "default: false",
-    "version" : "1.0.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.authenticate.enableSaslEncryption",
-    "value" : "spark.authenticate.enableSaslEncryption = false",
-    "meta" : "default: false",
-    "version" : "1.4.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.authenticate.secret.driver.file",
-    "version" : "3.0.0",
-    "docHTML" : "Path to a file that contains the authentication secret to use. Loaded by the driver. In Kubernetes client mode it is often useful to set a different secret path for the driver vs. the executors, since the driver may not be running in a pod unlike the executors. If this is set, an accompanying secret file must be specified for the executors. The fallback configuration allows the same path to be used for both the driver and the executors when running in cluster mode. File-based secret keys are only allowed when using Kubernetes."
-}, {
-    "caption" : "spark.buffer.write.chunkSize",
-    "value" : "spark.buffer.write.chunkSize = 67108864b",
-    "meta" : "default: 67108864b",
+    "caption" : "spark.shuffle.mapOutput.parallelAggregationThreshold",
+    "value" : "spark.shuffle.mapOutput.parallelAggregationThreshold = 10000000",
+    "meta" : "default: 10000000",
     "version" : "2.3.0",
-    "docHTML" : "The chunk size in bytes during writing out the bytes of ChunkedByteBuffer."
+    "docHTML" : "Multi-thread is used when the number of mappers * shuffle partitions is greater than or equal to this threshold. Note that the actual parallelism is calculated by number of mappers * shuffle partitions / this threshold + 1, so this threshold should be positive."
 }, {
-    "caption" : "spark.checkpoint.compress",
-    "value" : "spark.checkpoint.compress = false",
-    "meta" : "default: false",
-    "version" : "2.2.0",
-    "docHTML" : "Whether to compress RDD checkpoints. Generally a good idea. Compression will use spark.io.compression.codec."
-}, {
-    "caption" : "spark.shuffle.sort.io.plugin.class",
-    "value" : "spark.shuffle.sort.io.plugin.class = org.apache.spark.shuffle.sort.io.LocalDiskShuffleDataIO",
-    "meta" : "default: org.apache.spark.shuffle.sort.io.LocalDiskShuffleDataIO",
+    "caption" : "spark.storage.localDiskByExecutors.cacheSize",
+    "value" : "spark.storage.localDiskByExecutors.cacheSize = 1000",
+    "meta" : "default: 1000",
     "version" : "3.0.0",
-    "docHTML" : "Name of the class to use for shuffle IO."
+    "docHTML" : "The max number of executors for which the local dirs are stored. This size is both applied for the driver and both for the executors side to avoid having an unbounded store. This cache will be used to avoid the network in case of fetching disk persisted RDD blocks or shuffle blocks (when `spark.shuffle.readHostLocalDisk` is set) from the same host."
 }, {
-    "caption" : "spark.shuffle.file.buffer",
-    "value" : "spark.shuffle.file.buffer = 32k",
-    "meta" : "default: 32k",
-    "version" : "1.4.0",
-    "docHTML" : "Size of the in-memory buffer for each shuffle file output stream, in KiB unless otherwise specified. These buffers reduce the number of disk seeks and system calls made in creating intermediate shuffle files."
-}, {
-    "caption" : "spark.yarn.dist.forceDownloadSchemes",
-    "value" : "spark.yarn.dist.forceDownloadSchemes",
-    "version" : "2.3.0",
-    "docHTML" : "Comma-separated list of schemes for which resources will be downloaded to the local disk prior to being added to YARN's distributed cache. For use in cases where the YARN service does not support schemes that are supported by Spark, like http, https and ftp, or jars required to be in the local YARN client's classpath. Wildcard '*' is denoted to download resources for all the schemes."
-}, {
-    "caption" : "spark.driver.maxResultSize",
-    "value" : "spark.driver.maxResultSize = 1g",
-    "meta" : "default: 1g",
-    "version" : "1.2.0",
-    "docHTML" : "Size limit for results."
-}, {
-    "caption" : "spark.shuffle.checksum.enabled",
-    "value" : "spark.shuffle.checksum.enabled = true",
-    "meta" : "default: true",
-    "version" : "3.2.0",
-    "docHTML" : "Whether to calculate the checksum of shuffle data. If enabled, Spark will calculate the checksum values for each partition data within the map output file and store the values in a checksum file on the disk. When there's shuffle data corruption detected, Spark will try to diagnose the cause (e.g., network issue, disk issue, etc.) of the corruption by using the checksum file."
-}, {
-    "caption" : "spark.shuffle.compress",
-    "value" : "spark.shuffle.compress = true",
-    "meta" : "default: true",
-    "version" : "0.6.0",
-    "docHTML" : "Whether to compress shuffle output. Compression will use spark.io.compression.codec."
-}, {
-    "caption" : "spark.shuffle.spill.compress",
-    "value" : "spark.shuffle.spill.compress = true",
-    "meta" : "default: true",
-    "version" : "0.9.0",
-    "docHTML" : "Whether to compress data spilled during shuffles. Compression will use spark.io.compression.codec."
-}, {
-    "caption" : "spark.shuffle.spill.batchSize",
-    "value" : "spark.shuffle.spill.batchSize = 10000",
-    "meta" : "default: 10000",
-    "version" : "0.9.0",
-    "docHTML" : "Size of object batches when reading/writing from serializers."
-}, {
-    "caption" : "spark.shuffle.manager",
-    "value" : "spark.shuffle.manager = sort",
-    "meta" : "default: sort",
-    "version" : "1.1.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.shuffle.detectCorrupt",
-    "value" : "spark.shuffle.detectCorrupt = true",
-    "meta" : "default: true",
-    "version" : "2.2.0",
-    "docHTML" : "Whether to detect any corruption in fetched blocks."
-}, {
-    "caption" : "spark.shuffle.sync",
-    "value" : "spark.shuffle.sync = false",
-    "meta" : "default: false",
-    "version" : "0.8.0",
-    "docHTML" : "Whether to force outstanding writes to disk."
-}, {
-    "caption" : "spark.barrier.sync.timeout",
-    "value" : "spark.barrier.sync.timeout = 365d",
-    "meta" : "default: 365d",
+    "caption" : "spark.scheduler.barrier.maxConcurrentTasksCheck.interval",
+    "value" : "spark.scheduler.barrier.maxConcurrentTasksCheck.interval = 15s",
+    "meta" : "default: 15s",
     "version" : "2.4.0",
-    "docHTML" : "The timeout in seconds for each barrier() call from a barrier task. If the coordinator didn't receive all the sync messages from barrier tasks within the configured time, throw a SparkException to fail all the tasks. The default value is set to 31536000(3600 * 24 * 365) so the barrier() call shall wait for one year."
+    "docHTML" : "Time in seconds to wait between a max concurrent tasks check failure and the next check. A max concurrent tasks check ensures the cluster can launch more concurrent tasks than required by a barrier stage on job submitted. The check can fail in case a cluster has just started and not enough executors have registered, so we wait for a little while and try to perform the check again. If the check fails more than a configured max failure times for a job then fail current job submission. Note this config only applies to jobs that contain one or more barrier stages, we won't perform the check on non-barrier jobs."
 }, {
-    "caption" : "spark.master.rest.port",
-    "value" : "spark.master.rest.port = 6066",
-    "meta" : "default: 6066",
-    "version" : "1.3.0",
-    "docHTML" : ""
+    "caption" : "spark.scheduler.barrier.maxConcurrentTasksCheck.maxFailures",
+    "value" : "spark.scheduler.barrier.maxConcurrentTasksCheck.maxFailures = 40",
+    "meta" : "default: 40",
+    "version" : "2.4.0",
+    "docHTML" : "Number of max concurrent tasks check failures allowed before fail a job submission. A max concurrent tasks check ensures the cluster can launch more concurrent tasks than required by a barrier stage on job submitted. The check can fail in case a cluster has just started and not enough executors have registered, so we wait for a little while and try to perform the check again. If the check fails more than a configured max failure times for a job then fail current job submission. Note this config only applies to jobs that contain one or more barrier stages, we won't perform the check on non-barrier jobs."
 }, {
-    "caption" : "spark.master.ui.port",
-    "value" : "spark.master.ui.port = 8080",
-    "meta" : "default: 8080",
-    "version" : "1.1.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.io.compression.codec",
-    "value" : "spark.io.compression.codec = lz4",
-    "meta" : "default: lz4",
-    "version" : "0.8.0",
-    "docHTML" : "The codec used to compress internal data such as RDD partitions, event log, broadcast variables and shuffle outputs. By default, Spark provides four codecs: lz4, lzf, snappy, and zstd. You can also use fully qualified class names to specify the codec"
-}, {
-    "caption" : "spark.locality.wait.process",
-    "version" : "0.8.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.locality.wait.node",
-    "version" : "0.8.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.locality.wait.rack",
-    "version" : "0.8.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.broadcast.compress",
-    "value" : "spark.broadcast.compress = true",
-    "meta" : "default: true",
-    "version" : "0.6.0",
-    "docHTML" : "Whether to compress broadcast variables before sending them. Generally a good idea. Compression will use spark.io.compression.codec"
-}, {
-    "caption" : "spark.broadcast.blockSize",
-    "value" : "spark.broadcast.blockSize = 4m",
-    "meta" : "default: 4m",
-    "version" : "0.5.0",
-    "docHTML" : "Size of each piece of a block for TorrentBroadcastFactory, in KiB unless otherwise specified. Too large a value decreases parallelism during broadcast (makes it slower); however, if it is too small, BlockManager might take a performance hit"
-}, {
-    "caption" : "spark.broadcast.checksum",
-    "value" : "spark.broadcast.checksum = true",
-    "meta" : "default: true",
-    "version" : "2.1.1",
-    "docHTML" : "Whether to enable checksum for broadcast. If enabled, broadcasts will include a checksum, which can help detect corrupted blocks, at the cost of computing and sending a little more data. It's possible to disable it if the network has other mechanisms to guarantee data won't be corrupted during broadcast"
-}, {
-    "caption" : "spark.rdd.compress",
-    "value" : "spark.rdd.compress = false",
+    "caption" : "spark.cleaner.referenceTracking.blocking.shuffle",
+    "value" : "spark.cleaner.referenceTracking.blocking.shuffle = false",
     "meta" : "default: false",
-    "version" : "0.6.0",
-    "docHTML" : "Whether to compress serialized RDD partitions (e.g. for StorageLevel.MEMORY_ONLY_SER in Scala or StorageLevel.MEMORY_ONLY in Python). Can save substantial space at the cost of some extra CPU time. Compression will use spark.io.compression.codec"
-}, {
-    "caption" : "spark.serializer",
-    "value" : "spark.serializer = org.apache.spark.serializer.JavaSerializer",
-    "meta" : "default: org.apache.spark.serializer.JavaSerializer",
-    "version" : "0.5.0",
+    "version" : "1.1.1",
     "docHTML" : ""
 }, {
-    "caption" : "spark.submit.deployMode",
-    "value" : "spark.submit.deployMode = client",
-    "meta" : "default: client",
-    "version" : "1.5.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.submit.pyFiles",
-    "value" : "spark.submit.pyFiles",
-    "version" : "1.0.1",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.scheduler.mode",
-    "value" : "spark.scheduler.mode = FIFO",
-    "meta" : "default: FIFO",
-    "version" : "0.8.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.speculation",
-    "value" : "spark.speculation = false",
+    "caption" : "spark.cleaner.referenceTracking.cleanCheckpoints",
+    "value" : "spark.cleaner.referenceTracking.cleanCheckpoints = false",
     "meta" : "default: false",
-    "version" : "0.6.0",
+    "version" : "1.4.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.speculation.interval",
-    "value" : "spark.speculation.interval = 100ms",
-    "meta" : "default: 100ms",
-    "version" : "0.6.0",
+    "caption" : "spark.scheduler.maxRegisteredResourcesWaitingTime",
+    "value" : "spark.scheduler.maxRegisteredResourcesWaitingTime = 30s",
+    "meta" : "default: 30s",
+    "version" : "1.1.1",
     "docHTML" : ""
 }, {
-    "caption" : "spark.speculation.multiplier",
-    "value" : "spark.speculation.multiplier = 1.5",
-    "meta" : "default: 1.5",
-    "version" : "0.6.0",
-    "docHTML" : ""
+    "caption" : "spark.shuffle.push.finalize.timeout",
+    "value" : "spark.shuffle.push.finalize.timeout = 10s",
+    "meta" : "default: 10s",
+    "version" : "3.2.0",
+    "docHTML" : "The amount of time driver waits, after all mappers have finished for a given shuffle map stage, before it sends merge finalize requests to remote external shuffle services. This gives the external shuffle services extra time to merge blocks. Setting this too long could potentially lead to performance regression"
 }, {
-    "caption" : "spark.speculation.quantile",
-    "value" : "spark.speculation.quantile = 0.75",
-    "meta" : "default: 0.75",
-    "version" : "0.6.0",
-    "docHTML" : ""
+    "caption" : "spark.shuffle.push.mergersMinThresholdRatio",
+    "value" : "spark.shuffle.push.mergersMinThresholdRatio = 0.05",
+    "meta" : "default: 0.05",
+    "version" : "3.2.0",
+    "docHTML" : "Ratio used to compute the minimum number of shuffle merger locations required for a stage based on the number of partitions for the reducer stage. For example, a reduce stage which has 100 partitions and uses the default value 0.05 requires at least 5 unique merger locations to enable push-based shuffle. Merger locations are currently defined as external shuffle services."
 }, {
-    "caption" : "spark.decommission.enabled",
-    "value" : "spark.decommission.enabled = false",
-    "meta" : "default: false",
-    "version" : "3.1.0",
-    "docHTML" : "When decommission enabled, Spark will try its best to shutdown the executor gracefully. Spark will try to migrate all the RDD blocks (controlled by spark.storage.decommission.rddBlocks.enabled) and shuffle blocks (controlled by spark.storage.decommission.shuffleBlocks.enabled) from the decommissioning executor to a remote executor when spark.storage.decommission.enabled is enabled. With decommission enabled, Spark will also decommission an executor instead of killing when spark.dynamicAllocation.enabled enabled."
+    "caption" : "spark.shuffle.push.merge.finalizeThreads",
+    "value" : "spark.shuffle.push.merge.finalizeThreads = 3",
+    "meta" : "default: 3",
+    "version" : "3.3.0",
+    "docHTML" : "Number of threads used by driver to finalize shuffle merge. Since it could potentially take seconds for a large shuffle to finalize, having multiple threads helps driver to handle concurrent shuffle merge finalize requests when push-based shuffle is enabled."
 }, {
-    "caption" : "spark.jars.packages",
-    "value" : "spark.jars.packages",
-    "version" : "1.5.0",
-    "docHTML" : "Comma-separated list of Maven coordinates of jars to include on the driver and executor classpaths. The coordinates should be groupId:artifactId:version. If spark.jars.ivySettings is given artifacts will be resolved according to the configuration in the file, otherwise artifacts will be searched for in the local maven repo, then maven central and finally any additional remote repositories given by the command-line option --repositories. For more details, see Advanced Dependency Management."
-}, {
-    "caption" : "spark.jars.excludes",
-    "value" : "spark.jars.excludes",
-    "version" : "1.5.0",
-    "docHTML" : "Comma-separated list of groupId:artifactId, to exclude while resolving the dependencies provided in spark.jars.packages to avoid dependency conflicts."
-}, {
-    "caption" : "spark.jars.repositories",
-    "value" : "spark.jars.repositories",
-    "version" : "2.3.0",
-    "docHTML" : "Comma-separated list of additional remote repositories to search for the maven coordinates given with --packages or spark.jars.packages."
-}, {
-    "caption" : "spark.plugins",
-    "value" : "spark.plugins",
-    "version" : "3.0.0",
-    "docHTML" : "Comma-separated list of class names implementing org.apache.spark.api.plugin.SparkPlugin to load into the application."
-}, {
-    "caption" : "spark.jars",
-    "value" : "spark.jars",
-    "version" : "0.9.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.yarn.dist.pyFiles",
-    "value" : "spark.yarn.dist.pyFiles",
-    "version" : "2.2.1",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.archives",
-    "value" : "spark.archives",
-    "version" : "3.1.0",
-    "docHTML" : "Comma-separated list of archives to be extracted into the working directory of each executor. .jar, .tar.gz, .tgz and .zip are supported. You can specify the directory name to unpack via adding '#' after the file name to unpack, for example, 'file.zip#directory'. This configuration is experimental."
-}, {
-    "caption" : "spark.files",
-    "value" : "spark.files",
-    "version" : "1.0.0",
-    "docHTML" : ""
+    "caption" : "spark.shuffle.push.minShuffleSizeToWait",
+    "value" : "spark.shuffle.push.minShuffleSizeToWait = 500m",
+    "meta" : "default: 500m",
+    "version" : "3.3.0",
+    "docHTML" : "Driver will wait for merge finalization to complete only if total shuffle size is more than this threshold. If total shuffle size is less, driver will immediately finalize the shuffle output"
 }, {
     "caption" : "spark.resources.discoveryPlugin",
-    "value" : "spark.resources.discoveryPlugin",
+    "value" : "spark.resources.discoveryPlugin = ",
     "version" : "3.0.0",
     "docHTML" : "Comma-separated list of class names implementingorg.apache.spark.api.resource.ResourceDiscoveryPlugin to load into the application.This is for advanced users to replace the resource discovery class with a custom implementation. Spark will try each class specified until one of them returns the resource information for that resource. It tries the discovery script last if none of the plugins return information for that resource."
 }, {
@@ -761,12 +401,12 @@ let SPARK_CONFIG_OPTIONS = [ {
     "docHTML" : "Which credentials to use when renewing delegation tokens for executors. Can be either 'keytab', the default, which requires a keytab to be provided, or 'ccache', which uses the local credentials cache."
 }, {
     "caption" : "spark.kerberos.access.hadoopFileSystems",
-    "value" : "spark.kerberos.access.hadoopFileSystems",
+    "value" : "spark.kerberos.access.hadoopFileSystems = ",
     "version" : "3.0.0",
     "docHTML" : "Extra Hadoop filesystem URLs for which to request delegation tokens. The filesystem that hosts fs.defaultFS does not need to be listed here."
 }, {
     "caption" : "spark.yarn.kerberos.renewal.excludeHadoopFileSystems",
-    "value" : "spark.yarn.kerberos.renewal.excludeHadoopFileSystems",
+    "value" : "spark.yarn.kerberos.renewal.excludeHadoopFileSystems = ",
     "version" : "3.2.0",
     "docHTML" : "The list of Hadoop filesystem URLs whose hosts will be excluded from delegation token renewal at resource scheduler. Currently this is known to work under YARN, so YARN Resource Manager won't renew tokens for the application. Note that as resource scheduler does not renew token, so any application running longer than the original token expiration that tries to use that token will likely fail."
 }, {
@@ -1300,169 +940,530 @@ let SPARK_CONFIG_OPTIONS = [ {
     "version" : "3.3.0",
     "docHTML" : "The max attempts the worker will try to sync the ExecutorState to the Master, if the failed attempts reach the max attempts limit, the worker will give up and exit."
 }, {
-    "caption" : "spark.eventLog.gcMetrics.youngGenerationGarbageCollectors",
-    "value" : "spark.eventLog.gcMetrics.youngGenerationGarbageCollectors",
-    "version" : "3.0.0",
-    "docHTML" : "Names of supported young generation garbage collector. A name usually is  the return of GarbageCollectorMXBean.getName. The built-in young generation garbage collectors are List(Copy, PS Scavenge, ParNew, G1 Young Generation)"
+    "caption" : "spark.yarn.dist.pyFiles",
+    "value" : "spark.yarn.dist.pyFiles = ",
+    "version" : "2.2.1",
+    "docHTML" : ""
 }, {
-    "caption" : "spark.eventLog.gcMetrics.oldGenerationGarbageCollectors",
-    "value" : "spark.eventLog.gcMetrics.oldGenerationGarbageCollectors",
-    "version" : "3.0.0",
-    "docHTML" : "Names of supported old generation garbage collector. A name usually is the return of GarbageCollectorMXBean.getName. The built-in old generation garbage collectors are List(MarkSweepCompact, PS MarkSweep, ConcurrentMarkSweep, G1 Old Generation)"
+    "caption" : "spark.files",
+    "value" : "spark.files = ",
+    "version" : "1.0.0",
+    "docHTML" : ""
 }, {
-    "caption" : "spark.executor.heartbeat.dropZeroAccumulatorUpdates",
-    "value" : "spark.executor.heartbeat.dropZeroAccumulatorUpdates = true",
-    "meta" : "default: true",
+    "caption" : "spark.archives",
+    "value" : "spark.archives = ",
+    "version" : "3.1.0",
+    "docHTML" : "Comma-separated list of archives to be extracted into the working directory of each executor. .jar, .tar.gz, .tgz and .zip are supported. You can specify the directory name to unpack via adding '#' after the file name to unpack, for example, 'file.zip#directory'. This configuration is experimental."
+}, {
+    "caption" : "spark.jars",
+    "value" : "spark.jars = ",
+    "version" : "0.9.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.plugins",
+    "value" : "spark.plugins = ",
+    "version" : "3.0.0",
+    "docHTML" : "Comma-separated list of class names implementing org.apache.spark.api.plugin.SparkPlugin to load into the application."
+}, {
+    "caption" : "spark.buffer.size",
+    "value" : "spark.buffer.size = 65536",
+    "meta" : "default: 65536",
+    "version" : "0.5.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.driver.cores",
+    "value" : "spark.driver.cores = 1",
+    "meta" : "default: 1",
+    "version" : "1.3.0",
+    "docHTML" : "Number of cores to use for the driver process, only in cluster mode."
+}, {
+    "caption" : "spark.driver.memory",
+    "value" : "spark.driver.memory = 1g",
+    "meta" : "default: 1g",
+    "version" : "1.1.1",
+    "docHTML" : "Amount of memory to use for the driver process, in MiB unless otherwise specified."
+}, {
+    "caption" : "spark.driver.log.persistToDfs.enabled",
+    "value" : "spark.driver.log.persistToDfs.enabled = false",
+    "meta" : "default: false",
     "version" : "3.0.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.storage.decommission.shuffleBlocks.enabled",
-    "value" : "spark.storage.decommission.shuffleBlocks.enabled = false",
+    "caption" : "spark.driver.log.allowErasureCoding",
+    "value" : "spark.driver.log.allowErasureCoding = false",
     "meta" : "default: false",
-    "version" : "3.1.0",
-    "docHTML" : "Whether to transfer shuffle blocks during block manager decommissioning. Requires a migratable shuffle resolver (like sort based shuffle)"
-}, {
-    "caption" : "spark.storage.decommission.maxReplicationFailuresPerBlock",
-    "value" : "spark.storage.decommission.maxReplicationFailuresPerBlock = 3",
-    "meta" : "default: 3",
-    "version" : "3.1.0",
-    "docHTML" : "Maximum number of failures which can be handled for the replication of one RDD block when block manager is decommissioning and trying to move its existing blocks."
-}, {
-    "caption" : "spark.storage.decommission.replicationReattemptInterval",
-    "value" : "spark.storage.decommission.replicationReattemptInterval = 30s",
-    "meta" : "default: 30s",
-    "version" : "3.1.0",
-    "docHTML" : "The interval of time between consecutive cache block replication reattempts happening on each decommissioning executor (due to storage decommissioning)."
-}, {
-    "caption" : "spark.storage.decommission.fallbackStorage.cleanUp",
-    "value" : "spark.storage.decommission.fallbackStorage.cleanUp = false",
-    "meta" : "default: false",
-    "version" : "3.2.0",
-    "docHTML" : "If true, Spark cleans up its fallback storage data during shutting down."
-}, {
-    "caption" : "spark.storage.blockManagerMasterDriverHeartbeatTimeoutMs",
-    "value" : "spark.storage.blockManagerMasterDriverHeartbeatTimeoutMs = 10m",
-    "meta" : "default: 10m",
-    "version" : "3.2.0",
-    "docHTML" : "A timeout used for block manager master's driver heartbeat endpoint."
-}, {
-    "caption" : "spark.storage.cleanupFilesAfterExecutorExit",
-    "value" : "spark.storage.cleanupFilesAfterExecutorExit = true",
-    "meta" : "default: true",
-    "version" : "2.4.0",
-    "docHTML" : "Whether or not cleanup the files not served by the external shuffle service on executor exits."
-}, {
-    "caption" : "spark.dynamicAllocation.cachedExecutorIdleTimeout",
-    "value" : "spark.dynamicAllocation.cachedExecutorIdleTimeout = 2147483647000ms",
-    "meta" : "default: 2147483647000ms",
-    "version" : "1.4.0",
+    "version" : "3.0.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.dynamicAllocation.sustainedSchedulerBacklogTimeout",
+    "caption" : "spark.eventLog.enabled",
+    "value" : "spark.eventLog.enabled = false",
+    "meta" : "default: false",
+    "version" : "1.0.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.eventLog.dir",
+    "value" : "spark.eventLog.dir = /tmp/spark-events",
+    "meta" : "default: /tmp/spark-events",
+    "version" : "1.0.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.eventLog.compress",
+    "value" : "spark.eventLog.compress = false",
+    "meta" : "default: false",
+    "version" : "1.0.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.eventLog.logBlockUpdates.enabled",
+    "value" : "spark.eventLog.logBlockUpdates.enabled = false",
+    "meta" : "default: false",
+    "version" : "2.3.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.eventLog.erasureCoding.enabled",
+    "value" : "spark.eventLog.erasureCoding.enabled = false",
+    "meta" : "default: false",
+    "version" : "3.0.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.eventLog.testing",
+    "value" : "spark.eventLog.testing = false",
+    "meta" : "default: false",
+    "version" : "1.0.1",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.eventLog.overwrite",
+    "value" : "spark.eventLog.overwrite = false",
+    "meta" : "default: false",
+    "version" : "1.0.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.eventLog.rolling.enabled",
+    "value" : "spark.eventLog.rolling.enabled = false",
+    "meta" : "default: false",
+    "version" : "3.0.0",
+    "docHTML" : "Whether rolling over event log files is enabled. If set to true, it cuts down each event log file to the configured size."
+}, {
+    "caption" : "spark.executor.cores",
+    "value" : "spark.executor.cores = 1",
+    "meta" : "default: 1",
+    "version" : "1.0.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.executor.memory",
+    "value" : "spark.executor.memory = 1g",
+    "meta" : "default: 1g",
+    "version" : "0.7.0",
+    "docHTML" : "Amount of memory to use per executor process, in MiB unless otherwise specified."
+}, {
+    "caption" : "spark.memory.offHeap.enabled",
+    "value" : "spark.memory.offHeap.enabled = false",
+    "meta" : "default: false",
+    "version" : "1.6.0",
+    "docHTML" : "If true, Spark will attempt to use off-heap memory for certain operations. If off-heap memory use is enabled, then spark.memory.offHeap.size must be positive."
+}, {
+    "caption" : "spark.memory.offHeap.size",
+    "value" : "spark.memory.offHeap.size = 0b",
+    "meta" : "default: 0b",
+    "version" : "1.6.0",
+    "docHTML" : "The absolute amount of memory which can be used for off-heap allocation,  in bytes unless otherwise specified. This setting has no impact on heap memory usage, so if your executors' total memory consumption must fit within some hard limit then be sure to shrink your JVM heap size accordingly. This must be set to a positive value when spark.memory.offHeap.enabled=true."
+}, {
+    "caption" : "spark.memory.storageFraction",
+    "value" : "spark.memory.storageFraction = 0.5",
+    "meta" : "default: 0.5",
+    "version" : "1.6.0",
+    "docHTML" : "Amount of storage memory immune to eviction, expressed as a fraction of the size of the region set aside by spark.memory.fraction. The higher this is, the less working memory may be available to execution and tasks may spill to disk more often. Leaving this at the default value is recommended. "
+}, {
+    "caption" : "spark.memory.fraction",
+    "value" : "spark.memory.fraction = 0.6",
+    "meta" : "default: 0.6",
+    "version" : "1.6.0",
+    "docHTML" : "Fraction of (heap space - 300MB) used for execution and storage. The lower this is, the more frequently spills and cached data eviction occur. The purpose of this config is to set aside memory for internal metadata, user data structures, and imprecise size estimation in the case of sparse, unusually large records. Leaving this at the default value is recommended.  "
+}, {
+    "caption" : "spark.storage.cachedPeersTtl",
+    "value" : "spark.storage.cachedPeersTtl = 60000",
+    "meta" : "default: 60000",
+    "version" : "1.1.1",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.yarn.isPython",
+    "value" : "spark.yarn.isPython = false",
+    "meta" : "default: false",
+    "version" : "1.5.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.task.cpus",
+    "value" : "spark.task.cpus = 1",
+    "meta" : "default: 1",
+    "version" : "0.5.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.dynamicAllocation.enabled",
+    "value" : "spark.dynamicAllocation.enabled = false",
+    "meta" : "default: false",
     "version" : "1.2.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.files.fetchFailure.unRegisterOutputOnHost",
-    "value" : "spark.files.fetchFailure.unRegisterOutputOnHost = false",
+    "caption" : "spark.dynamicAllocation.testing",
+    "value" : "spark.dynamicAllocation.testing = false",
     "meta" : "default: false",
-    "version" : "2.3.0",
-    "docHTML" : "Whether to un-register all the outputs on the host in condition that we receive  a FetchFailure. This is set default to false, which means, we only un-register the  outputs related to the exact executor(instead of the host) on a FetchFailure."
-}, {
-    "caption" : "spark.scheduler.listenerbus.metrics.maxListenerClassesTimed",
-    "value" : "spark.scheduler.listenerbus.metrics.maxListenerClassesTimed = 128",
-    "meta" : "default: 128",
-    "version" : "2.3.0",
+    "version" : "1.2.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.scheduler.listenerbus.logSlowEvent.threshold",
-    "value" : "spark.scheduler.listenerbus.logSlowEvent.threshold = 1s",
-    "meta" : "default: 1s",
-    "version" : "3.0.0",
-    "docHTML" : "The time threshold of whether a event is considered to be taking too much time to process. Log the event if spark.scheduler.listenerbus.logSlowEvent is true."
+    "caption" : "spark.locality.wait",
+    "value" : "spark.locality.wait = 3s",
+    "meta" : "default: 3s",
+    "version" : "0.5.0",
+    "docHTML" : ""
 }, {
-    "caption" : "spark.taskMetrics.trackUpdatedBlockStatuses",
-    "value" : "spark.taskMetrics.trackUpdatedBlockStatuses = false",
+    "caption" : "spark.shuffle.service.enabled",
+    "value" : "spark.shuffle.service.enabled = false",
     "meta" : "default: false",
-    "version" : "2.3.0",
-    "docHTML" : "Enable tracking of updatedBlockStatuses in the TaskMetrics. Off by default since tracking the block statuses can use a lot of memory and its not used anywhere within spark."
+    "version" : "1.2.0",
+    "docHTML" : ""
 }, {
-    "caption" : "spark.shuffle.spill.numElementsForceSpillThreshold",
-    "value" : "spark.shuffle.spill.numElementsForceSpillThreshold = 2147483647",
+    "caption" : "spark.shuffle.service.port",
+    "value" : "spark.shuffle.service.port = 7337",
+    "meta" : "default: 7337",
+    "version" : "1.2.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.shuffle.service.name",
+    "value" : "spark.shuffle.service.name = spark_shuffle",
+    "meta" : "default: spark_shuffle",
+    "version" : "3.2.0",
+    "docHTML" : "The configured name of the Spark shuffle service the client should communicate with. This must match the name used to configure the Shuffle within the YARN NodeManager configuration (`yarn.nodemanager.aux-services`). Only takes effect when ConfigEntry(key=spark.shuffle.service.enabled, defaultValue=false, doc=, public=true, version=1.2.0) is set to true."
+}, {
+    "caption" : "spark.kerberos.relogin.period",
+    "value" : "spark.kerberos.relogin.period = 1m",
+    "meta" : "default: 1m",
+    "version" : "3.0.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.task.maxFailures",
+    "value" : "spark.task.maxFailures = 4",
+    "meta" : "default: 4",
+    "version" : "0.8.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.task.reaper.enabled",
+    "value" : "spark.task.reaper.enabled = false",
+    "meta" : "default: false",
+    "version" : "2.0.3",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.task.reaper.killTimeout",
+    "value" : "spark.task.reaper.killTimeout = -1ms",
+    "meta" : "default: -1ms",
+    "version" : "2.0.3",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.task.reaper.threadDump",
+    "value" : "spark.task.reaper.threadDump = true",
+    "meta" : "default: true",
+    "version" : "2.0.3",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.excludeOnFailure.application.maxFailedTasksPerExecutor",
+    "value" : "spark.excludeOnFailure.application.maxFailedTasksPerExecutor = 2",
+    "meta" : "default: 2",
+    "version" : "3.1.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.excludeOnFailure.application.maxFailedExecutorsPerNode",
+    "value" : "spark.excludeOnFailure.application.maxFailedExecutorsPerNode = 2",
+    "meta" : "default: 2",
+    "version" : "3.1.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.history.ui.maxApplications",
+    "value" : "spark.history.ui.maxApplications = 2147483647",
     "meta" : "default: 2147483647",
-    "version" : "1.6.0",
-    "docHTML" : "The maximum number of elements in memory before forcing the shuffle sorter to spill. By default it's Integer.MAX_VALUE, which means we never force the sorter to spill, until we reach some limitations, like the max page size limitation for the pointer array in the sorter."
-}, {
-    "caption" : "spark.shuffle.mapOutput.parallelAggregationThreshold",
-    "value" : "spark.shuffle.mapOutput.parallelAggregationThreshold = 10000000",
-    "meta" : "default: 10000000",
-    "version" : "2.3.0",
-    "docHTML" : "Multi-thread is used when the number of mappers * shuffle partitions is greater than or equal to this threshold. Note that the actual parallelism is calculated by number of mappers * shuffle partitions / this threshold + 1, so this threshold should be positive."
-}, {
-    "caption" : "spark.storage.localDiskByExecutors.cacheSize",
-    "value" : "spark.storage.localDiskByExecutors.cacheSize = 1000",
-    "meta" : "default: 1000",
-    "version" : "3.0.0",
-    "docHTML" : "The max number of executors for which the local dirs are stored. This size is both applied for the driver and both for the executors side to avoid having an unbounded store. This cache will be used to avoid the network in case of fetching disk persisted RDD blocks or shuffle blocks (when `spark.shuffle.readHostLocalDisk` is set) from the same host."
-}, {
-    "caption" : "spark.scheduler.barrier.maxConcurrentTasksCheck.interval",
-    "value" : "spark.scheduler.barrier.maxConcurrentTasksCheck.interval = 15s",
-    "meta" : "default: 15s",
-    "version" : "2.4.0",
-    "docHTML" : "Time in seconds to wait between a max concurrent tasks check failure and the next check. A max concurrent tasks check ensures the cluster can launch more concurrent tasks than required by a barrier stage on job submitted. The check can fail in case a cluster has just started and not enough executors have registered, so we wait for a little while and try to perform the check again. If the check fails more than a configured max failure times for a job then fail current job submission. Note this config only applies to jobs that contain one or more barrier stages, we won't perform the check on non-barrier jobs."
-}, {
-    "caption" : "spark.scheduler.barrier.maxConcurrentTasksCheck.maxFailures",
-    "value" : "spark.scheduler.barrier.maxConcurrentTasksCheck.maxFailures = 40",
-    "meta" : "default: 40",
-    "version" : "2.4.0",
-    "docHTML" : "Number of max concurrent tasks check failures allowed before fail a job submission. A max concurrent tasks check ensures the cluster can launch more concurrent tasks than required by a barrier stage on job submitted. The check can fail in case a cluster has just started and not enough executors have registered, so we wait for a little while and try to perform the check again. If the check fails more than a configured max failure times for a job then fail current job submission. Note this config only applies to jobs that contain one or more barrier stages, we won't perform the check on non-barrier jobs."
-}, {
-    "caption" : "spark.cleaner.referenceTracking.blocking.shuffle",
-    "value" : "spark.cleaner.referenceTracking.blocking.shuffle = false",
-    "meta" : "default: false",
-    "version" : "1.1.1",
+    "version" : "2.0.1",
     "docHTML" : ""
 }, {
-    "caption" : "spark.cleaner.referenceTracking.cleanCheckpoints",
-    "value" : "spark.cleaner.referenceTracking.cleanCheckpoints = false",
+    "caption" : "spark.io.encryption.enabled",
+    "value" : "spark.io.encryption.enabled = false",
+    "meta" : "default: false",
+    "version" : "2.1.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.driver.host",
+    "value" : "spark.driver.host = 172.18.2.2",
+    "meta" : "default: 172.18.2.2",
+    "version" : "0.7.0",
+    "docHTML" : "Address of driver endpoints."
+}, {
+    "caption" : "spark.driver.port",
+    "value" : "spark.driver.port = 0",
+    "meta" : "default: 0",
+    "version" : "0.7.0",
+    "docHTML" : "Port of driver endpoints."
+}, {
+    "caption" : "spark.driver.supervise",
+    "value" : "spark.driver.supervise = false",
+    "meta" : "default: false",
+    "version" : "1.3.0",
+    "docHTML" : "If true, restarts the driver automatically if it fails with a non-zero exit status. Only has effect in Spark standalone mode or Mesos cluster deploy mode."
+}, {
+    "caption" : "spark.driver.bindAddress",
+    "version" : "2.1.0",
+    "docHTML" : "Address where to bind network listen sockets on the driver."
+}, {
+    "caption" : "spark.blockManager.port",
+    "value" : "spark.blockManager.port = 0",
+    "meta" : "default: 0",
+    "version" : "1.1.0",
+    "docHTML" : "Port to use for the block manager when a more specific setting is not provided."
+}, {
+    "caption" : "spark.files.ignoreCorruptFiles",
+    "value" : "spark.files.ignoreCorruptFiles = false",
+    "meta" : "default: false",
+    "version" : "2.1.0",
+    "docHTML" : "Whether to ignore corrupt files. If true, the Spark jobs will continue to run when encountering corrupted or non-existing files and contents that have been read will still be returned."
+}, {
+    "caption" : "spark.files.ignoreMissingFiles",
+    "value" : "spark.files.ignoreMissingFiles = false",
+    "meta" : "default: false",
+    "version" : "2.4.0",
+    "docHTML" : "Whether to ignore missing files. If true, the Spark jobs will continue to run when encountering missing files and the contents that have been read will still be returned."
+}, {
+    "caption" : "spark.files.openCostInBytes",
+    "value" : "spark.files.openCostInBytes = 4194304b",
+    "meta" : "default: 4194304b",
+    "version" : "2.1.0",
+    "docHTML" : "The estimated cost to open a file, measured by the number of bytes could be scanned in the same time. This is used when putting multiple files into a partition. It's better to over estimate, then the partitions with small files will be faster than partitions with bigger files."
+}, {
+    "caption" : "spark.redaction.regex",
+    "value" : "spark.redaction.regex = ",
+    "version" : "2.1.2",
+    "docHTML" : "Regex to decide which Spark configuration properties and environment variables in driver and executor environments contain sensitive information. When this regex matches a property key or value, the value is redacted from the environment UI and various logs like YARN and event logs."
+}, {
+    "caption" : "spark.authenticate.secretBitLength",
+    "value" : "spark.authenticate.secretBitLength = 256",
+    "meta" : "default: 256",
+    "version" : "1.6.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.authenticate",
+    "value" : "spark.authenticate = false",
+    "meta" : "default: false",
+    "version" : "1.0.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.authenticate.enableSaslEncryption",
+    "value" : "spark.authenticate.enableSaslEncryption = false",
     "meta" : "default: false",
     "version" : "1.4.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.scheduler.maxRegisteredResourcesWaitingTime",
-    "value" : "spark.scheduler.maxRegisteredResourcesWaitingTime = 30s",
-    "meta" : "default: 30s",
-    "version" : "1.1.1",
+    "caption" : "spark.authenticate.secret.driver.file",
+    "version" : "3.0.0",
+    "docHTML" : "Path to a file that contains the authentication secret to use. Loaded by the driver. In Kubernetes client mode it is often useful to set a different secret path for the driver vs. the executors, since the driver may not be running in a pod unlike the executors. If this is set, an accompanying secret file must be specified for the executors. The fallback configuration allows the same path to be used for both the driver and the executors when running in cluster mode. File-based secret keys are only allowed when using Kubernetes."
+}, {
+    "caption" : "spark.buffer.write.chunkSize",
+    "value" : "spark.buffer.write.chunkSize = 67108864b",
+    "meta" : "default: 67108864b",
+    "version" : "2.3.0",
+    "docHTML" : "The chunk size in bytes during writing out the bytes of ChunkedByteBuffer."
+}, {
+    "caption" : "spark.checkpoint.compress",
+    "value" : "spark.checkpoint.compress = false",
+    "meta" : "default: false",
+    "version" : "2.2.0",
+    "docHTML" : "Whether to compress RDD checkpoints. Generally a good idea. Compression will use spark.io.compression.codec."
+}, {
+    "caption" : "spark.shuffle.sort.io.plugin.class",
+    "value" : "spark.shuffle.sort.io.plugin.class = org.apache.spark.shuffle.sort.io.LocalDiskShuffleDataIO",
+    "meta" : "default: org.apache.spark.shuffle.sort.io.LocalDiskShuffleDataIO",
+    "version" : "3.0.0",
+    "docHTML" : "Name of the class to use for shuffle IO."
+}, {
+    "caption" : "spark.shuffle.file.buffer",
+    "value" : "spark.shuffle.file.buffer = 32k",
+    "meta" : "default: 32k",
+    "version" : "1.4.0",
+    "docHTML" : "Size of the in-memory buffer for each shuffle file output stream, in KiB unless otherwise specified. These buffers reduce the number of disk seeks and system calls made in creating intermediate shuffle files."
+}, {
+    "caption" : "spark.yarn.dist.forceDownloadSchemes",
+    "value" : "spark.yarn.dist.forceDownloadSchemes = ",
+    "version" : "2.3.0",
+    "docHTML" : "Comma-separated list of schemes for which resources will be downloaded to the local disk prior to being added to YARN's distributed cache. For use in cases where the YARN service does not support schemes that are supported by Spark, like http, https and ftp, or jars required to be in the local YARN client's classpath. Wildcard '*' is denoted to download resources for all the schemes."
+}, {
+    "caption" : "spark.driver.maxResultSize",
+    "value" : "spark.driver.maxResultSize = 1g",
+    "meta" : "default: 1g",
+    "version" : "1.2.0",
+    "docHTML" : "Size limit for results."
+}, {
+    "caption" : "spark.shuffle.checksum.enabled",
+    "value" : "spark.shuffle.checksum.enabled = true",
+    "meta" : "default: true",
+    "version" : "3.2.0",
+    "docHTML" : "Whether to calculate the checksum of shuffle data. If enabled, Spark will calculate the checksum values for each partition data within the map output file and store the values in a checksum file on the disk. When there's shuffle data corruption detected, Spark will try to diagnose the cause (e.g., network issue, disk issue, etc.) of the corruption by using the checksum file."
+}, {
+    "caption" : "spark.shuffle.compress",
+    "value" : "spark.shuffle.compress = true",
+    "meta" : "default: true",
+    "version" : "0.6.0",
+    "docHTML" : "Whether to compress shuffle output. Compression will use spark.io.compression.codec."
+}, {
+    "caption" : "spark.shuffle.spill.compress",
+    "value" : "spark.shuffle.spill.compress = true",
+    "meta" : "default: true",
+    "version" : "0.9.0",
+    "docHTML" : "Whether to compress data spilled during shuffles. Compression will use spark.io.compression.codec."
+}, {
+    "caption" : "spark.shuffle.spill.batchSize",
+    "value" : "spark.shuffle.spill.batchSize = 10000",
+    "meta" : "default: 10000",
+    "version" : "0.9.0",
+    "docHTML" : "Size of object batches when reading/writing from serializers."
+}, {
+    "caption" : "spark.shuffle.manager",
+    "value" : "spark.shuffle.manager = sort",
+    "meta" : "default: sort",
+    "version" : "1.1.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.shuffle.push.finalize.timeout",
-    "value" : "spark.shuffle.push.finalize.timeout = 10s",
-    "meta" : "default: 10s",
-    "version" : "3.2.0",
-    "docHTML" : "The amount of time driver waits, after all mappers have finished for a given shuffle map stage, before it sends merge finalize requests to remote external shuffle services. This gives the external shuffle services extra time to merge blocks. Setting this too long could potentially lead to performance regression"
+    "caption" : "spark.shuffle.detectCorrupt",
+    "value" : "spark.shuffle.detectCorrupt = true",
+    "meta" : "default: true",
+    "version" : "2.2.0",
+    "docHTML" : "Whether to detect any corruption in fetched blocks."
 }, {
-    "caption" : "spark.shuffle.push.mergersMinThresholdRatio",
-    "value" : "spark.shuffle.push.mergersMinThresholdRatio = 0.05",
-    "meta" : "default: 0.05",
-    "version" : "3.2.0",
-    "docHTML" : "Ratio used to compute the minimum number of shuffle merger locations required for a stage based on the number of partitions for the reducer stage. For example, a reduce stage which has 100 partitions and uses the default value 0.05 requires at least 5 unique merger locations to enable push-based shuffle. Merger locations are currently defined as external shuffle services."
+    "caption" : "spark.shuffle.sync",
+    "value" : "spark.shuffle.sync = false",
+    "meta" : "default: false",
+    "version" : "0.8.0",
+    "docHTML" : "Whether to force outstanding writes to disk."
 }, {
-    "caption" : "spark.shuffle.push.mergersMinStaticThreshold",
-    "value" : "spark.shuffle.push.mergersMinStaticThreshold = 5",
-    "meta" : "default: 5",
-    "version" : "3.2.0",
-    "docHTML" : "The static threshold for number of shuffle push merger locations should be available in order to enable push-based shuffle for a stage. Note this config works in conjunction with spark.shuffle.push.mergersMinThresholdRatio. Maximum of spark.shuffle.push.mergersMinStaticThreshold and spark.shuffle.push.mergersMinThresholdRatio ratio number of mergers needed to enable push-based shuffle for a stage. For eg: with 1000 partitions for the child stage with spark.shuffle.push.mergersMinStaticThreshold as 5 and spark.shuffle.push.mergersMinThresholdRatio set to 0.05, we would need at least 50 mergers to enable push-based shuffle for that stage."
+    "caption" : "spark.barrier.sync.timeout",
+    "value" : "spark.barrier.sync.timeout = 365d",
+    "meta" : "default: 365d",
+    "version" : "2.4.0",
+    "docHTML" : "The timeout in seconds for each barrier() call from a barrier task. If the coordinator didn't receive all the sync messages from barrier tasks within the configured time, throw a SparkException to fail all the tasks. The default value is set to 31536000(3600 * 24 * 365) so the barrier() call shall wait for one year."
 }, {
-    "caption" : "spark.shuffle.push.merge.finalizeThreads",
-    "value" : "spark.shuffle.push.merge.finalizeThreads = 3",
-    "meta" : "default: 3",
-    "version" : "3.3.0",
-    "docHTML" : "Number of threads used by driver to finalize shuffle merge. Since it could potentially take seconds for a large shuffle to finalize, having multiple threads helps driver to handle concurrent shuffle merge finalize requests when push-based shuffle is enabled."
+    "caption" : "spark.master.rest.port",
+    "value" : "spark.master.rest.port = 6066",
+    "meta" : "default: 6066",
+    "version" : "1.3.0",
+    "docHTML" : ""
 }, {
-    "caption" : "spark.shuffle.push.minShuffleSizeToWait",
-    "value" : "spark.shuffle.push.minShuffleSizeToWait = 500m",
-    "meta" : "default: 500m",
-    "version" : "3.3.0",
-    "docHTML" : "Driver will wait for merge finalization to complete only if total shuffle size is more than this threshold. If total shuffle size is less, driver will immediately finalize the shuffle output"
+    "caption" : "spark.master.ui.port",
+    "value" : "spark.master.ui.port = 8080",
+    "meta" : "default: 8080",
+    "version" : "1.1.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.io.compression.codec",
+    "value" : "spark.io.compression.codec = lz4",
+    "meta" : "default: lz4",
+    "version" : "0.8.0",
+    "docHTML" : "The codec used to compress internal data such as RDD partitions, event log, broadcast variables and shuffle outputs. By default, Spark provides four codecs: lz4, lzf, snappy, and zstd. You can also use fully qualified class names to specify the codec"
+}, {
+    "caption" : "spark.locality.wait.process",
+    "version" : "0.8.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.locality.wait.node",
+    "version" : "0.8.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.locality.wait.rack",
+    "version" : "0.8.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.broadcast.compress",
+    "value" : "spark.broadcast.compress = true",
+    "meta" : "default: true",
+    "version" : "0.6.0",
+    "docHTML" : "Whether to compress broadcast variables before sending them. Generally a good idea. Compression will use spark.io.compression.codec"
+}, {
+    "caption" : "spark.broadcast.blockSize",
+    "value" : "spark.broadcast.blockSize = 4m",
+    "meta" : "default: 4m",
+    "version" : "0.5.0",
+    "docHTML" : "Size of each piece of a block for TorrentBroadcastFactory, in KiB unless otherwise specified. Too large a value decreases parallelism during broadcast (makes it slower); however, if it is too small, BlockManager might take a performance hit"
+}, {
+    "caption" : "spark.broadcast.checksum",
+    "value" : "spark.broadcast.checksum = true",
+    "meta" : "default: true",
+    "version" : "2.1.1",
+    "docHTML" : "Whether to enable checksum for broadcast. If enabled, broadcasts will include a checksum, which can help detect corrupted blocks, at the cost of computing and sending a little more data. It's possible to disable it if the network has other mechanisms to guarantee data won't be corrupted during broadcast"
+}, {
+    "caption" : "spark.rdd.compress",
+    "value" : "spark.rdd.compress = false",
+    "meta" : "default: false",
+    "version" : "0.6.0",
+    "docHTML" : "Whether to compress serialized RDD partitions (e.g. for StorageLevel.MEMORY_ONLY_SER in Scala or StorageLevel.MEMORY_ONLY in Python). Can save substantial space at the cost of some extra CPU time. Compression will use spark.io.compression.codec"
+}, {
+    "caption" : "spark.serializer",
+    "value" : "spark.serializer = org.apache.spark.serializer.JavaSerializer",
+    "meta" : "default: org.apache.spark.serializer.JavaSerializer",
+    "version" : "0.5.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.submit.deployMode",
+    "value" : "spark.submit.deployMode = client",
+    "meta" : "default: client",
+    "version" : "1.5.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.submit.pyFiles",
+    "value" : "spark.submit.pyFiles = ",
+    "version" : "1.0.1",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.scheduler.mode",
+    "value" : "spark.scheduler.mode = FIFO",
+    "meta" : "default: FIFO",
+    "version" : "0.8.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.speculation",
+    "value" : "spark.speculation = false",
+    "meta" : "default: false",
+    "version" : "0.6.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.speculation.interval",
+    "value" : "spark.speculation.interval = 100ms",
+    "meta" : "default: 100ms",
+    "version" : "0.6.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.speculation.multiplier",
+    "value" : "spark.speculation.multiplier = 1.5",
+    "meta" : "default: 1.5",
+    "version" : "0.6.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.speculation.quantile",
+    "value" : "spark.speculation.quantile = 0.75",
+    "meta" : "default: 0.75",
+    "version" : "0.6.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.decommission.enabled",
+    "value" : "spark.decommission.enabled = false",
+    "meta" : "default: false",
+    "version" : "3.1.0",
+    "docHTML" : "When decommission enabled, Spark will try its best to shutdown the executor gracefully. Spark will try to migrate all the RDD blocks (controlled by spark.storage.decommission.rddBlocks.enabled) and shuffle blocks (controlled by spark.storage.decommission.shuffleBlocks.enabled) from the decommissioning executor to a remote executor when spark.storage.decommission.enabled is enabled. With decommission enabled, Spark will also decommission an executor instead of killing when spark.dynamicAllocation.enabled enabled."
+}, {
+    "caption" : "spark.jars.packages",
+    "value" : "spark.jars.packages = ",
+    "version" : "1.5.0",
+    "docHTML" : "Comma-separated list of Maven coordinates of jars to include on the driver and executor classpaths. The coordinates should be groupId:artifactId:version. If spark.jars.ivySettings is given artifacts will be resolved according to the configuration in the file, otherwise artifacts will be searched for in the local maven repo, then maven central and finally any additional remote repositories given by the command-line option --repositories. For more details, see Advanced Dependency Management."
+}, {
+    "caption" : "spark.jars.excludes",
+    "value" : "spark.jars.excludes = ",
+    "version" : "1.5.0",
+    "docHTML" : "Comma-separated list of groupId:artifactId, to exclude while resolving the dependencies provided in spark.jars.packages to avoid dependency conflicts."
+}, {
+    "caption" : "spark.jars.repositories",
+    "value" : "spark.jars.repositories = ",
+    "version" : "2.3.0",
+    "docHTML" : "Comma-separated list of additional remote repositories to search for the maven coordinates given with --packages or spark.jars.packages."
 }, {
     "caption" : "spark.sql.optimizer.runtime.bloomFilter.applicationSideScanSizeThreshold",
     "value" : "spark.sql.optimizer.runtime.bloomFilter.applicationSideScanSizeThreshold = 10GB",
@@ -1476,537 +1477,365 @@ let SPARK_CONFIG_OPTIONS = [ {
     "version" : "3.2.0",
     "docHTML" : "When true, streaming session window sorts and merge sessions in local partition prior to shuffle. This is to reduce the rows to shuffle, but only beneficial when there're lots of rows in a batch being assigned to same sessions."
 }, {
-    "caption" : "spark.sql.analyzer.maxIterations",
-    "value" : "spark.sql.analyzer.maxIterations = 100",
-    "meta" : "default: 100",
+    "caption" : "spark.sql.optimizer.dynamicPartitionPruning.fallbackFilterRatio",
+    "value" : "spark.sql.optimizer.dynamicPartitionPruning.fallbackFilterRatio = 0.5",
+    "meta" : "default: 0.5",
     "version" : "3.0.0",
-    "docHTML" : "The max number of iterations the analyzer runs."
+    "docHTML" : "When statistics are not available or configured not to be used, this config will be used as the fallback filter ratio for computing the data size of the partitioned table after dynamic partition pruning, in order to evaluate if it is worth adding an extra subquery as the pruning filter if broadcast reuse is not applicable."
 }, {
-    "caption" : "spark.sql.optimizer.maxIterations",
-    "value" : "spark.sql.optimizer.maxIterations = 100",
-    "meta" : "default: 100",
-    "version" : "2.0.0",
-    "docHTML" : "The max number of iterations the optimizer runs."
-}, {
-    "caption" : "spark.sql.planChangeLog.level",
-    "value" : "spark.sql.planChangeLog.level = trace",
-    "meta" : "default: trace",
-    "version" : "3.1.0",
-    "docHTML" : "Configures the log level for logging the change from the original plan to the new plan after a rule or batch is applied. The value can be 'trace', 'debug', 'info', 'warn', or 'error'. The default log level is 'trace'."
-}, {
-    "caption" : "spark.sql.inMemoryColumnarStorage.compressed",
-    "value" : "spark.sql.inMemoryColumnarStorage.compressed = true",
-    "meta" : "default: true",
-    "version" : "1.0.1",
-    "docHTML" : "When set to true Spark SQL will automatically select a compression codec for each column based on statistics of the data."
-}, {
-    "caption" : "spark.sql.inMemoryColumnarStorage.batchSize",
-    "value" : "spark.sql.inMemoryColumnarStorage.batchSize = 10000",
-    "meta" : "default: 10000",
-    "version" : "1.1.1",
-    "docHTML" : "Controls the size of batches for columnar caching.  Larger batch sizes can improve memory utilization and compression, but risk OOMs when caching data."
-}, {
-    "caption" : "spark.sql.join.preferSortMergeJoin",
-    "value" : "spark.sql.join.preferSortMergeJoin = true",
-    "meta" : "default: true",
-    "version" : "2.0.0",
-    "docHTML" : "When true, prefer sort merge join over shuffled hash join. Sort merge join consumes less memory than shuffled hash join and it works efficiently when both join tables are large. On the other hand, shuffled hash join can improve performance (e.g., of full outer joins) when one of join tables is much smaller."
-}, {
-    "caption" : "spark.sql.sort.enableRadixSort",
-    "value" : "spark.sql.sort.enableRadixSort = true",
-    "meta" : "default: true",
-    "version" : "2.0.0",
-    "docHTML" : "When true, enable use of radix sort when possible. Radix sort is much faster but requires additional memory to be reserved up-front. The memory overhead may be significant when sorting very small rows (up to 50% more in this case)."
-}, {
-    "caption" : "spark.sql.shuffledHashJoinFactor",
-    "value" : "spark.sql.shuffledHashJoinFactor = 3",
-    "meta" : "default: 3",
-    "version" : "3.3.0",
-    "docHTML" : "The shuffle hash join can be selected if the data size of small side multiplied by this factor is still smaller than the large side."
-}, {
-    "caption" : "spark.sql.limit.scaleUpFactor",
-    "value" : "spark.sql.limit.scaleUpFactor = 4",
-    "meta" : "default: 4",
-    "version" : "2.1.1",
-    "docHTML" : "Minimal increase rate in number of partitions between attempts when executing a take on a query. Higher values lead to more partitions read. Lower values might lead to longer execution times as more jobs will be run"
-}, {
-    "caption" : "spark.sql.shuffle.partitions",
-    "value" : "spark.sql.shuffle.partitions = 200",
-    "meta" : "default: 200",
-    "version" : "1.1.0",
-    "docHTML" : "The default number of partitions to use when shuffling data for joins or aggregations. Note: For structured streaming, this configuration cannot be changed between query restarts from the same checkpoint location."
-}, {
-    "caption" : "spark.sql.adaptive.skewJoin.enabled",
-    "value" : "spark.sql.adaptive.skewJoin.enabled = true",
+    "caption" : "spark.sql.optimizer.dynamicPartitionPruning.reuseBroadcastOnly",
+    "value" : "spark.sql.optimizer.dynamicPartitionPruning.reuseBroadcastOnly = true",
     "meta" : "default: true",
     "version" : "3.0.0",
-    "docHTML" : "When true and 'spark.sql.adaptive.enabled' is true, Spark dynamically handles skew in shuffled join (sort-merge and shuffled hash) by splitting (and replicating if needed) skewed partitions."
+    "docHTML" : "When true, dynamic partition pruning will only apply when the broadcast exchange of a broadcast hash join operation can be reused as the dynamic pruning filter."
 }, {
-    "caption" : "spark.sql.caseSensitive",
-    "value" : "spark.sql.caseSensitive = false",
+    "caption" : "spark.sql.optimizer.runtimeFilter.semiJoinReduction.enabled",
+    "value" : "spark.sql.optimizer.runtimeFilter.semiJoinReduction.enabled = false",
     "meta" : "default: false",
+    "version" : "3.3.0",
+    "docHTML" : "When true and if one side of a shuffle join has a selective predicate, we attempt to insert a semi join in the other side to reduce the amount of shuffle data."
+}, {
+    "caption" : "spark.sql.optimizer.runtime.bloomFilter.creationSideThreshold",
+    "value" : "spark.sql.optimizer.runtime.bloomFilter.creationSideThreshold = 10MB",
+    "meta" : "default: 10MB",
+    "version" : "3.3.0",
+    "docHTML" : "Size threshold of the bloom filter creation side plan. Estimated size needs to be under this value to try to inject bloom filter."
+}, {
+    "caption" : "spark.sql.requireAllClusterKeysForCoPartition",
+    "value" : "spark.sql.requireAllClusterKeysForCoPartition = true",
+    "meta" : "default: true",
+    "version" : "3.3.0",
+    "docHTML" : "When true, the planner requires all the clustering keys as the hash partition keys of the children, to eliminate the shuffles for the operator that needs its children to be co-partitioned, such as JOIN node. This is to avoid data skews which can lead to significant performance regression if shuffles are eliminated."
+}, {
+    "caption" : "spark.sql.requireAllClusterKeysForDistribution",
+    "value" : "spark.sql.requireAllClusterKeysForDistribution = false",
+    "meta" : "default: false",
+    "version" : "3.3.0",
+    "docHTML" : "When true, the planner requires all the clustering keys as the partition keys (with same ordering) of the children, to eliminate the shuffle for the operator that requires its children be clustered distributed, such as AGGREGATE and WINDOW node. This is to avoid data skews which can lead to significant performance regression if shuffle is eliminated."
+}, {
+    "caption" : "spark.sql.adaptive.nonEmptyPartitionRatioForBroadcastJoin",
+    "value" : "spark.sql.adaptive.nonEmptyPartitionRatioForBroadcastJoin = 0.2",
+    "meta" : "default: 0.2",
+    "version" : "3.0.0",
+    "docHTML" : "The relation with a non-empty partition ratio lower than this config will not be considered as the build side of a broadcast-hash join in adaptive execution regardless of its size.This configuration only has an effect when 'spark.sql.adaptive.enabled' is true."
+}, {
+    "caption" : "spark.sql.adaptive.maxShuffledHashJoinLocalMapThreshold",
+    "value" : "spark.sql.adaptive.maxShuffledHashJoinLocalMapThreshold = 0b",
+    "meta" : "default: 0b",
+    "version" : "3.2.0",
+    "docHTML" : "Configures the maximum size in bytes per partition that can be allowed to build local hash map. If this value is not smaller than spark.sql.adaptive.advisoryPartitionSizeInBytes and all the partition size are not larger than this config, join selection prefer to use shuffled hash join instead of sort merge join regardless of the value of spark.sql.join.preferSortMergeJoin."
+}, {
+    "caption" : "spark.sql.adaptive.optimizeSkewsInRebalancePartitions.enabled",
+    "value" : "spark.sql.adaptive.optimizeSkewsInRebalancePartitions.enabled = true",
+    "meta" : "default: true",
+    "version" : "3.2.0",
+    "docHTML" : "When true and 'spark.sql.adaptive.enabled' is true, Spark will optimize the skewed shuffle partitions in RebalancePartitions and split them to smaller ones according to the target size (specified by 'spark.sql.adaptive.advisoryPartitionSizeInBytes'), to avoid data skew."
+}, {
+    "caption" : "spark.sql.adaptive.rebalancePartitionsSmallPartitionFactor",
+    "value" : "spark.sql.adaptive.rebalancePartitionsSmallPartitionFactor = 0.2",
+    "meta" : "default: 0.2",
+    "version" : "3.3.0",
+    "docHTML" : "A partition will be merged during splitting if its size is small than this factor multiply spark.sql.adaptive.advisoryPartitionSizeInBytes."
+}, {
+    "caption" : "spark.sql.subexpressionElimination.cache.maxEntries",
+    "value" : "spark.sql.subexpressionElimination.cache.maxEntries = 100",
+    "meta" : "default: 100",
+    "version" : "3.1.0",
+    "docHTML" : "The maximum entries of the cache used for interpreted subexpression elimination."
+}, {
+    "caption" : "spark.sql.parquet.filterPushdown.timestamp",
+    "value" : "spark.sql.parquet.filterPushdown.timestamp = true",
+    "meta" : "default: true",
+    "version" : "2.4.0",
+    "docHTML" : "If true, enables Parquet filter push-down optimization for Timestamp. This configuration only has an effect when 'spark.sql.parquet.filterPushdown' is enabled and Timestamp stored as TIMESTAMP_MICROS or TIMESTAMP_MILLIS type."
+}, {
+    "caption" : "spark.sql.parquet.filterPushdown.string.startsWith",
+    "value" : "spark.sql.parquet.filterPushdown.string.startsWith = true",
+    "meta" : "default: true",
+    "version" : "2.4.0",
+    "docHTML" : "If true, enables Parquet filter push-down optimization for string startsWith function. This configuration only has an effect when 'spark.sql.parquet.filterPushdown' is enabled."
+}, {
+    "caption" : "spark.sql.parquet.pushdown.inFilterThreshold",
+    "value" : "spark.sql.parquet.pushdown.inFilterThreshold = 10",
+    "meta" : "default: 10",
+    "version" : "2.4.0",
+    "docHTML" : "For IN predicate, Parquet filter will push-down a set of OR clauses if its number of values not exceeds this threshold. Otherwise, Parquet filter will push-down a value greater than or equal to its minimum value and less than or equal to its maximum value. By setting this value to 0 this feature can be disabled. This configuration only has an effect when 'spark.sql.parquet.filterPushdown' is enabled."
+}, {
+    "caption" : "spark.sql.parquet.enableNestedColumnVectorizedReader",
+    "value" : "spark.sql.parquet.enableNestedColumnVectorizedReader = false",
+    "meta" : "default: false",
+    "version" : "3.3.0",
+    "docHTML" : "Enables vectorized Parquet decoding for nested columns (e.g., struct, list, map). Requires spark.sql.parquet.enableVectorizedReader to be enabled."
+}, {
+    "caption" : "spark.sql.orc.enableNestedColumnVectorizedReader",
+    "value" : "spark.sql.orc.enableNestedColumnVectorizedReader = false",
+    "meta" : "default: false",
+    "version" : "3.2.0",
+    "docHTML" : "Enables vectorized orc decoding for nested column."
+}, {
+    "caption" : "spark.sql.hive.metastorePartitionPruningInSetThreshold",
+    "value" : "spark.sql.hive.metastorePartitionPruningInSetThreshold = 1000",
+    "meta" : "default: 1000",
+    "version" : "3.1.0",
+    "docHTML" : "The threshold of set size for InSet predicate when pruning partitions through Hive Metastore. When the set size exceeds the threshold, we rewrite the InSet predicate to be greater than or equal to the minimum value in set and less than or equal to the maximum value in set. Larger values may cause Hive Metastore stack overflow. But for InSet inside Not with values exceeding the threshold, we won't push it to Hive Metastore."
+}, {
+    "caption" : "spark.sql.hive.metastorePartitionPruningFallbackOnException",
+    "value" : "spark.sql.hive.metastorePartitionPruningFallbackOnException = false",
+    "meta" : "default: false",
+    "version" : "3.3.0",
+    "docHTML" : "Whether to fallback to get all partitions from Hive metastore and perform partition pruning on Spark client side, when encountering MetaException from the metastore. Note that Spark query performance may degrade if this is enabled and there are many partitions to be listed. If this is disabled, Spark will fail the query instead."
+}, {
+    "caption" : "spark.sql.hive.metastorePartitionPruningFastFallback",
+    "value" : "spark.sql.hive.metastorePartitionPruningFastFallback = false",
+    "meta" : "default: false",
+    "version" : "3.3.0",
+    "docHTML" : "When this config is enabled, if the predicates are not supported by Hive or Spark does fallback due to encountering MetaException from the metastore, Spark will instead prune partitions by getting the partition names first and then evaluating the filter expressions on the client side. Note that the predicates with TimeZoneAwareExpression is not supported."
+}, {
+    "caption" : "spark.sql.hive.filesourcePartitionFileCacheSize",
+    "value" : "spark.sql.hive.filesourcePartitionFileCacheSize = 262144000",
+    "meta" : "default: 262144000",
+    "version" : "2.1.1",
+    "docHTML" : "When nonzero, enable caching of partition file metadata in memory. All tables share a cache that can use up to specified num bytes for file metadata. This conf only has an effect when hive filesource partition management is enabled."
+}, {
+    "caption" : "spark.sql.optimizer.canChangeCachedPlanOutputPartitioning",
+    "value" : "spark.sql.optimizer.canChangeCachedPlanOutputPartitioning = false",
+    "meta" : "default: false",
+    "version" : "3.2.0",
+    "docHTML" : "Whether to forcibly enable some optimization rules that can change the output partitioning of a cached query when executing it for caching. If it is set to true, queries may need an extra shuffle to read the cached data. This configuration is disabled by default. Currently, the optimization rules enabled by this configuration are spark.sql.adaptive.enabled and spark.sql.sources.bucketing.autoBucketedScan.enabled."
+}, {
+    "caption" : "spark.sql.selfJoinAutoResolveAmbiguity",
+    "value" : "spark.sql.selfJoinAutoResolveAmbiguity = true",
+    "meta" : "default: true",
     "version" : "1.4.0",
-    "docHTML" : "Whether the query analyzer should be case sensitive or not. Default to case insensitive. It is highly discouraged to turn on case sensitive mode."
+    "docHTML" : ""
 }, {
-    "caption" : "spark.sql.parser.escapedStringLiterals",
-    "value" : "spark.sql.parser.escapedStringLiterals = false",
-    "meta" : "default: false",
-    "version" : "2.2.1",
-    "docHTML" : "When true, string literals (including regex patterns) remain escaped in our SQL parser. The default is false since Spark 2.0. Setting it to true can restore the behavior prior to Spark 2.0."
-}, {
-    "caption" : "spark.sql.sources.fileCompressionFactor",
-    "value" : "spark.sql.sources.fileCompressionFactor = 1.0",
-    "meta" : "default: 1.0",
+    "caption" : "spark.sql.codegen.splitConsumeFuncByOperator",
+    "value" : "spark.sql.codegen.splitConsumeFuncByOperator = true",
+    "meta" : "default: true",
     "version" : "2.3.1",
-    "docHTML" : "When estimating the output data size of a table scan, multiply the file size with this factor as the estimated data size, in case the data is compressed in the file and lead to a heavily underestimated result."
+    "docHTML" : "When true, whole stage codegen would put the logic of consuming rows of each physical operator into individual methods, instead of a single big method. This can be used to avoid oversized function that can miss the opportunity of JIT optimization."
 }, {
-    "caption" : "spark.sql.parquet.binaryAsString",
-    "value" : "spark.sql.parquet.binaryAsString = false",
-    "meta" : "default: false",
-    "version" : "1.1.1",
-    "docHTML" : "Some other Parquet-producing systems, in particular Impala and older versions of Spark SQL, do not differentiate between binary data and strings when writing out the Parquet schema. This flag tells Spark SQL to interpret binary data as a string to provide compatibility with these systems."
+    "caption" : "spark.sql.streaming.flatMapGroupsWithState.stateFormatVersion",
+    "value" : "spark.sql.streaming.flatMapGroupsWithState.stateFormatVersion = 2",
+    "meta" : "default: 2",
+    "version" : "2.4.0",
+    "docHTML" : "State format version used by flatMapGroupsWithState operation in a streaming query"
 }, {
-    "caption" : "spark.sql.parquet.compression.codec",
-    "value" : "spark.sql.parquet.compression.codec = snappy",
-    "meta" : "default: snappy",
-    "version" : "1.1.1",
-    "docHTML" : "Sets the compression codec used when writing Parquet files. If either `compression` or `parquet.compression` is specified in the table-specific options/properties, the precedence would be `compression`, `parquet.compression`, `spark.sql.parquet.compression.codec`. Acceptable values include: none, uncompressed, snappy, gzip, lzo, brotli, lz4, zstd."
+    "caption" : "spark.sql.streaming.aggregation.stateFormatVersion",
+    "value" : "spark.sql.streaming.aggregation.stateFormatVersion = 2",
+    "meta" : "default: 2",
+    "version" : "2.4.0",
+    "docHTML" : "State format version used by streaming aggregation operations in a streaming query. State between versions are tend to be incompatible, so state format version shouldn't be modified after running."
 }, {
-    "caption" : "spark.sql.orc.compression.codec",
-    "value" : "spark.sql.orc.compression.codec = snappy",
-    "meta" : "default: snappy",
-    "version" : "2.3.0",
-    "docHTML" : "Sets the compression codec used when writing ORC files. If either `compression` or `orc.compress` is specified in the table-specific options/properties, the precedence would be `compression`, `orc.compress`, `spark.sql.orc.compression.codec`.Acceptable values include: none, uncompressed, snappy, zlib, lzo, zstd, lz4."
+    "caption" : "spark.sql.streaming.sessionWindow.stateFormatVersion",
+    "value" : "spark.sql.streaming.sessionWindow.stateFormatVersion = 1",
+    "meta" : "default: 1",
+    "version" : "3.2.0",
+    "docHTML" : "State format version used by streaming session window in a streaming query. State between versions are tend to be incompatible, so state format version shouldn't be modified after running."
 }, {
-    "caption" : "spark.sql.orc.impl",
-    "value" : "spark.sql.orc.impl = native",
-    "meta" : "default: native",
-    "version" : "2.3.0",
-    "docHTML" : "When native, use the native version of ORC support instead of the ORC library in Hive. It is 'hive' by default prior to Spark 2.4."
-}, {
-    "caption" : "spark.sql.optimizer.metadataOnly",
-    "value" : "spark.sql.optimizer.metadataOnly = false",
-    "meta" : "default: false",
-    "version" : "2.1.1",
-    "docHTML" : "When true, enable the metadata-only query optimization that use the table's metadata to produce the partition columns instead of table scans. It applies when all the columns scanned are partition columns and the query has an aggregate operator that satisfies distinct semantics. By default the optimization is disabled, and deprecated as of Spark 3.0 since it may return incorrect results when the files are empty, see also SPARK-26709.It will be removed in the future releases. If you must use, use 'SparkSessionExtensions' instead to inject it as a custom rule."
-}, {
-    "caption" : "spark.sql.broadcastTimeout",
-    "value" : "spark.sql.broadcastTimeout = 300",
-    "meta" : "default: 300",
-    "version" : "1.3.0",
-    "docHTML" : "Timeout in seconds for the broadcast wait time in broadcast joins."
-}, {
-    "caption" : "spark.sql.sources.default",
-    "value" : "spark.sql.sources.default = parquet",
-    "meta" : "default: parquet",
-    "version" : "1.3.0",
-    "docHTML" : "The default data source to use in input/output."
-}, {
-    "caption" : "spark.sql.hive.convertCTAS",
-    "value" : "spark.sql.hive.convertCTAS = false",
-    "meta" : "default: false",
-    "version" : "2.0.0",
-    "docHTML" : "When true, a table created by a Hive CTAS statement (no USING clause) without specifying any storage property will be converted to a data source table, using the data source set by spark.sql.sources.default."
-}, {
-    "caption" : "spark.sql.hive.gatherFastStats",
-    "value" : "spark.sql.hive.gatherFastStats = true",
+    "caption" : "spark.sql.streaming.statefulOperator.checkCorrectness.enabled",
+    "value" : "spark.sql.streaming.statefulOperator.checkCorrectness.enabled = true",
     "meta" : "default: true",
-    "version" : "2.0.1",
-    "docHTML" : "When true, fast stats (number of files and total size of all files) will be gathered in parallel while repairing table partitions to avoid the sequential listing in Hive metastore."
+    "version" : "3.1.0",
+    "docHTML" : "When true, the stateful operators for streaming query will be checked for possible correctness issue due to global watermark. The correctness issue comes from queries containing stateful operation which can emit rows older than the current watermark plus allowed late record delay, which are \"late rows\" in downstream stateful operations and these rows can be discarded. Please refer the programming guide doc for more details. Once the issue is detected, Spark will throw analysis exception. When this config is disabled, Spark will just print warning message for users. Prior to Spark 3.1.0, the behavior is disabling this config."
 }, {
-    "caption" : "spark.sql.sources.bucketing.enabled",
-    "value" : "spark.sql.sources.bucketing.enabled = true",
+    "caption" : "spark.sql.streaming.statefulOperator.useStrictDistribution",
+    "value" : "spark.sql.streaming.statefulOperator.useStrictDistribution = true",
     "meta" : "default: true",
-    "version" : "2.0.0",
-    "docHTML" : "When false, we will treat bucketed table as normal table"
+    "version" : "3.3.0",
+    "docHTML" : "The purpose of this config is only compatibility; DO NOT MANUALLY CHANGE THIS!!! When true, the stateful operator for streaming query will use StatefulOpClusteredDistribution which guarantees stable state partitioning as long as the operator provides consistent grouping keys across the lifetime of query. When false, the stateful operator for streaming query will use ClusteredDistribution which is not sufficient to guarantee stable state partitioning despite the operator provides consistent grouping keys across the lifetime of query. This config will be set to true for new streaming queries to guarantee stable state partitioning, and set to false for existing streaming queries to not break queries which are restored from existing checkpoints. Please refer SPARK-38204 for details."
 }, {
-    "caption" : "spark.sql.sources.v2.bucketing.enabled",
-    "value" : "spark.sql.sources.v2.bucketing.enabled = false",
+    "caption" : "spark.sql.streaming.stateStore.skipNullsForStreamStreamJoins.enabled",
+    "value" : "spark.sql.streaming.stateStore.skipNullsForStreamStreamJoins.enabled = false",
     "meta" : "default: false",
     "version" : "3.3.0",
-    "docHTML" : "Similar to spark.sql.sources.bucketing.enabled, this config is used to enable bucketing for V2 data sources. When turned on, Spark will recognize the specific distribution reported by a V2 data source through SupportsReportPartitioning, and will try to avoid shuffle if necessary."
+    "docHTML" : "When true, this config will skip null values in hash based stream-stream joins."
 }, {
-    "caption" : "spark.sql.sources.bucketing.maxBuckets",
-    "value" : "spark.sql.sources.bucketing.maxBuckets = 100000",
-    "meta" : "default: 100000",
-    "version" : "2.4.0",
-    "docHTML" : "The maximum number of buckets allowed."
-}, {
-    "caption" : "spark.sql.crossJoin.enabled",
-    "value" : "spark.sql.crossJoin.enabled = true",
+    "caption" : "spark.sql.codegen.join.fullOuterShuffledHashJoin.enabled",
+    "value" : "spark.sql.codegen.join.fullOuterShuffledHashJoin.enabled = true",
     "meta" : "default: true",
-    "version" : "2.0.0",
-    "docHTML" : "When false, we will throw an error if a query contains a cartesian product without explicit CROSS JOIN syntax."
+    "version" : "3.3.0",
+    "docHTML" : "When true, enable code-gen for FULL OUTER shuffled hash join."
 }, {
-    "caption" : "spark.sql.orderByOrdinal",
-    "value" : "spark.sql.orderByOrdinal = true",
+    "caption" : "spark.sql.codegen.join.fullOuterSortMergeJoin.enabled",
+    "value" : "spark.sql.codegen.join.fullOuterSortMergeJoin.enabled = true",
     "meta" : "default: true",
-    "version" : "2.0.0",
-    "docHTML" : "When true, the ordinal numbers are treated as the position in the select list. When false, the ordinal numbers in order/sort by clause are ignored."
+    "version" : "3.3.0",
+    "docHTML" : "When true, enable code-gen for FULL OUTER sort merge join."
 }, {
-    "caption" : "spark.sql.groupByOrdinal",
-    "value" : "spark.sql.groupByOrdinal = true",
-    "meta" : "default: true",
-    "version" : "2.0.0",
-    "docHTML" : "When true, the ordinal numbers in group by clauses are treated as the position in the select list. When false, the ordinal numbers are ignored."
-}, {
-    "caption" : "spark.sql.groupByAliases",
-    "value" : "spark.sql.groupByAliases = true",
-    "meta" : "default: true",
-    "version" : "2.2.0",
-    "docHTML" : "When true, aliases in a select list can be used in group by clauses. When false, an analysis exception is thrown in the case."
-}, {
-    "caption" : "spark.sql.sources.ignoreDataLocality",
-    "value" : "spark.sql.sources.ignoreDataLocality = false",
+    "caption" : "spark.sql.legacy.allowStarWithSingleTableIdentifierInCount",
+    "value" : "spark.sql.legacy.allowStarWithSingleTableIdentifierInCount = false",
     "meta" : "default: false",
-    "version" : "3.0.0",
-    "docHTML" : "If true, Spark will not fetch the block locations for each file on listing files. This speeds up file listing, but the scheduler cannot schedule tasks to take advantage of data locality. It can be particularly useful if data is read from a remote cluster so the scheduler could never take advantage of locality anyway."
+    "version" : "3.2",
+    "docHTML" : "When true, the SQL function 'count' is allowed to take single 'tblName.*' as parameter"
 }, {
-    "caption" : "spark.sql.runSQLOnFiles",
-    "value" : "spark.sql.runSQLOnFiles = true",
-    "meta" : "default: true",
-    "version" : "1.6.0",
-    "docHTML" : "When true, we could use `datasource`.`path` as table in SQL query."
-}, {
-    "caption" : "spark.sql.codegen.factoryMode",
-    "value" : "spark.sql.codegen.factoryMode = FALLBACK",
-    "meta" : "default: FALLBACK",
-    "version" : "2.4.0",
-    "docHTML" : "This config determines the fallback behavior of several codegen generators during tests. `FALLBACK` means trying codegen first and then falling back to interpreted if any compile error happens. Disabling fallback if `CODEGEN_ONLY`. `NO_CODEGEN` skips codegen and goes interpreted path always. Note that this config works only for tests."
-}, {
-    "caption" : "spark.sql.codegen.fallback",
-    "value" : "spark.sql.codegen.fallback = true",
-    "meta" : "default: true",
-    "version" : "2.0.0",
-    "docHTML" : "When true, (whole stage) codegen could be temporary disabled for the part of query that fail to compile generated code"
-}, {
-    "caption" : "spark.sql.files.maxRecordsPerFile",
-    "value" : "spark.sql.files.maxRecordsPerFile = 0",
-    "meta" : "default: 0",
-    "version" : "2.2.0",
-    "docHTML" : "Maximum number of records to write out to a single file. If this value is zero or negative, there is no limit."
-}, {
-    "caption" : "spark.sql.exchange.reuse",
-    "value" : "spark.sql.exchange.reuse = true",
-    "meta" : "default: true",
-    "version" : "2.0.0",
-    "docHTML" : "When true, the planner will try to find out duplicated exchanges and re-use them."
-}, {
-    "caption" : "spark.sql.execution.reuseSubquery",
-    "value" : "spark.sql.execution.reuseSubquery = true",
-    "meta" : "default: true",
-    "version" : "3.0.0",
-    "docHTML" : "When true, the planner will try to find out duplicated subqueries and re-use them."
-}, {
-    "caption" : "spark.sql.streaming.minBatchesToRetain",
-    "value" : "spark.sql.streaming.minBatchesToRetain = 100",
-    "meta" : "default: 100",
+    "caption" : "spark.sql.streaming.noDataProgressEventInterval",
+    "value" : "spark.sql.streaming.noDataProgressEventInterval = 10000ms",
+    "meta" : "default: 10000ms",
     "version" : "2.1.1",
-    "docHTML" : "The minimum number of batches that must be retained and made recoverable."
+    "docHTML" : "How long to wait between two progress events when there is no data"
 }, {
-    "caption" : "spark.sql.codegen.aggregate.map.twolevel.enabled",
-    "value" : "spark.sql.codegen.aggregate.map.twolevel.enabled = true",
+    "caption" : "spark.sql.streaming.checkpoint.escapedPathCheck.enabled",
+    "value" : "spark.sql.streaming.checkpoint.escapedPathCheck.enabled = true",
     "meta" : "default: true",
-    "version" : "2.3.0",
-    "docHTML" : "Enable two-level aggregate hash map. When enabled, records will first be inserted/looked-up at a 1st-level, small, fast map, and then fallback to a 2nd-level, larger, slower map when 1st level is full or keys cannot be found. When disabled, records go directly to the 2nd level."
+    "version" : "3.0.0",
+    "docHTML" : "Whether to detect a streaming query may pick up an incorrect checkpoint path due to SPARK-26824."
 }, {
-    "caption" : "spark.sql.view.maxNestedViewDepth",
-    "value" : "spark.sql.view.maxNestedViewDepth = 100",
-    "meta" : "default: 100",
-    "version" : "2.2.0",
-    "docHTML" : "The maximum depth of a view reference in a nested view. A nested view may reference other nested views, the dependencies are organized in a directed acyclic graph (DAG). However the DAG depth may become too large and cause unexpected behavior. This configuration puts a limit on this: when the depth of a view exceeds this value during analysis, we terminate the resolution to avoid potential errors."
-}, {
-    "caption" : "spark.sql.execution.useObjectHashAggregateExec",
-    "value" : "spark.sql.execution.useObjectHashAggregateExec = true",
+    "caption" : "spark.sql.statistics.parallelFileListingInStatsComputation.enabled",
+    "value" : "spark.sql.statistics.parallelFileListingInStatsComputation.enabled = true",
     "meta" : "default: true",
-    "version" : "2.2.0",
-    "docHTML" : "Decides if we use ObjectHashAggregateExec"
+    "version" : "2.4.1",
+    "docHTML" : "When true, SQL commands use parallel file listing, as opposed to single thread listing. This usually speeds up commands that need to list many directories."
 }, {
-    "caption" : "spark.sql.streaming.fileSink.log.deletion",
-    "value" : "spark.sql.streaming.fileSink.log.deletion = true",
-    "meta" : "default: true",
-    "version" : "2.0.0",
-    "docHTML" : "Whether to delete the expired log files in file stream sink."
+    "caption" : "spark.sql.sessionWindow.buffer.in.memory.threshold",
+    "value" : "spark.sql.sessionWindow.buffer.in.memory.threshold = 4096",
+    "meta" : "default: 4096",
+    "version" : "3.2.0",
+    "docHTML" : "Threshold for number of windows guaranteed to be held in memory by the session window operator. Note that the buffer is used only for the query Spark cannot apply aggregations on determining session window."
 }, {
-    "caption" : "spark.sql.streaming.fileSource.log.deletion",
-    "value" : "spark.sql.streaming.fileSource.log.deletion = true",
-    "meta" : "default: true",
-    "version" : "2.0.1",
-    "docHTML" : "Whether to delete the expired log files in file stream source."
-}, {
-    "caption" : "spark.sql.streaming.pollingDelay",
-    "value" : "spark.sql.streaming.pollingDelay = 10ms",
-    "meta" : "default: 10ms",
-    "version" : "2.0.0",
-    "docHTML" : "How long to delay polling new data when no data is available"
-}, {
-    "caption" : "spark.sql.streaming.stopTimeout",
-    "value" : "spark.sql.streaming.stopTimeout = 0",
-    "meta" : "default: 0",
-    "version" : "3.0.0",
-    "docHTML" : "How long to wait in milliseconds for the streaming execution thread to stop when calling the streaming query's stop() method. 0 or negative values wait indefinitely."
-}, {
-    "caption" : "spark.sql.defaultSizeInBytes",
-    "value" : "spark.sql.defaultSizeInBytes = 9223372036854775807b",
-    "meta" : "default: 9223372036854775807b",
-    "version" : "1.1.0",
-    "docHTML" : "The default table size used in query planning. By default, it is set to Long.MaxValue which is larger than `spark.sql.autoBroadcastJoinThreshold` to be more conservative. That is to say by default the optimizer will not choose to broadcast a table unless it knows for sure its size is small enough."
-}, {
-    "caption" : "spark.sql.statistics.ndv.maxError",
-    "value" : "spark.sql.statistics.ndv.maxError = 0.05",
-    "meta" : "default: 0.05",
-    "version" : "2.1.1",
-    "docHTML" : "The maximum relative standard deviation allowed in HyperLogLog++ algorithm when generating column level statistics."
-}, {
-    "caption" : "spark.sql.statistics.histogram.enabled",
-    "value" : "spark.sql.statistics.histogram.enabled = false",
-    "meta" : "default: false",
-    "version" : "2.3.0",
-    "docHTML" : "Generates histograms when computing column statistics if enabled. Histograms can provide better estimation accuracy. Currently, Spark only supports equi-height histogram. Note that collecting histograms takes extra cost. For example, collecting column statistics usually takes only one table scan, but generating equi-height histogram will cause an extra table scan."
-}, {
-    "caption" : "spark.sql.statistics.histogram.numBins",
-    "value" : "spark.sql.statistics.histogram.numBins = 254",
-    "meta" : "default: 254",
-    "version" : "2.3.0",
-    "docHTML" : "The number of bins when generating histograms."
-}, {
-    "caption" : "spark.sql.statistics.percentile.accuracy",
-    "value" : "spark.sql.statistics.percentile.accuracy = 10000",
-    "meta" : "default: 10000",
-    "version" : "2.3.0",
-    "docHTML" : "Accuracy of percentile approximation when generating equi-height histograms. Larger value means better accuracy. The relative error can be deduced by 1.0 / PERCENTILE_ACCURACY."
-}, {
-    "caption" : "spark.sql.statistics.size.autoUpdate.enabled",
-    "value" : "spark.sql.statistics.size.autoUpdate.enabled = false",
-    "meta" : "default: false",
-    "version" : "2.3.0",
-    "docHTML" : "Enables automatic update for table size once table's data is changed. Note that if the total number of files of the table is very large, this can be expensive and slow down data change commands."
-}, {
-    "caption" : "spark.sql.cbo.enabled",
-    "value" : "spark.sql.cbo.enabled = false",
-    "meta" : "default: false",
-    "version" : "2.2.0",
-    "docHTML" : "Enables CBO for estimation of plan statistics when set true."
-}, {
-    "caption" : "spark.sql.cbo.planStats.enabled",
-    "value" : "spark.sql.cbo.planStats.enabled = false",
-    "meta" : "default: false",
-    "version" : "3.0.0",
-    "docHTML" : "When true, the logical plan will fetch row counts and column statistics from catalog."
-}, {
-    "caption" : "spark.sql.cbo.joinReorder.enabled",
-    "value" : "spark.sql.cbo.joinReorder.enabled = false",
-    "meta" : "default: false",
-    "version" : "2.2.0",
-    "docHTML" : "Enables join reorder in CBO."
-}, {
-    "caption" : "spark.sql.cbo.joinReorder.card.weight",
-    "value" : "spark.sql.cbo.joinReorder.card.weight = 0.7",
-    "meta" : "default: 0.7",
-    "version" : "2.2.0",
-    "docHTML" : "The weight of the ratio of cardinalities (number of rows) in the cost comparison function. The ratio of sizes in bytes has weight 1 - this value. The weighted geometric mean of these ratios is used to decide which of the candidate plans will be chosen by the CBO."
-}, {
-    "caption" : "spark.sql.cbo.starSchemaDetection",
-    "value" : "spark.sql.cbo.starSchemaDetection = false",
-    "meta" : "default: false",
-    "version" : "2.2.0",
-    "docHTML" : "When true, it enables join reordering based on star schema detection. "
-}, {
-    "caption" : "spark.sql.session.timeZone",
-    "value" : "spark.sql.session.timeZone = Asia/Shanghai",
-    "meta" : "default: Asia/Shanghai",
-    "version" : "2.2.0",
-    "docHTML" : "The ID of session local timezone in the format of either region-based zone IDs or zone offsets. Region IDs must have the form 'area/city', such as 'America/Los_Angeles'. Zone offsets must be in the format '(+|-)HH', '(+|-)HH:mm' or '(+|-)HH:mm:ss', e.g '-08', '+01:00' or '-13:33:33'. Also 'UTC' and 'Z' are supported as aliases of '+00:00'. Other short names are not recommended to use because they can be ambiguous."
-}, {
-    "caption" : "spark.sql.execution.arrow.enabled",
-    "value" : "spark.sql.execution.arrow.enabled = false",
-    "meta" : "default: false",
-    "version" : "2.3.0",
-    "docHTML" : "(Deprecated since Spark 3.0, please set 'spark.sql.execution.arrow.pyspark.enabled'.)"
-}, {
-    "caption" : "spark.sql.execution.arrow.fallback.enabled",
-    "value" : "spark.sql.execution.arrow.fallback.enabled = true",
-    "meta" : "default: true",
-    "version" : "2.4.0",
-    "docHTML" : "(Deprecated since Spark 3.0, please set 'spark.sql.execution.arrow.pyspark.fallback.enabled'.)"
-}, {
-    "caption" : "spark.sql.execution.pandas.udf.buffer.size",
-    "version" : "3.0.0",
-    "docHTML" : "Same as `spark.buffer.size` but only applies to Pandas UDF executions. If it is not set, the fallback is `spark.buffer.size`. Note that Pandas execution requires more than 4 bytes. Lowering this value could make small Pandas UDF batch iterated and pipelined; however, it might degrade performance. See SPARK-27870."
-}, {
-    "caption" : "spark.sql.function.concatBinaryAsString",
-    "value" : "spark.sql.function.concatBinaryAsString = false",
-    "meta" : "default: false",
-    "version" : "2.3.0",
-    "docHTML" : "When this option is set to false and all inputs are binary, `functions.concat` returns an output as binary. Otherwise, it returns as a string."
-}, {
-    "caption" : "spark.sql.function.eltOutputAsString",
-    "value" : "spark.sql.function.eltOutputAsString = false",
-    "meta" : "default: false",
-    "version" : "2.3.0",
-    "docHTML" : "When this option is set to false and all inputs are binary, `elt` returns an output as binary. Otherwise, it returns as a string."
-}, {
-    "caption" : "spark.sql.sources.useV1SourceList",
-    "value" : "spark.sql.sources.useV1SourceList = avro,csv,json,kafka,orc,parquet,text",
-    "meta" : "default: avro,csv,json,kafka,orc,parquet,text",
-    "version" : "3.0.0",
-    "docHTML" : "A comma-separated list of data source short names or fully qualified data source implementation class names for which Data Source V2 code path is disabled. These data sources will fallback to Data Source V1 code path."
-}, {
-    "caption" : "spark.sql.sources.partitionOverwriteMode",
-    "value" : "spark.sql.sources.partitionOverwriteMode = STATIC",
-    "meta" : "default: STATIC",
-    "version" : "2.3.0",
-    "docHTML" : "When INSERT OVERWRITE a partitioned data source table, we currently support 2 modes: static and dynamic. In static mode, Spark deletes all the partitions that match the partition specification(e.g. PARTITION(a=1,b)) in the INSERT statement, before overwriting. In dynamic mode, Spark doesn't delete partitions ahead, and only overwrite those partitions that have data written into it at runtime. By default we use static mode to keep the same behavior of Spark prior to 2.3. Note that this config doesn't affect Hive serde tables, as they are always overwritten with dynamic mode. This can also be set as an output option for a data source using key partitionOverwriteMode (which takes precedence over this setting), e.g. dataframe.write.option(\"partitionOverwriteMode\", \"dynamic\").save(path)."
-}, {
-    "caption" : "spark.sql.storeAssignmentPolicy",
-    "value" : "spark.sql.storeAssignmentPolicy = ANSI",
-    "meta" : "default: ANSI",
-    "version" : "3.0.0",
-    "docHTML" : "When inserting a value into a column with different data type, Spark will perform type coercion. Currently, we support 3 policies for the type coercion rules: ANSI, legacy and strict. With ANSI policy, Spark performs the type coercion as per ANSI SQL. In practice, the behavior is mostly the same as PostgreSQL. It disallows certain unreasonable type conversions such as converting `string` to `int` or `double` to `boolean`. With legacy policy, Spark allows the type coercion as long as it is a valid `Cast`, which is very loose. e.g. converting `string` to `int` or `double` to `boolean` is allowed. It is also the only behavior in Spark 2.x and it is compatible with Hive. With strict policy, Spark doesn't allow any possible precision loss or data truncation in type coercion, e.g. converting `double` to `int` or `decimal` to `double` is not allowed."
-}, {
-    "caption" : "spark.sql.ansi.enabled",
-    "value" : "spark.sql.ansi.enabled = false",
-    "meta" : "default: false",
-    "version" : "3.0.0",
-    "docHTML" : "When true, Spark SQL uses an ANSI compliant dialect instead of being Hive compliant. For example, Spark will throw an exception at runtime instead of returning null results when the inputs to a SQL operator/function are invalid.For full details of this dialect, you can find them in the section \"ANSI Compliance\" of Spark's documentation. Some ANSI dialect features may be not from the ANSI SQL standard directly, but their behaviors align with ANSI SQL's style"
-}, {
-    "caption" : "spark.sql.execution.sortBeforeRepartition",
-    "value" : "spark.sql.execution.sortBeforeRepartition = true",
-    "meta" : "default: true",
-    "version" : "2.1.4",
-    "docHTML" : "When perform a repartition following a shuffle, the output row ordering would be nondeterministic. If some downstream stages fail and some tasks of the repartition stage retry, these tasks may generate different data, and that can lead to correctness issues. Turn on this config to insert a local sort before actually doing repartition to generate consistent repartition results. The performance of repartition() may go down since we insert extra local sort before it."
-}, {
-    "caption" : "spark.sql.optimizer.disableHints",
-    "value" : "spark.sql.optimizer.disableHints = false",
-    "meta" : "default: false",
-    "version" : "3.1.0",
-    "docHTML" : "When true, the optimizer will disable user-specified hints that are additional directives for better planning of a query."
-}, {
-    "caption" : "spark.sql.repl.eagerEval.enabled",
-    "value" : "spark.sql.repl.eagerEval.enabled = false",
-    "meta" : "default: false",
-    "version" : "2.4.0",
-    "docHTML" : "Enables eager evaluation or not. When true, the top K rows of Dataset will be displayed if and only if the REPL supports the eager evaluation. Currently, the eager evaluation is supported in PySpark and SparkR. In PySpark, for the notebooks like Jupyter, the HTML table (generated by _repr_html_) will be returned. For plain Python REPL, the returned outputs are formatted like dataframe.show(). In SparkR, the returned outputs are showed similar to R data.frame would."
-}, {
-    "caption" : "spark.sql.repl.eagerEval.truncate",
-    "value" : "spark.sql.repl.eagerEval.truncate = 20",
-    "meta" : "default: 20",
-    "version" : "2.4.0",
-    "docHTML" : "The max number of characters for each cell that is returned by eager evaluation. This only takes effect when spark.sql.repl.eagerEval.enabled is set to true."
-}, {
-    "caption" : "spark.sql.avro.compression.codec",
-    "value" : "spark.sql.avro.compression.codec = snappy",
-    "meta" : "default: snappy",
-    "version" : "2.4.0",
-    "docHTML" : "Compression codec used in writing of AVRO files. Supported codecs: uncompressed, deflate, snappy, bzip2, xz and zstandard. Default codec is snappy."
-}, {
-    "caption" : "spark.sql.avro.deflate.level",
-    "value" : "spark.sql.avro.deflate.level = -1",
-    "meta" : "default: -1",
-    "version" : "2.4.0",
-    "docHTML" : "Compression level for the deflate codec used in writing of AVRO files. Valid value must be in the range of from 1 to 9 inclusive or -1. The default value is -1 which corresponds to 6 level in the current implementation."
-}, {
-    "caption" : "spark.sql.legacy.sizeOfNull",
-    "value" : "spark.sql.legacy.sizeOfNull = true",
-    "meta" : "default: true",
-    "version" : "2.4.0",
-    "docHTML" : "If it is set to false, or spark.sql.ansi.enabled is true, then size of null returns null. Otherwise, it returns -1, which was inherited from Hive."
-}, {
-    "caption" : "spark.sql.debug.maxToStringFields",
-    "value" : "spark.sql.debug.maxToStringFields = 25",
-    "meta" : "default: 25",
-    "version" : "3.0.0",
-    "docHTML" : "Maximum number of fields of sequence-like entries can be converted to strings in debug output. Any elements beyond the limit will be dropped and replaced by a \"... N more fields\" placeholder."
-}, {
-    "caption" : "spark.sql.maxPlanStringLength",
-    "value" : "spark.sql.maxPlanStringLength = 2147483632",
+    "caption" : "spark.sql.sortMergeJoinExec.buffer.in.memory.threshold",
+    "value" : "spark.sql.sortMergeJoinExec.buffer.in.memory.threshold = 2147483632",
     "meta" : "default: 2147483632",
+    "version" : "2.2.1",
+    "docHTML" : "Threshold for number of rows guaranteed to be held in memory by the sort merge join operator"
+}, {
+    "caption" : "spark.sql.sortMergeJoinExec.buffer.spill.threshold",
+    "value" : "spark.sql.sortMergeJoinExec.buffer.spill.threshold = 2147483647",
+    "meta" : "default: 2147483647",
+    "version" : "2.2.0",
+    "docHTML" : "Threshold for number of rows to be spilled by sort merge join operator"
+}, {
+    "caption" : "spark.sql.cartesianProductExec.buffer.in.memory.threshold",
+    "value" : "spark.sql.cartesianProductExec.buffer.in.memory.threshold = 4096",
+    "meta" : "default: 4096",
+    "version" : "2.2.1",
+    "docHTML" : "Threshold for number of rows guaranteed to be held in memory by the cartesian product operator"
+}, {
+    "caption" : "spark.sql.cartesianProductExec.buffer.spill.threshold",
+    "value" : "spark.sql.cartesianProductExec.buffer.spill.threshold = 2147483647",
+    "meta" : "default: 2147483647",
+    "version" : "2.2.0",
+    "docHTML" : "Threshold for number of rows to be spilled by cartesian product operator"
+}, {
+    "caption" : "spark.sql.legacy.execution.pandas.groupedMap.assignColumnsByName",
+    "value" : "spark.sql.legacy.execution.pandas.groupedMap.assignColumnsByName = true",
+    "meta" : "default: true",
+    "version" : "2.4.1",
+    "docHTML" : "When true, columns will be looked up by name if labeled with a string and fallback to use position if not. When false, a grouped map Pandas UDF will assign columns from the returned Pandas DataFrame based on position, regardless of column label type. This configuration will be deprecated in future releases."
+}, {
+    "caption" : "spark.sql.streaming.continuous.epochBacklogQueueSize",
+    "value" : "spark.sql.streaming.continuous.epochBacklogQueueSize = 10000",
+    "meta" : "default: 10000",
     "version" : "3.0.0",
-    "docHTML" : "Maximum number of characters to output for a plan string.  If the plan is longer, further output will be truncated.  The default setting always generates a full plan.  Set this to a lower value such as 8k if plan strings are taking up too much memory or are causing OutOfMemory errors in the driver or UI processes."
+    "docHTML" : "The max number of entries to be stored in queue to wait for late epochs. If this parameter is exceeded by the size of the queue, stream will stop with an error."
 }, {
-    "caption" : "spark.sql.timestampType",
-    "value" : "spark.sql.timestampType = TIMESTAMP_LTZ",
-    "meta" : "default: TIMESTAMP_LTZ",
-    "version" : "3.4.0",
-    "docHTML" : "Configures the default timestamp type of Spark SQL, including SQL DDL, Cast clause and type literal. Setting the configuration as TIMESTAMP_NTZ will use TIMESTAMP WITHOUT TIME ZONE as the default type while putting it as TIMESTAMP_LTZ will use TIMESTAMP WITH LOCAL TIME ZONE. Before the 3.4.0 release, Spark only supports the TIMESTAMP WITH LOCAL TIME ZONE type."
-}, {
-    "caption" : "spark.sql.ui.explainMode",
-    "value" : "spark.sql.ui.explainMode = formatted",
-    "meta" : "default: formatted",
-    "version" : "3.1.0",
-    "docHTML" : "Configures the query explain mode used in the Spark SQL UI. The value can be 'simple', 'extended', 'codegen', 'cost', or 'formatted'. The default value is 'formatted'."
-}, {
-    "caption" : "spark.sql.defaultCatalog",
-    "value" : "spark.sql.defaultCatalog = spark_catalog",
-    "meta" : "default: spark_catalog",
-    "version" : "3.0.0",
-    "docHTML" : "Name of the default catalog. This will be the current catalog if users have not explicitly set the current catalog yet."
-}, {
-    "caption" : "spark.sql.mapKeyDedupPolicy",
-    "value" : "spark.sql.mapKeyDedupPolicy = EXCEPTION",
-    "meta" : "default: EXCEPTION",
-    "version" : "3.0.0",
-    "docHTML" : "The policy to deduplicate map keys in builtin function: CreateMap, MapFromArrays, MapFromEntries, StringToMap, MapConcat and TransformKeys. When EXCEPTION, the query fails if duplicated map keys are detected. When LAST_WIN, the map key that is inserted at last takes precedence."
-}, {
-    "caption" : "spark.sql.legacy.doLooseUpcast",
-    "value" : "spark.sql.legacy.doLooseUpcast = false",
-    "meta" : "default: false",
-    "version" : "3.0.0",
-    "docHTML" : "When true, the upcast will be loose and allows string to atomic types."
-}, {
-    "caption" : "spark.sql.addPartitionInBatch.size",
-    "value" : "spark.sql.addPartitionInBatch.size = 100",
-    "meta" : "default: 100",
-    "version" : "3.0.0",
-    "docHTML" : "The number of partitions to be handled in one turn when use `AlterTableAddPartitionCommand` or `RepairTableCommand` to add partitions into table. The smaller batch size is, the less memory is required for the real handler, e.g. Hive Metastore."
-}, {
-    "caption" : "spark.sql.avro.datetimeRebaseModeInRead",
-    "value" : "spark.sql.avro.datetimeRebaseModeInRead = EXCEPTION",
-    "meta" : "default: EXCEPTION",
-    "version" : "3.0.0",
-    "docHTML" : "When LEGACY, Spark will rebase dates/timestamps from the legacy hybrid (Julian + Gregorian) calendar to Proleptic Gregorian calendar when reading Avro files. When CORRECTED, Spark will not do rebase and read the dates/timestamps as it is. When EXCEPTION, which is the default, Spark will fail the reading if it sees ancient dates/timestamps that are ambiguous between the two calendars. This config is only effective if the writer info (like Spark, Hive) of the Avro files is unknown."
-}, {
-    "caption" : "spark.sql.charAsVarchar",
-    "value" : "spark.sql.charAsVarchar = false",
-    "meta" : "default: false",
-    "version" : "3.3.0",
-    "docHTML" : "When true, Spark replaces CHAR type with VARCHAR type in CREATE/REPLACE/ALTER TABLE commands, so that newly created/updated tables will not have CHAR type columns/fields. Existing tables with CHAR type columns/fields are not affected by this config."
-}, {
-    "caption" : "spark.sql.cli.print.header",
-    "value" : "spark.sql.cli.print.header = false",
-    "meta" : "default: false",
-    "version" : "3.2.0",
-    "docHTML" : "When set to true, spark-sql CLI prints the names of the columns in query output."
-}, {
-    "caption" : "spark.sql.legacy.interval.enabled",
-    "value" : "spark.sql.legacy.interval.enabled = false",
-    "meta" : "default: false",
-    "version" : "3.2.0",
-    "docHTML" : "When set to true, Spark SQL uses the mixed legacy interval type `CalendarIntervalType` instead of the ANSI compliant interval types `YearMonthIntervalType` and `DayTimeIntervalType`. For instance, the date subtraction expression returns `CalendarIntervalType` when the SQL config is set to `true` otherwise an ANSI interval."
-}, {
-    "caption" : "spark.sql.legacy.useV1Command",
-    "value" : "spark.sql.legacy.useV1Command = false",
-    "meta" : "default: false",
-    "version" : "3.3.0",
-    "docHTML" : "When true, Spark will use legacy V1 SQL commands."
-}, {
-    "caption" : "spark.sql.files.ignoreCorruptFiles",
-    "value" : "spark.sql.files.ignoreCorruptFiles = false",
-    "meta" : "default: false",
-    "version" : "2.1.1",
-    "docHTML" : "Whether to ignore corrupt files. If true, the Spark jobs will continue to run when encountering corrupted files and the contents that have been read will still be returned. This configuration is effective only when using file-based sources such as Parquet, JSON and ORC."
-}, {
-    "caption" : "spark.sql.files.ignoreMissingFiles",
-    "value" : "spark.sql.files.ignoreMissingFiles = false",
-    "meta" : "default: false",
+    "caption" : "spark.sql.streaming.continuous.executorPollIntervalMs",
+    "value" : "spark.sql.streaming.continuous.executorPollIntervalMs = 100ms",
+    "meta" : "default: 100ms",
     "version" : "2.3.0",
-    "docHTML" : "Whether to ignore missing files. If true, the Spark jobs will continue to run when encountering missing files and the contents that have been read will still be returned. This configuration is effective only when using file-based sources such as Parquet, JSON and ORC."
+    "docHTML" : "The interval at which continuous execution readers will poll to check whether the epoch has advanced on the driver."
 }, {
-    "caption" : "spark.sql.files.openCostInBytes",
-    "value" : "spark.sql.files.openCostInBytes = 4MB",
-    "meta" : "default: 4MB",
+    "caption" : "spark.sql.optimizer.nestedPredicatePushdown.supportedFileSources",
+    "value" : "spark.sql.optimizer.nestedPredicatePushdown.supportedFileSources = parquet,orc",
+    "meta" : "default: parquet,orc",
+    "version" : "3.0.0",
+    "docHTML" : "A comma-separated list of data source short names or fully qualified data source implementation class names for which Spark tries to push down predicates for nested columns and/or names containing `dots` to data sources. This configuration is only effective with file-based data sources in DSv1. Currently, Parquet and ORC implement both optimizations. The other data sources don't support this feature yet. So the default value is 'parquet,orc'."
+}, {
+    "caption" : "spark.sql.legacy.respectNullabilityInTextDatasetConversion",
+    "value" : "spark.sql.legacy.respectNullabilityInTextDatasetConversion = false",
+    "meta" : "default: false",
+    "version" : "3.3.0",
+    "docHTML" : "When true, the nullability in the user-specified schema for `DataFrameReader.schema(schema).json(jsonDataset)` and `DataFrameReader.schema(schema).csv(csvDataset)` is respected. Otherwise, they are turned to a nullable schema forcibly."
+}, {
+    "caption" : "spark.sql.codegen.aggregate.fastHashMap.capacityBit",
+    "value" : "spark.sql.codegen.aggregate.fastHashMap.capacityBit = 16",
+    "meta" : "default: 16",
+    "version" : "2.4.0",
+    "docHTML" : "Capacity for the max number of rows to be held in memory by the fast hash aggregate product operator. The bit is not for actual value, but the actual numBuckets is determined by loadFactor (e.g: default bit value 16 , the actual numBuckets is ((1 << 16) / 0.5)."
+}, {
+    "caption" : "spark.sql.legacy.parseNullPartitionSpecAsStringLiteral",
+    "value" : "spark.sql.legacy.parseNullPartitionSpecAsStringLiteral = false",
+    "meta" : "default: false",
+    "version" : "3.0.2",
+    "docHTML" : "If it is set to true, `PARTITION(col=null)` is parsed as a string literal of its text representation, e.g., string 'null', when the partition column is string type. Otherwise, it is always parsed as a null literal in the partition spec."
+}, {
+    "caption" : "spark.sql.legacy.replaceDatabricksSparkAvro.enabled",
+    "value" : "spark.sql.legacy.replaceDatabricksSparkAvro.enabled = true",
+    "meta" : "default: true",
+    "version" : "2.4.0",
+    "docHTML" : "If it is set to true, the data source provider com.databricks.spark.avro is mapped to the built-in but external Avro data source module for backward compatibility."
+}, {
+    "caption" : "spark.sql.legacy.exponentLiteralAsDecimal.enabled",
+    "value" : "spark.sql.legacy.exponentLiteralAsDecimal.enabled = false",
+    "meta" : "default: false",
+    "version" : "3.0.0",
+    "docHTML" : "When set to true, a literal with an exponent (e.g. 1E-30) would be parsed as Decimal rather than Double."
+}, {
+    "caption" : "spark.sql.legacy.allowNegativeScaleOfDecimal",
+    "value" : "spark.sql.legacy.allowNegativeScaleOfDecimal = false",
+    "meta" : "default: false",
+    "version" : "3.0.0",
+    "docHTML" : "When set to true, negative scale of Decimal type is allowed. For example, the type of number 1E10BD under legacy mode is DecimalType(2, -9), but is Decimal(11, 0) in non legacy mode."
+}, {
+    "caption" : "spark.sql.legacy.bucketedTableScan.outputOrdering",
+    "value" : "spark.sql.legacy.bucketedTableScan.outputOrdering = false",
+    "meta" : "default: false",
+    "version" : "3.0.0",
+    "docHTML" : "When true, the bucketed table scan will list files during planning to figure out the output ordering, which is expensive and may make the planning quite slow."
+}, {
+    "caption" : "spark.sql.legacy.createEmptyCollectionUsingStringType",
+    "value" : "spark.sql.legacy.createEmptyCollectionUsingStringType = false",
+    "meta" : "default: false",
+    "version" : "3.0.0",
+    "docHTML" : "When set to true, Spark returns an empty collection with `StringType` as element type if the `array`/`map` function is called without any parameters. Otherwise, Spark returns an empty collection with `NullType` as element type."
+}, {
+    "caption" : "spark.sql.legacy.followThreeValuedLogicInArrayExists",
+    "value" : "spark.sql.legacy.followThreeValuedLogicInArrayExists = true",
+    "meta" : "default: true",
+    "version" : "3.0.0",
+    "docHTML" : "When true, the ArrayExists will follow the three-valued boolean logic."
+}, {
+    "caption" : "spark.sql.legacy.mssqlserver.numericMapping.enabled",
+    "value" : "spark.sql.legacy.mssqlserver.numericMapping.enabled = false",
+    "meta" : "default: false",
+    "version" : "2.4.5",
+    "docHTML" : "When true, use legacy MySqlServer SMALLINT and REAL type mapping."
+}, {
+    "caption" : "spark.sql.legacy.groupingIdWithAppendedUserGroupBy",
+    "value" : "spark.sql.legacy.groupingIdWithAppendedUserGroupBy = false",
+    "meta" : "default: false",
+    "version" : "3.2.3",
+    "docHTML" : "When true, grouping_id() returns values based on grouping set columns plus user-given group-by expressions order like Spark 3.2.0, 3.2.1, 3.2.2, and 3.3.0."
+}, {
+    "caption" : "spark.sql.bucketing.coalesceBucketsInJoin.maxBucketRatio",
+    "value" : "spark.sql.bucketing.coalesceBucketsInJoin.maxBucketRatio = 4",
+    "meta" : "default: 4",
+    "version" : "3.1.0",
+    "docHTML" : "The ratio of the number of two buckets being coalesced should be less than or equal to this value for bucket coalescing to be applied. This configuration only has an effect when 'spark.sql.bucketing.coalesceBucketsInJoin.enabled' is set to true."
+}, {
+    "caption" : "spark.sql.execution.broadcastHashJoin.outputPartitioningExpandLimit",
+    "value" : "spark.sql.execution.broadcastHashJoin.outputPartitioningExpandLimit = 8",
+    "meta" : "default: 8",
+    "version" : "3.1.0",
+    "docHTML" : "The maximum number of partitionings that a HashPartitioning can be expanded to. This configuration is applicable only for BroadcastHashJoin inner joins and can be set to '0' to disable this feature."
+}, {
+    "caption" : "spark.sql.legacy.nullValueWrittenAsQuotedEmptyStringCsv",
+    "value" : "spark.sql.legacy.nullValueWrittenAsQuotedEmptyStringCsv = false",
+    "meta" : "default: false",
+    "version" : "3.3.0",
+    "docHTML" : "When set to false, nulls are written as unquoted empty strings in CSV data source. If set to true, it restores the legacy behavior that nulls were written as quoted empty strings, `\"\"`."
+}, {
+    "caption" : "spark.sql.legacy.allowNullComparisonResultInArraySort",
+    "value" : "spark.sql.legacy.allowNullComparisonResultInArraySort = false",
+    "meta" : "default: false",
+    "version" : "3.2.2",
+    "docHTML" : "When set to false, `array_sort` function throws an error if the comparator function returns null. If set to true, it restores the legacy behavior that handles null as zero (equal)."
+}, {
+    "caption" : "spark.sql.files.maxPartitionBytes",
+    "value" : "spark.sql.files.maxPartitionBytes = 128MB",
+    "meta" : "default: 128MB",
     "version" : "2.0.0",
-    "docHTML" : "The estimated cost to open a file, measured by the number of bytes could be scanned in the same time. This is used when putting multiple files into a partition. It's better to over estimated, then the partitions with small files will be faster than partitions with bigger files (which is scheduled first). This configuration is effective only when using file-based sources such as Parquet, JSON and ORC."
+    "docHTML" : "The maximum number of bytes to pack into a single partition when reading files. This configuration is effective only when using file-based sources such as Parquet, JSON and ORC."
 }, {
     "caption" : "spark.sql.optimizer.inSetConversionThreshold",
     "value" : "spark.sql.optimizer.inSetConversionThreshold = 10",
@@ -2867,7 +2696,7 @@ let SPARK_CONFIG_OPTIONS = [ {
     "docHTML" : "When integral literal is used in decimal operations, pick a minimum precision required by the literal if this config is true, to make the resulting precision and/or scale smaller. This can reduce the possibility of precision lose and/or overflow."
 }, {
     "caption" : "spark.sql.redaction.options.regex",
-    "value" : "spark.sql.redaction.options.regex",
+    "value" : "spark.sql.redaction.options.regex = ",
     "version" : "2.2.2",
     "docHTML" : "Regex to decide which keys in a Spark SQL command's options map contain sensitive information. The values of options whose names that match this regex will be redacted in the explain output. This redaction is applied on top of the global redaction configuration defined by spark.redaction.regex."
 }, {
@@ -3211,353 +3040,571 @@ let SPARK_CONFIG_OPTIONS = [ {
     "version" : "3.3.0",
     "docHTML" : "When set to false, when the first argument and the optional padding pattern is a byte sequence, the result is a BINARY value. The default padding pattern in this case is the zero byte. When set to true, it restores the legacy behavior of always returning string types even for binary inputs."
 }, {
-    "caption" : "spark.sql.files.maxPartitionBytes",
-    "value" : "spark.sql.files.maxPartitionBytes = 128MB",
-    "meta" : "default: 128MB",
-    "version" : "2.0.0",
-    "docHTML" : "The maximum number of bytes to pack into a single partition when reading files. This configuration is effective only when using file-based sources such as Parquet, JSON and ORC."
-}, {
-    "caption" : "spark.sql.optimizer.dynamicPartitionPruning.fallbackFilterRatio",
-    "value" : "spark.sql.optimizer.dynamicPartitionPruning.fallbackFilterRatio = 0.5",
-    "meta" : "default: 0.5",
-    "version" : "3.0.0",
-    "docHTML" : "When statistics are not available or configured not to be used, this config will be used as the fallback filter ratio for computing the data size of the partitioned table after dynamic partition pruning, in order to evaluate if it is worth adding an extra subquery as the pruning filter if broadcast reuse is not applicable."
-}, {
-    "caption" : "spark.sql.optimizer.dynamicPartitionPruning.reuseBroadcastOnly",
-    "value" : "spark.sql.optimizer.dynamicPartitionPruning.reuseBroadcastOnly = true",
-    "meta" : "default: true",
-    "version" : "3.0.0",
-    "docHTML" : "When true, dynamic partition pruning will only apply when the broadcast exchange of a broadcast hash join operation can be reused as the dynamic pruning filter."
-}, {
-    "caption" : "spark.sql.optimizer.runtimeFilter.semiJoinReduction.enabled",
-    "value" : "spark.sql.optimizer.runtimeFilter.semiJoinReduction.enabled = false",
+    "caption" : "spark.sql.files.ignoreCorruptFiles",
+    "value" : "spark.sql.files.ignoreCorruptFiles = false",
     "meta" : "default: false",
-    "version" : "3.3.0",
-    "docHTML" : "When true and if one side of a shuffle join has a selective predicate, we attempt to insert a semi join in the other side to reduce the amount of shuffle data."
-}, {
-    "caption" : "spark.sql.optimizer.runtime.bloomFilter.creationSideThreshold",
-    "value" : "spark.sql.optimizer.runtime.bloomFilter.creationSideThreshold = 10MB",
-    "meta" : "default: 10MB",
-    "version" : "3.3.0",
-    "docHTML" : "Size threshold of the bloom filter creation side plan. Estimated size needs to be under this value to try to inject bloom filter."
-}, {
-    "caption" : "spark.sql.requireAllClusterKeysForCoPartition",
-    "value" : "spark.sql.requireAllClusterKeysForCoPartition = true",
-    "meta" : "default: true",
-    "version" : "3.3.0",
-    "docHTML" : "When true, the planner requires all the clustering keys as the hash partition keys of the children, to eliminate the shuffles for the operator that needs its children to be co-partitioned, such as JOIN node. This is to avoid data skews which can lead to significant performance regression if shuffles are eliminated."
-}, {
-    "caption" : "spark.sql.requireAllClusterKeysForDistribution",
-    "value" : "spark.sql.requireAllClusterKeysForDistribution = false",
-    "meta" : "default: false",
-    "version" : "3.3.0",
-    "docHTML" : "When true, the planner requires all the clustering keys as the partition keys (with same ordering) of the children, to eliminate the shuffle for the operator that requires its children be clustered distributed, such as AGGREGATE and WINDOW node. This is to avoid data skews which can lead to significant performance regression if shuffle is eliminated."
-}, {
-    "caption" : "spark.sql.adaptive.nonEmptyPartitionRatioForBroadcastJoin",
-    "value" : "spark.sql.adaptive.nonEmptyPartitionRatioForBroadcastJoin = 0.2",
-    "meta" : "default: 0.2",
-    "version" : "3.0.0",
-    "docHTML" : "The relation with a non-empty partition ratio lower than this config will not be considered as the build side of a broadcast-hash join in adaptive execution regardless of its size.This configuration only has an effect when 'spark.sql.adaptive.enabled' is true."
-}, {
-    "caption" : "spark.sql.adaptive.maxShuffledHashJoinLocalMapThreshold",
-    "value" : "spark.sql.adaptive.maxShuffledHashJoinLocalMapThreshold = 0b",
-    "meta" : "default: 0b",
-    "version" : "3.2.0",
-    "docHTML" : "Configures the maximum size in bytes per partition that can be allowed to build local hash map. If this value is not smaller than spark.sql.adaptive.advisoryPartitionSizeInBytes and all the partition size are not larger than this config, join selection prefer to use shuffled hash join instead of sort merge join regardless of the value of spark.sql.join.preferSortMergeJoin."
-}, {
-    "caption" : "spark.sql.adaptive.optimizeSkewsInRebalancePartitions.enabled",
-    "value" : "spark.sql.adaptive.optimizeSkewsInRebalancePartitions.enabled = true",
-    "meta" : "default: true",
-    "version" : "3.2.0",
-    "docHTML" : "When true and 'spark.sql.adaptive.enabled' is true, Spark will optimize the skewed shuffle partitions in RebalancePartitions and split them to smaller ones according to the target size (specified by 'spark.sql.adaptive.advisoryPartitionSizeInBytes'), to avoid data skew."
-}, {
-    "caption" : "spark.sql.adaptive.rebalancePartitionsSmallPartitionFactor",
-    "value" : "spark.sql.adaptive.rebalancePartitionsSmallPartitionFactor = 0.2",
-    "meta" : "default: 0.2",
-    "version" : "3.3.0",
-    "docHTML" : "A partition will be merged during splitting if its size is small than this factor multiply spark.sql.adaptive.advisoryPartitionSizeInBytes."
-}, {
-    "caption" : "spark.sql.subexpressionElimination.cache.maxEntries",
-    "value" : "spark.sql.subexpressionElimination.cache.maxEntries = 100",
-    "meta" : "default: 100",
-    "version" : "3.1.0",
-    "docHTML" : "The maximum entries of the cache used for interpreted subexpression elimination."
-}, {
-    "caption" : "spark.sql.parquet.filterPushdown.timestamp",
-    "value" : "spark.sql.parquet.filterPushdown.timestamp = true",
-    "meta" : "default: true",
-    "version" : "2.4.0",
-    "docHTML" : "If true, enables Parquet filter push-down optimization for Timestamp. This configuration only has an effect when 'spark.sql.parquet.filterPushdown' is enabled and Timestamp stored as TIMESTAMP_MICROS or TIMESTAMP_MILLIS type."
-}, {
-    "caption" : "spark.sql.parquet.filterPushdown.string.startsWith",
-    "value" : "spark.sql.parquet.filterPushdown.string.startsWith = true",
-    "meta" : "default: true",
-    "version" : "2.4.0",
-    "docHTML" : "If true, enables Parquet filter push-down optimization for string startsWith function. This configuration only has an effect when 'spark.sql.parquet.filterPushdown' is enabled."
-}, {
-    "caption" : "spark.sql.parquet.pushdown.inFilterThreshold",
-    "value" : "spark.sql.parquet.pushdown.inFilterThreshold = 10",
-    "meta" : "default: 10",
-    "version" : "2.4.0",
-    "docHTML" : "For IN predicate, Parquet filter will push-down a set of OR clauses if its number of values not exceeds this threshold. Otherwise, Parquet filter will push-down a value greater than or equal to its minimum value and less than or equal to its maximum value. By setting this value to 0 this feature can be disabled. This configuration only has an effect when 'spark.sql.parquet.filterPushdown' is enabled."
-}, {
-    "caption" : "spark.sql.parquet.enableNestedColumnVectorizedReader",
-    "value" : "spark.sql.parquet.enableNestedColumnVectorizedReader = false",
-    "meta" : "default: false",
-    "version" : "3.3.0",
-    "docHTML" : "Enables vectorized Parquet decoding for nested columns (e.g., struct, list, map). Requires spark.sql.parquet.enableVectorizedReader to be enabled."
-}, {
-    "caption" : "spark.sql.orc.enableNestedColumnVectorizedReader",
-    "value" : "spark.sql.orc.enableNestedColumnVectorizedReader = false",
-    "meta" : "default: false",
-    "version" : "3.2.0",
-    "docHTML" : "Enables vectorized orc decoding for nested column."
-}, {
-    "caption" : "spark.sql.hive.metastorePartitionPruningInSetThreshold",
-    "value" : "spark.sql.hive.metastorePartitionPruningInSetThreshold = 1000",
-    "meta" : "default: 1000",
-    "version" : "3.1.0",
-    "docHTML" : "The threshold of set size for InSet predicate when pruning partitions through Hive Metastore. When the set size exceeds the threshold, we rewrite the InSet predicate to be greater than or equal to the minimum value in set and less than or equal to the maximum value in set. Larger values may cause Hive Metastore stack overflow. But for InSet inside Not with values exceeding the threshold, we won't push it to Hive Metastore."
-}, {
-    "caption" : "spark.sql.hive.metastorePartitionPruningFallbackOnException",
-    "value" : "spark.sql.hive.metastorePartitionPruningFallbackOnException = false",
-    "meta" : "default: false",
-    "version" : "3.3.0",
-    "docHTML" : "Whether to fallback to get all partitions from Hive metastore and perform partition pruning on Spark client side, when encountering MetaException from the metastore. Note that Spark query performance may degrade if this is enabled and there are many partitions to be listed. If this is disabled, Spark will fail the query instead."
-}, {
-    "caption" : "spark.sql.hive.metastorePartitionPruningFastFallback",
-    "value" : "spark.sql.hive.metastorePartitionPruningFastFallback = false",
-    "meta" : "default: false",
-    "version" : "3.3.0",
-    "docHTML" : "When this config is enabled, if the predicates are not supported by Hive or Spark does fallback due to encountering MetaException from the metastore, Spark will instead prune partitions by getting the partition names first and then evaluating the filter expressions on the client side. Note that the predicates with TimeZoneAwareExpression is not supported."
-}, {
-    "caption" : "spark.sql.hive.filesourcePartitionFileCacheSize",
-    "value" : "spark.sql.hive.filesourcePartitionFileCacheSize = 262144000",
-    "meta" : "default: 262144000",
     "version" : "2.1.1",
-    "docHTML" : "When nonzero, enable caching of partition file metadata in memory. All tables share a cache that can use up to specified num bytes for file metadata. This conf only has an effect when hive filesource partition management is enabled."
+    "docHTML" : "Whether to ignore corrupt files. If true, the Spark jobs will continue to run when encountering corrupted files and the contents that have been read will still be returned. This configuration is effective only when using file-based sources such as Parquet, JSON and ORC."
 }, {
-    "caption" : "spark.sql.optimizer.canChangeCachedPlanOutputPartitioning",
-    "value" : "spark.sql.optimizer.canChangeCachedPlanOutputPartitioning = false",
+    "caption" : "spark.sql.files.ignoreMissingFiles",
+    "value" : "spark.sql.files.ignoreMissingFiles = false",
     "meta" : "default: false",
-    "version" : "3.2.0",
-    "docHTML" : "Whether to forcibly enable some optimization rules that can change the output partitioning of a cached query when executing it for caching. If it is set to true, queries may need an extra shuffle to read the cached data. This configuration is disabled by default. Currently, the optimization rules enabled by this configuration are spark.sql.adaptive.enabled and spark.sql.sources.bucketing.autoBucketedScan.enabled."
-}, {
-    "caption" : "spark.sql.selfJoinAutoResolveAmbiguity",
-    "value" : "spark.sql.selfJoinAutoResolveAmbiguity = true",
-    "meta" : "default: true",
-    "version" : "1.4.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.sql.codegen.splitConsumeFuncByOperator",
-    "value" : "spark.sql.codegen.splitConsumeFuncByOperator = true",
-    "meta" : "default: true",
-    "version" : "2.3.1",
-    "docHTML" : "When true, whole stage codegen would put the logic of consuming rows of each physical operator into individual methods, instead of a single big method. This can be used to avoid oversized function that can miss the opportunity of JIT optimization."
-}, {
-    "caption" : "spark.sql.streaming.flatMapGroupsWithState.stateFormatVersion",
-    "value" : "spark.sql.streaming.flatMapGroupsWithState.stateFormatVersion = 2",
-    "meta" : "default: 2",
-    "version" : "2.4.0",
-    "docHTML" : "State format version used by flatMapGroupsWithState operation in a streaming query"
-}, {
-    "caption" : "spark.sql.streaming.aggregation.stateFormatVersion",
-    "value" : "spark.sql.streaming.aggregation.stateFormatVersion = 2",
-    "meta" : "default: 2",
-    "version" : "2.4.0",
-    "docHTML" : "State format version used by streaming aggregation operations in a streaming query. State between versions are tend to be incompatible, so state format version shouldn't be modified after running."
-}, {
-    "caption" : "spark.sql.streaming.sessionWindow.stateFormatVersion",
-    "value" : "spark.sql.streaming.sessionWindow.stateFormatVersion = 1",
-    "meta" : "default: 1",
-    "version" : "3.2.0",
-    "docHTML" : "State format version used by streaming session window in a streaming query. State between versions are tend to be incompatible, so state format version shouldn't be modified after running."
-}, {
-    "caption" : "spark.sql.streaming.statefulOperator.checkCorrectness.enabled",
-    "value" : "spark.sql.streaming.statefulOperator.checkCorrectness.enabled = true",
-    "meta" : "default: true",
-    "version" : "3.1.0",
-    "docHTML" : "When true, the stateful operators for streaming query will be checked for possible correctness issue due to global watermark. The correctness issue comes from queries containing stateful operation which can emit rows older than the current watermark plus allowed late record delay, which are \"late rows\" in downstream stateful operations and these rows can be discarded. Please refer the programming guide doc for more details. Once the issue is detected, Spark will throw analysis exception. When this config is disabled, Spark will just print warning message for users. Prior to Spark 3.1.0, the behavior is disabling this config."
-}, {
-    "caption" : "spark.sql.streaming.statefulOperator.useStrictDistribution",
-    "value" : "spark.sql.streaming.statefulOperator.useStrictDistribution = true",
-    "meta" : "default: true",
-    "version" : "3.3.0",
-    "docHTML" : "The purpose of this config is only compatibility; DO NOT MANUALLY CHANGE THIS!!! When true, the stateful operator for streaming query will use StatefulOpClusteredDistribution which guarantees stable state partitioning as long as the operator provides consistent grouping keys across the lifetime of query. When false, the stateful operator for streaming query will use ClusteredDistribution which is not sufficient to guarantee stable state partitioning despite the operator provides consistent grouping keys across the lifetime of query. This config will be set to true for new streaming queries to guarantee stable state partitioning, and set to false for existing streaming queries to not break queries which are restored from existing checkpoints. Please refer SPARK-38204 for details."
-}, {
-    "caption" : "spark.sql.streaming.stateStore.skipNullsForStreamStreamJoins.enabled",
-    "value" : "spark.sql.streaming.stateStore.skipNullsForStreamStreamJoins.enabled = false",
-    "meta" : "default: false",
-    "version" : "3.3.0",
-    "docHTML" : "When true, this config will skip null values in hash based stream-stream joins."
-}, {
-    "caption" : "spark.sql.codegen.join.fullOuterShuffledHashJoin.enabled",
-    "value" : "spark.sql.codegen.join.fullOuterShuffledHashJoin.enabled = true",
-    "meta" : "default: true",
-    "version" : "3.3.0",
-    "docHTML" : "When true, enable code-gen for FULL OUTER shuffled hash join."
-}, {
-    "caption" : "spark.sql.codegen.join.fullOuterSortMergeJoin.enabled",
-    "value" : "spark.sql.codegen.join.fullOuterSortMergeJoin.enabled = true",
-    "meta" : "default: true",
-    "version" : "3.3.0",
-    "docHTML" : "When true, enable code-gen for FULL OUTER sort merge join."
-}, {
-    "caption" : "spark.sql.legacy.allowStarWithSingleTableIdentifierInCount",
-    "value" : "spark.sql.legacy.allowStarWithSingleTableIdentifierInCount = false",
-    "meta" : "default: false",
-    "version" : "3.2",
-    "docHTML" : "When true, the SQL function 'count' is allowed to take single 'tblName.*' as parameter"
-}, {
-    "caption" : "spark.sql.streaming.noDataProgressEventInterval",
-    "value" : "spark.sql.streaming.noDataProgressEventInterval = 10000ms",
-    "meta" : "default: 10000ms",
-    "version" : "2.1.1",
-    "docHTML" : "How long to wait between two progress events when there is no data"
-}, {
-    "caption" : "spark.sql.streaming.checkpoint.escapedPathCheck.enabled",
-    "value" : "spark.sql.streaming.checkpoint.escapedPathCheck.enabled = true",
-    "meta" : "default: true",
-    "version" : "3.0.0",
-    "docHTML" : "Whether to detect a streaming query may pick up an incorrect checkpoint path due to SPARK-26824."
-}, {
-    "caption" : "spark.sql.statistics.parallelFileListingInStatsComputation.enabled",
-    "value" : "spark.sql.statistics.parallelFileListingInStatsComputation.enabled = true",
-    "meta" : "default: true",
-    "version" : "2.4.1",
-    "docHTML" : "When true, SQL commands use parallel file listing, as opposed to single thread listing. This usually speeds up commands that need to list many directories."
-}, {
-    "caption" : "spark.sql.sessionWindow.buffer.in.memory.threshold",
-    "value" : "spark.sql.sessionWindow.buffer.in.memory.threshold = 4096",
-    "meta" : "default: 4096",
-    "version" : "3.2.0",
-    "docHTML" : "Threshold for number of windows guaranteed to be held in memory by the session window operator. Note that the buffer is used only for the query Spark cannot apply aggregations on determining session window."
-}, {
-    "caption" : "spark.sql.sortMergeJoinExec.buffer.in.memory.threshold",
-    "value" : "spark.sql.sortMergeJoinExec.buffer.in.memory.threshold = 2147483632",
-    "meta" : "default: 2147483632",
-    "version" : "2.2.1",
-    "docHTML" : "Threshold for number of rows guaranteed to be held in memory by the sort merge join operator"
-}, {
-    "caption" : "spark.sql.sortMergeJoinExec.buffer.spill.threshold",
-    "value" : "spark.sql.sortMergeJoinExec.buffer.spill.threshold = 2147483647",
-    "meta" : "default: 2147483647",
-    "version" : "2.2.0",
-    "docHTML" : "Threshold for number of rows to be spilled by sort merge join operator"
-}, {
-    "caption" : "spark.sql.cartesianProductExec.buffer.in.memory.threshold",
-    "value" : "spark.sql.cartesianProductExec.buffer.in.memory.threshold = 4096",
-    "meta" : "default: 4096",
-    "version" : "2.2.1",
-    "docHTML" : "Threshold for number of rows guaranteed to be held in memory by the cartesian product operator"
-}, {
-    "caption" : "spark.sql.cartesianProductExec.buffer.spill.threshold",
-    "value" : "spark.sql.cartesianProductExec.buffer.spill.threshold = 2147483647",
-    "meta" : "default: 2147483647",
-    "version" : "2.2.0",
-    "docHTML" : "Threshold for number of rows to be spilled by cartesian product operator"
-}, {
-    "caption" : "spark.sql.legacy.execution.pandas.groupedMap.assignColumnsByName",
-    "value" : "spark.sql.legacy.execution.pandas.groupedMap.assignColumnsByName = true",
-    "meta" : "default: true",
-    "version" : "2.4.1",
-    "docHTML" : "When true, columns will be looked up by name if labeled with a string and fallback to use position if not. When false, a grouped map Pandas UDF will assign columns from the returned Pandas DataFrame based on position, regardless of column label type. This configuration will be deprecated in future releases."
-}, {
-    "caption" : "spark.sql.streaming.continuous.epochBacklogQueueSize",
-    "value" : "spark.sql.streaming.continuous.epochBacklogQueueSize = 10000",
-    "meta" : "default: 10000",
-    "version" : "3.0.0",
-    "docHTML" : "The max number of entries to be stored in queue to wait for late epochs. If this parameter is exceeded by the size of the queue, stream will stop with an error."
-}, {
-    "caption" : "spark.sql.streaming.continuous.executorPollIntervalMs",
-    "value" : "spark.sql.streaming.continuous.executorPollIntervalMs = 100ms",
-    "meta" : "default: 100ms",
     "version" : "2.3.0",
-    "docHTML" : "The interval at which continuous execution readers will poll to check whether the epoch has advanced on the driver."
+    "docHTML" : "Whether to ignore missing files. If true, the Spark jobs will continue to run when encountering missing files and the contents that have been read will still be returned. This configuration is effective only when using file-based sources such as Parquet, JSON and ORC."
 }, {
-    "caption" : "spark.sql.optimizer.nestedPredicatePushdown.supportedFileSources",
-    "value" : "spark.sql.optimizer.nestedPredicatePushdown.supportedFileSources = parquet,orc",
-    "meta" : "default: parquet,orc",
+    "caption" : "spark.sql.files.openCostInBytes",
+    "value" : "spark.sql.files.openCostInBytes = 4MB",
+    "meta" : "default: 4MB",
+    "version" : "2.0.0",
+    "docHTML" : "The estimated cost to open a file, measured by the number of bytes could be scanned in the same time. This is used when putting multiple files into a partition. It's better to over estimated, then the partitions with small files will be faster than partitions with bigger files (which is scheduled first). This configuration is effective only when using file-based sources such as Parquet, JSON and ORC."
+}, {
+    "caption" : "spark.sql.analyzer.maxIterations",
+    "value" : "spark.sql.analyzer.maxIterations = 100",
+    "meta" : "default: 100",
     "version" : "3.0.0",
-    "docHTML" : "A comma-separated list of data source short names or fully qualified data source implementation class names for which Spark tries to push down predicates for nested columns and/or names containing `dots` to data sources. This configuration is only effective with file-based data sources in DSv1. Currently, Parquet and ORC implement both optimizations. The other data sources don't support this feature yet. So the default value is 'parquet,orc'."
+    "docHTML" : "The max number of iterations the analyzer runs."
 }, {
-    "caption" : "spark.sql.legacy.respectNullabilityInTextDatasetConversion",
-    "value" : "spark.sql.legacy.respectNullabilityInTextDatasetConversion = false",
-    "meta" : "default: false",
+    "caption" : "spark.sql.optimizer.maxIterations",
+    "value" : "spark.sql.optimizer.maxIterations = 100",
+    "meta" : "default: 100",
+    "version" : "2.0.0",
+    "docHTML" : "The max number of iterations the optimizer runs."
+}, {
+    "caption" : "spark.sql.planChangeLog.level",
+    "value" : "spark.sql.planChangeLog.level = trace",
+    "meta" : "default: trace",
+    "version" : "3.1.0",
+    "docHTML" : "Configures the log level for logging the change from the original plan to the new plan after a rule or batch is applied. The value can be 'trace', 'debug', 'info', 'warn', or 'error'. The default log level is 'trace'."
+}, {
+    "caption" : "spark.sql.inMemoryColumnarStorage.compressed",
+    "value" : "spark.sql.inMemoryColumnarStorage.compressed = true",
+    "meta" : "default: true",
+    "version" : "1.0.1",
+    "docHTML" : "When set to true Spark SQL will automatically select a compression codec for each column based on statistics of the data."
+}, {
+    "caption" : "spark.sql.inMemoryColumnarStorage.batchSize",
+    "value" : "spark.sql.inMemoryColumnarStorage.batchSize = 10000",
+    "meta" : "default: 10000",
+    "version" : "1.1.1",
+    "docHTML" : "Controls the size of batches for columnar caching.  Larger batch sizes can improve memory utilization and compression, but risk OOMs when caching data."
+}, {
+    "caption" : "spark.sql.join.preferSortMergeJoin",
+    "value" : "spark.sql.join.preferSortMergeJoin = true",
+    "meta" : "default: true",
+    "version" : "2.0.0",
+    "docHTML" : "When true, prefer sort merge join over shuffled hash join. Sort merge join consumes less memory than shuffled hash join and it works efficiently when both join tables are large. On the other hand, shuffled hash join can improve performance (e.g., of full outer joins) when one of join tables is much smaller."
+}, {
+    "caption" : "spark.sql.sort.enableRadixSort",
+    "value" : "spark.sql.sort.enableRadixSort = true",
+    "meta" : "default: true",
+    "version" : "2.0.0",
+    "docHTML" : "When true, enable use of radix sort when possible. Radix sort is much faster but requires additional memory to be reserved up-front. The memory overhead may be significant when sorting very small rows (up to 50% more in this case)."
+}, {
+    "caption" : "spark.sql.shuffledHashJoinFactor",
+    "value" : "spark.sql.shuffledHashJoinFactor = 3",
+    "meta" : "default: 3",
     "version" : "3.3.0",
-    "docHTML" : "When true, the nullability in the user-specified schema for `DataFrameReader.schema(schema).json(jsonDataset)` and `DataFrameReader.schema(schema).csv(csvDataset)` is respected. Otherwise, they are turned to a nullable schema forcibly."
+    "docHTML" : "The shuffle hash join can be selected if the data size of small side multiplied by this factor is still smaller than the large side."
 }, {
-    "caption" : "spark.sql.codegen.aggregate.fastHashMap.capacityBit",
-    "value" : "spark.sql.codegen.aggregate.fastHashMap.capacityBit = 16",
-    "meta" : "default: 16",
-    "version" : "2.4.0",
-    "docHTML" : "Capacity for the max number of rows to be held in memory by the fast hash aggregate product operator. The bit is not for actual value, but the actual numBuckets is determined by loadFactor (e.g: default bit value 16 , the actual numBuckets is ((1 << 16) / 0.5)."
-}, {
-    "caption" : "spark.sql.legacy.parseNullPartitionSpecAsStringLiteral",
-    "value" : "spark.sql.legacy.parseNullPartitionSpecAsStringLiteral = false",
-    "meta" : "default: false",
-    "version" : "3.0.2",
-    "docHTML" : "If it is set to true, `PARTITION(col=null)` is parsed as a string literal of its text representation, e.g., string 'null', when the partition column is string type. Otherwise, it is always parsed as a null literal in the partition spec."
-}, {
-    "caption" : "spark.sql.legacy.replaceDatabricksSparkAvro.enabled",
-    "value" : "spark.sql.legacy.replaceDatabricksSparkAvro.enabled = true",
-    "meta" : "default: true",
-    "version" : "2.4.0",
-    "docHTML" : "If it is set to true, the data source provider com.databricks.spark.avro is mapped to the built-in but external Avro data source module for backward compatibility."
-}, {
-    "caption" : "spark.sql.legacy.exponentLiteralAsDecimal.enabled",
-    "value" : "spark.sql.legacy.exponentLiteralAsDecimal.enabled = false",
-    "meta" : "default: false",
-    "version" : "3.0.0",
-    "docHTML" : "When set to true, a literal with an exponent (e.g. 1E-30) would be parsed as Decimal rather than Double."
-}, {
-    "caption" : "spark.sql.legacy.allowNegativeScaleOfDecimal",
-    "value" : "spark.sql.legacy.allowNegativeScaleOfDecimal = false",
-    "meta" : "default: false",
-    "version" : "3.0.0",
-    "docHTML" : "When set to true, negative scale of Decimal type is allowed. For example, the type of number 1E10BD under legacy mode is DecimalType(2, -9), but is Decimal(11, 0) in non legacy mode."
-}, {
-    "caption" : "spark.sql.legacy.bucketedTableScan.outputOrdering",
-    "value" : "spark.sql.legacy.bucketedTableScan.outputOrdering = false",
-    "meta" : "default: false",
-    "version" : "3.0.0",
-    "docHTML" : "When true, the bucketed table scan will list files during planning to figure out the output ordering, which is expensive and may make the planning quite slow."
-}, {
-    "caption" : "spark.sql.legacy.createEmptyCollectionUsingStringType",
-    "value" : "spark.sql.legacy.createEmptyCollectionUsingStringType = false",
-    "meta" : "default: false",
-    "version" : "3.0.0",
-    "docHTML" : "When set to true, Spark returns an empty collection with `StringType` as element type if the `array`/`map` function is called without any parameters. Otherwise, Spark returns an empty collection with `NullType` as element type."
-}, {
-    "caption" : "spark.sql.legacy.followThreeValuedLogicInArrayExists",
-    "value" : "spark.sql.legacy.followThreeValuedLogicInArrayExists = true",
-    "meta" : "default: true",
-    "version" : "3.0.0",
-    "docHTML" : "When true, the ArrayExists will follow the three-valued boolean logic."
-}, {
-    "caption" : "spark.sql.legacy.mssqlserver.numericMapping.enabled",
-    "value" : "spark.sql.legacy.mssqlserver.numericMapping.enabled = false",
-    "meta" : "default: false",
-    "version" : "2.4.5",
-    "docHTML" : "When true, use legacy MySqlServer SMALLINT and REAL type mapping."
-}, {
-    "caption" : "spark.sql.bucketing.coalesceBucketsInJoin.maxBucketRatio",
-    "value" : "spark.sql.bucketing.coalesceBucketsInJoin.maxBucketRatio = 4",
+    "caption" : "spark.sql.limit.scaleUpFactor",
+    "value" : "spark.sql.limit.scaleUpFactor = 4",
     "meta" : "default: 4",
-    "version" : "3.1.0",
-    "docHTML" : "The ratio of the number of two buckets being coalesced should be less than or equal to this value for bucket coalescing to be applied. This configuration only has an effect when 'spark.sql.bucketing.coalesceBucketsInJoin.enabled' is set to true."
+    "version" : "2.1.1",
+    "docHTML" : "Minimal increase rate in number of partitions between attempts when executing a take on a query. Higher values lead to more partitions read. Lower values might lead to longer execution times as more jobs will be run"
 }, {
-    "caption" : "spark.sql.execution.broadcastHashJoin.outputPartitioningExpandLimit",
-    "value" : "spark.sql.execution.broadcastHashJoin.outputPartitioningExpandLimit = 8",
-    "meta" : "default: 8",
-    "version" : "3.1.0",
-    "docHTML" : "The maximum number of partitionings that a HashPartitioning can be expanded to. This configuration is applicable only for BroadcastHashJoin inner joins and can be set to '0' to disable this feature."
+    "caption" : "spark.sql.shuffle.partitions",
+    "value" : "spark.sql.shuffle.partitions = 200",
+    "meta" : "default: 200",
+    "version" : "1.1.0",
+    "docHTML" : "The default number of partitions to use when shuffling data for joins or aggregations. Note: For structured streaming, this configuration cannot be changed between query restarts from the same checkpoint location."
 }, {
-    "caption" : "spark.sql.legacy.nullValueWrittenAsQuotedEmptyStringCsv",
-    "value" : "spark.sql.legacy.nullValueWrittenAsQuotedEmptyStringCsv = false",
+    "caption" : "spark.sql.adaptive.skewJoin.enabled",
+    "value" : "spark.sql.adaptive.skewJoin.enabled = true",
+    "meta" : "default: true",
+    "version" : "3.0.0",
+    "docHTML" : "When true and 'spark.sql.adaptive.enabled' is true, Spark dynamically handles skew in shuffled join (sort-merge and shuffled hash) by splitting (and replicating if needed) skewed partitions."
+}, {
+    "caption" : "spark.sql.caseSensitive",
+    "value" : "spark.sql.caseSensitive = false",
+    "meta" : "default: false",
+    "version" : "1.4.0",
+    "docHTML" : "Whether the query analyzer should be case sensitive or not. Default to case insensitive. It is highly discouraged to turn on case sensitive mode."
+}, {
+    "caption" : "spark.sql.parser.escapedStringLiterals",
+    "value" : "spark.sql.parser.escapedStringLiterals = false",
+    "meta" : "default: false",
+    "version" : "2.2.1",
+    "docHTML" : "When true, string literals (including regex patterns) remain escaped in our SQL parser. The default is false since Spark 2.0. Setting it to true can restore the behavior prior to Spark 2.0."
+}, {
+    "caption" : "spark.sql.sources.fileCompressionFactor",
+    "value" : "spark.sql.sources.fileCompressionFactor = 1.0",
+    "meta" : "default: 1.0",
+    "version" : "2.3.1",
+    "docHTML" : "When estimating the output data size of a table scan, multiply the file size with this factor as the estimated data size, in case the data is compressed in the file and lead to a heavily underestimated result."
+}, {
+    "caption" : "spark.sql.parquet.binaryAsString",
+    "value" : "spark.sql.parquet.binaryAsString = false",
+    "meta" : "default: false",
+    "version" : "1.1.1",
+    "docHTML" : "Some other Parquet-producing systems, in particular Impala and older versions of Spark SQL, do not differentiate between binary data and strings when writing out the Parquet schema. This flag tells Spark SQL to interpret binary data as a string to provide compatibility with these systems."
+}, {
+    "caption" : "spark.sql.parquet.compression.codec",
+    "value" : "spark.sql.parquet.compression.codec = snappy",
+    "meta" : "default: snappy",
+    "version" : "1.1.1",
+    "docHTML" : "Sets the compression codec used when writing Parquet files. If either `compression` or `parquet.compression` is specified in the table-specific options/properties, the precedence would be `compression`, `parquet.compression`, `spark.sql.parquet.compression.codec`. Acceptable values include: none, uncompressed, snappy, gzip, lzo, brotli, lz4, zstd."
+}, {
+    "caption" : "spark.sql.orc.compression.codec",
+    "value" : "spark.sql.orc.compression.codec = snappy",
+    "meta" : "default: snappy",
+    "version" : "2.3.0",
+    "docHTML" : "Sets the compression codec used when writing ORC files. If either `compression` or `orc.compress` is specified in the table-specific options/properties, the precedence would be `compression`, `orc.compress`, `spark.sql.orc.compression.codec`.Acceptable values include: none, uncompressed, snappy, zlib, lzo, zstd, lz4."
+}, {
+    "caption" : "spark.sql.orc.impl",
+    "value" : "spark.sql.orc.impl = native",
+    "meta" : "default: native",
+    "version" : "2.3.0",
+    "docHTML" : "When native, use the native version of ORC support instead of the ORC library in Hive. It is 'hive' by default prior to Spark 2.4."
+}, {
+    "caption" : "spark.sql.optimizer.metadataOnly",
+    "value" : "spark.sql.optimizer.metadataOnly = false",
+    "meta" : "default: false",
+    "version" : "2.1.1",
+    "docHTML" : "When true, enable the metadata-only query optimization that use the table's metadata to produce the partition columns instead of table scans. It applies when all the columns scanned are partition columns and the query has an aggregate operator that satisfies distinct semantics. By default the optimization is disabled, and deprecated as of Spark 3.0 since it may return incorrect results when the files are empty, see also SPARK-26709.It will be removed in the future releases. If you must use, use 'SparkSessionExtensions' instead to inject it as a custom rule."
+}, {
+    "caption" : "spark.sql.broadcastTimeout",
+    "value" : "spark.sql.broadcastTimeout = 300",
+    "meta" : "default: 300",
+    "version" : "1.3.0",
+    "docHTML" : "Timeout in seconds for the broadcast wait time in broadcast joins."
+}, {
+    "caption" : "spark.sql.sources.default",
+    "value" : "spark.sql.sources.default = parquet",
+    "meta" : "default: parquet",
+    "version" : "1.3.0",
+    "docHTML" : "The default data source to use in input/output."
+}, {
+    "caption" : "spark.sql.hive.convertCTAS",
+    "value" : "spark.sql.hive.convertCTAS = false",
+    "meta" : "default: false",
+    "version" : "2.0.0",
+    "docHTML" : "When true, a table created by a Hive CTAS statement (no USING clause) without specifying any storage property will be converted to a data source table, using the data source set by spark.sql.sources.default."
+}, {
+    "caption" : "spark.sql.hive.gatherFastStats",
+    "value" : "spark.sql.hive.gatherFastStats = true",
+    "meta" : "default: true",
+    "version" : "2.0.1",
+    "docHTML" : "When true, fast stats (number of files and total size of all files) will be gathered in parallel while repairing table partitions to avoid the sequential listing in Hive metastore."
+}, {
+    "caption" : "spark.sql.sources.bucketing.enabled",
+    "value" : "spark.sql.sources.bucketing.enabled = true",
+    "meta" : "default: true",
+    "version" : "2.0.0",
+    "docHTML" : "When false, we will treat bucketed table as normal table"
+}, {
+    "caption" : "spark.sql.sources.v2.bucketing.enabled",
+    "value" : "spark.sql.sources.v2.bucketing.enabled = false",
     "meta" : "default: false",
     "version" : "3.3.0",
-    "docHTML" : "When set to false, nulls are written as unquoted empty strings in CSV data source. If set to true, it restores the legacy behavior that nulls were written as quoted empty strings, `\"\"`."
+    "docHTML" : "Similar to spark.sql.sources.bucketing.enabled, this config is used to enable bucketing for V2 data sources. When turned on, Spark will recognize the specific distribution reported by a V2 data source through SupportsReportPartitioning, and will try to avoid shuffle if necessary."
+}, {
+    "caption" : "spark.sql.sources.bucketing.maxBuckets",
+    "value" : "spark.sql.sources.bucketing.maxBuckets = 100000",
+    "meta" : "default: 100000",
+    "version" : "2.4.0",
+    "docHTML" : "The maximum number of buckets allowed."
+}, {
+    "caption" : "spark.sql.crossJoin.enabled",
+    "value" : "spark.sql.crossJoin.enabled = true",
+    "meta" : "default: true",
+    "version" : "2.0.0",
+    "docHTML" : "When false, we will throw an error if a query contains a cartesian product without explicit CROSS JOIN syntax."
+}, {
+    "caption" : "spark.sql.orderByOrdinal",
+    "value" : "spark.sql.orderByOrdinal = true",
+    "meta" : "default: true",
+    "version" : "2.0.0",
+    "docHTML" : "When true, the ordinal numbers are treated as the position in the select list. When false, the ordinal numbers in order/sort by clause are ignored."
+}, {
+    "caption" : "spark.sql.groupByOrdinal",
+    "value" : "spark.sql.groupByOrdinal = true",
+    "meta" : "default: true",
+    "version" : "2.0.0",
+    "docHTML" : "When true, the ordinal numbers in group by clauses are treated as the position in the select list. When false, the ordinal numbers are ignored."
+}, {
+    "caption" : "spark.sql.groupByAliases",
+    "value" : "spark.sql.groupByAliases = true",
+    "meta" : "default: true",
+    "version" : "2.2.0",
+    "docHTML" : "When true, aliases in a select list can be used in group by clauses. When false, an analysis exception is thrown in the case."
+}, {
+    "caption" : "spark.sql.sources.ignoreDataLocality",
+    "value" : "spark.sql.sources.ignoreDataLocality = false",
+    "meta" : "default: false",
+    "version" : "3.0.0",
+    "docHTML" : "If true, Spark will not fetch the block locations for each file on listing files. This speeds up file listing, but the scheduler cannot schedule tasks to take advantage of data locality. It can be particularly useful if data is read from a remote cluster so the scheduler could never take advantage of locality anyway."
+}, {
+    "caption" : "spark.sql.runSQLOnFiles",
+    "value" : "spark.sql.runSQLOnFiles = true",
+    "meta" : "default: true",
+    "version" : "1.6.0",
+    "docHTML" : "When true, we could use `datasource`.`path` as table in SQL query."
+}, {
+    "caption" : "spark.sql.codegen.factoryMode",
+    "value" : "spark.sql.codegen.factoryMode = FALLBACK",
+    "meta" : "default: FALLBACK",
+    "version" : "2.4.0",
+    "docHTML" : "This config determines the fallback behavior of several codegen generators during tests. `FALLBACK` means trying codegen first and then falling back to interpreted if any compile error happens. Disabling fallback if `CODEGEN_ONLY`. `NO_CODEGEN` skips codegen and goes interpreted path always. Note that this config works only for tests."
+}, {
+    "caption" : "spark.sql.codegen.fallback",
+    "value" : "spark.sql.codegen.fallback = true",
+    "meta" : "default: true",
+    "version" : "2.0.0",
+    "docHTML" : "When true, (whole stage) codegen could be temporary disabled for the part of query that fail to compile generated code"
+}, {
+    "caption" : "spark.sql.files.maxRecordsPerFile",
+    "value" : "spark.sql.files.maxRecordsPerFile = 0",
+    "meta" : "default: 0",
+    "version" : "2.2.0",
+    "docHTML" : "Maximum number of records to write out to a single file. If this value is zero or negative, there is no limit."
+}, {
+    "caption" : "spark.sql.exchange.reuse",
+    "value" : "spark.sql.exchange.reuse = true",
+    "meta" : "default: true",
+    "version" : "2.0.0",
+    "docHTML" : "When true, the planner will try to find out duplicated exchanges and re-use them."
+}, {
+    "caption" : "spark.sql.execution.reuseSubquery",
+    "value" : "spark.sql.execution.reuseSubquery = true",
+    "meta" : "default: true",
+    "version" : "3.0.0",
+    "docHTML" : "When true, the planner will try to find out duplicated subqueries and re-use them."
+}, {
+    "caption" : "spark.sql.streaming.minBatchesToRetain",
+    "value" : "spark.sql.streaming.minBatchesToRetain = 100",
+    "meta" : "default: 100",
+    "version" : "2.1.1",
+    "docHTML" : "The minimum number of batches that must be retained and made recoverable."
+}, {
+    "caption" : "spark.sql.codegen.aggregate.map.twolevel.enabled",
+    "value" : "spark.sql.codegen.aggregate.map.twolevel.enabled = true",
+    "meta" : "default: true",
+    "version" : "2.3.0",
+    "docHTML" : "Enable two-level aggregate hash map. When enabled, records will first be inserted/looked-up at a 1st-level, small, fast map, and then fallback to a 2nd-level, larger, slower map when 1st level is full or keys cannot be found. When disabled, records go directly to the 2nd level."
+}, {
+    "caption" : "spark.sql.view.maxNestedViewDepth",
+    "value" : "spark.sql.view.maxNestedViewDepth = 100",
+    "meta" : "default: 100",
+    "version" : "2.2.0",
+    "docHTML" : "The maximum depth of a view reference in a nested view. A nested view may reference other nested views, the dependencies are organized in a directed acyclic graph (DAG). However the DAG depth may become too large and cause unexpected behavior. This configuration puts a limit on this: when the depth of a view exceeds this value during analysis, we terminate the resolution to avoid potential errors."
+}, {
+    "caption" : "spark.sql.execution.useObjectHashAggregateExec",
+    "value" : "spark.sql.execution.useObjectHashAggregateExec = true",
+    "meta" : "default: true",
+    "version" : "2.2.0",
+    "docHTML" : "Decides if we use ObjectHashAggregateExec"
+}, {
+    "caption" : "spark.sql.streaming.fileSink.log.deletion",
+    "value" : "spark.sql.streaming.fileSink.log.deletion = true",
+    "meta" : "default: true",
+    "version" : "2.0.0",
+    "docHTML" : "Whether to delete the expired log files in file stream sink."
+}, {
+    "caption" : "spark.sql.streaming.fileSource.log.deletion",
+    "value" : "spark.sql.streaming.fileSource.log.deletion = true",
+    "meta" : "default: true",
+    "version" : "2.0.1",
+    "docHTML" : "Whether to delete the expired log files in file stream source."
+}, {
+    "caption" : "spark.sql.streaming.pollingDelay",
+    "value" : "spark.sql.streaming.pollingDelay = 10ms",
+    "meta" : "default: 10ms",
+    "version" : "2.0.0",
+    "docHTML" : "How long to delay polling new data when no data is available"
+}, {
+    "caption" : "spark.sql.streaming.stopTimeout",
+    "value" : "spark.sql.streaming.stopTimeout = 0",
+    "meta" : "default: 0",
+    "version" : "3.0.0",
+    "docHTML" : "How long to wait in milliseconds for the streaming execution thread to stop when calling the streaming query's stop() method. 0 or negative values wait indefinitely."
+}, {
+    "caption" : "spark.sql.defaultSizeInBytes",
+    "value" : "spark.sql.defaultSizeInBytes = 9223372036854775807b",
+    "meta" : "default: 9223372036854775807b",
+    "version" : "1.1.0",
+    "docHTML" : "The default table size used in query planning. By default, it is set to Long.MaxValue which is larger than `spark.sql.autoBroadcastJoinThreshold` to be more conservative. That is to say by default the optimizer will not choose to broadcast a table unless it knows for sure its size is small enough."
+}, {
+    "caption" : "spark.sql.statistics.ndv.maxError",
+    "value" : "spark.sql.statistics.ndv.maxError = 0.05",
+    "meta" : "default: 0.05",
+    "version" : "2.1.1",
+    "docHTML" : "The maximum relative standard deviation allowed in HyperLogLog++ algorithm when generating column level statistics."
+}, {
+    "caption" : "spark.sql.statistics.histogram.enabled",
+    "value" : "spark.sql.statistics.histogram.enabled = false",
+    "meta" : "default: false",
+    "version" : "2.3.0",
+    "docHTML" : "Generates histograms when computing column statistics if enabled. Histograms can provide better estimation accuracy. Currently, Spark only supports equi-height histogram. Note that collecting histograms takes extra cost. For example, collecting column statistics usually takes only one table scan, but generating equi-height histogram will cause an extra table scan."
+}, {
+    "caption" : "spark.sql.statistics.histogram.numBins",
+    "value" : "spark.sql.statistics.histogram.numBins = 254",
+    "meta" : "default: 254",
+    "version" : "2.3.0",
+    "docHTML" : "The number of bins when generating histograms."
+}, {
+    "caption" : "spark.sql.statistics.percentile.accuracy",
+    "value" : "spark.sql.statistics.percentile.accuracy = 10000",
+    "meta" : "default: 10000",
+    "version" : "2.3.0",
+    "docHTML" : "Accuracy of percentile approximation when generating equi-height histograms. Larger value means better accuracy. The relative error can be deduced by 1.0 / PERCENTILE_ACCURACY."
+}, {
+    "caption" : "spark.sql.statistics.size.autoUpdate.enabled",
+    "value" : "spark.sql.statistics.size.autoUpdate.enabled = false",
+    "meta" : "default: false",
+    "version" : "2.3.0",
+    "docHTML" : "Enables automatic update for table size once table's data is changed. Note that if the total number of files of the table is very large, this can be expensive and slow down data change commands."
+}, {
+    "caption" : "spark.sql.cbo.enabled",
+    "value" : "spark.sql.cbo.enabled = false",
+    "meta" : "default: false",
+    "version" : "2.2.0",
+    "docHTML" : "Enables CBO for estimation of plan statistics when set true."
+}, {
+    "caption" : "spark.sql.cbo.planStats.enabled",
+    "value" : "spark.sql.cbo.planStats.enabled = false",
+    "meta" : "default: false",
+    "version" : "3.0.0",
+    "docHTML" : "When true, the logical plan will fetch row counts and column statistics from catalog."
+}, {
+    "caption" : "spark.sql.cbo.joinReorder.enabled",
+    "value" : "spark.sql.cbo.joinReorder.enabled = false",
+    "meta" : "default: false",
+    "version" : "2.2.0",
+    "docHTML" : "Enables join reorder in CBO."
+}, {
+    "caption" : "spark.sql.cbo.joinReorder.card.weight",
+    "value" : "spark.sql.cbo.joinReorder.card.weight = 0.7",
+    "meta" : "default: 0.7",
+    "version" : "2.2.0",
+    "docHTML" : "The weight of the ratio of cardinalities (number of rows) in the cost comparison function. The ratio of sizes in bytes has weight 1 - this value. The weighted geometric mean of these ratios is used to decide which of the candidate plans will be chosen by the CBO."
+}, {
+    "caption" : "spark.sql.cbo.starSchemaDetection",
+    "value" : "spark.sql.cbo.starSchemaDetection = false",
+    "meta" : "default: false",
+    "version" : "2.2.0",
+    "docHTML" : "When true, it enables join reordering based on star schema detection. "
+}, {
+    "caption" : "spark.sql.session.timeZone",
+    "value" : "spark.sql.session.timeZone = Asia/Shanghai",
+    "meta" : "default: Asia/Shanghai",
+    "version" : "2.2.0",
+    "docHTML" : "The ID of session local timezone in the format of either region-based zone IDs or zone offsets. Region IDs must have the form 'area/city', such as 'America/Los_Angeles'. Zone offsets must be in the format '(+|-)HH', '(+|-)HH:mm' or '(+|-)HH:mm:ss', e.g '-08', '+01:00' or '-13:33:33'. Also 'UTC' and 'Z' are supported as aliases of '+00:00'. Other short names are not recommended to use because they can be ambiguous."
+}, {
+    "caption" : "spark.sql.execution.arrow.enabled",
+    "value" : "spark.sql.execution.arrow.enabled = false",
+    "meta" : "default: false",
+    "version" : "2.3.0",
+    "docHTML" : "(Deprecated since Spark 3.0, please set 'spark.sql.execution.arrow.pyspark.enabled'.)"
+}, {
+    "caption" : "spark.sql.execution.arrow.fallback.enabled",
+    "value" : "spark.sql.execution.arrow.fallback.enabled = true",
+    "meta" : "default: true",
+    "version" : "2.4.0",
+    "docHTML" : "(Deprecated since Spark 3.0, please set 'spark.sql.execution.arrow.pyspark.fallback.enabled'.)"
+}, {
+    "caption" : "spark.sql.execution.pandas.udf.buffer.size",
+    "version" : "3.0.0",
+    "docHTML" : "Same as `spark.buffer.size` but only applies to Pandas UDF executions. If it is not set, the fallback is `spark.buffer.size`. Note that Pandas execution requires more than 4 bytes. Lowering this value could make small Pandas UDF batch iterated and pipelined; however, it might degrade performance. See SPARK-27870."
+}, {
+    "caption" : "spark.sql.function.concatBinaryAsString",
+    "value" : "spark.sql.function.concatBinaryAsString = false",
+    "meta" : "default: false",
+    "version" : "2.3.0",
+    "docHTML" : "When this option is set to false and all inputs are binary, `functions.concat` returns an output as binary. Otherwise, it returns as a string."
+}, {
+    "caption" : "spark.sql.function.eltOutputAsString",
+    "value" : "spark.sql.function.eltOutputAsString = false",
+    "meta" : "default: false",
+    "version" : "2.3.0",
+    "docHTML" : "When this option is set to false and all inputs are binary, `elt` returns an output as binary. Otherwise, it returns as a string."
+}, {
+    "caption" : "spark.sql.sources.useV1SourceList",
+    "value" : "spark.sql.sources.useV1SourceList = avro,csv,json,kafka,orc,parquet,text",
+    "meta" : "default: avro,csv,json,kafka,orc,parquet,text",
+    "version" : "3.0.0",
+    "docHTML" : "A comma-separated list of data source short names or fully qualified data source implementation class names for which Data Source V2 code path is disabled. These data sources will fallback to Data Source V1 code path."
+}, {
+    "caption" : "spark.sql.sources.partitionOverwriteMode",
+    "value" : "spark.sql.sources.partitionOverwriteMode = STATIC",
+    "meta" : "default: STATIC",
+    "version" : "2.3.0",
+    "docHTML" : "When INSERT OVERWRITE a partitioned data source table, we currently support 2 modes: static and dynamic. In static mode, Spark deletes all the partitions that match the partition specification(e.g. PARTITION(a=1,b)) in the INSERT statement, before overwriting. In dynamic mode, Spark doesn't delete partitions ahead, and only overwrite those partitions that have data written into it at runtime. By default we use static mode to keep the same behavior of Spark prior to 2.3. Note that this config doesn't affect Hive serde tables, as they are always overwritten with dynamic mode. This can also be set as an output option for a data source using key partitionOverwriteMode (which takes precedence over this setting), e.g. dataframe.write.option(\"partitionOverwriteMode\", \"dynamic\").save(path)."
+}, {
+    "caption" : "spark.sql.storeAssignmentPolicy",
+    "value" : "spark.sql.storeAssignmentPolicy = ANSI",
+    "meta" : "default: ANSI",
+    "version" : "3.0.0",
+    "docHTML" : "When inserting a value into a column with different data type, Spark will perform type coercion. Currently, we support 3 policies for the type coercion rules: ANSI, legacy and strict. With ANSI policy, Spark performs the type coercion as per ANSI SQL. In practice, the behavior is mostly the same as PostgreSQL. It disallows certain unreasonable type conversions such as converting `string` to `int` or `double` to `boolean`. With legacy policy, Spark allows the type coercion as long as it is a valid `Cast`, which is very loose. e.g. converting `string` to `int` or `double` to `boolean` is allowed. It is also the only behavior in Spark 2.x and it is compatible with Hive. With strict policy, Spark doesn't allow any possible precision loss or data truncation in type coercion, e.g. converting `double` to `int` or `decimal` to `double` is not allowed."
+}, {
+    "caption" : "spark.sql.ansi.enabled",
+    "value" : "spark.sql.ansi.enabled = false",
+    "meta" : "default: false",
+    "version" : "3.0.0",
+    "docHTML" : "When true, Spark SQL uses an ANSI compliant dialect instead of being Hive compliant. For example, Spark will throw an exception at runtime instead of returning null results when the inputs to a SQL operator/function are invalid.For full details of this dialect, you can find them in the section \"ANSI Compliance\" of Spark's documentation. Some ANSI dialect features may be not from the ANSI SQL standard directly, but their behaviors align with ANSI SQL's style"
+}, {
+    "caption" : "spark.sql.execution.sortBeforeRepartition",
+    "value" : "spark.sql.execution.sortBeforeRepartition = true",
+    "meta" : "default: true",
+    "version" : "2.1.4",
+    "docHTML" : "When perform a repartition following a shuffle, the output row ordering would be nondeterministic. If some downstream stages fail and some tasks of the repartition stage retry, these tasks may generate different data, and that can lead to correctness issues. Turn on this config to insert a local sort before actually doing repartition to generate consistent repartition results. The performance of repartition() may go down since we insert extra local sort before it."
+}, {
+    "caption" : "spark.sql.optimizer.disableHints",
+    "value" : "spark.sql.optimizer.disableHints = false",
+    "meta" : "default: false",
+    "version" : "3.1.0",
+    "docHTML" : "When true, the optimizer will disable user-specified hints that are additional directives for better planning of a query."
+}, {
+    "caption" : "spark.sql.repl.eagerEval.enabled",
+    "value" : "spark.sql.repl.eagerEval.enabled = false",
+    "meta" : "default: false",
+    "version" : "2.4.0",
+    "docHTML" : "Enables eager evaluation or not. When true, the top K rows of Dataset will be displayed if and only if the REPL supports the eager evaluation. Currently, the eager evaluation is supported in PySpark and SparkR. In PySpark, for the notebooks like Jupyter, the HTML table (generated by _repr_html_) will be returned. For plain Python REPL, the returned outputs are formatted like dataframe.show(). In SparkR, the returned outputs are showed similar to R data.frame would."
+}, {
+    "caption" : "spark.sql.repl.eagerEval.truncate",
+    "value" : "spark.sql.repl.eagerEval.truncate = 20",
+    "meta" : "default: 20",
+    "version" : "2.4.0",
+    "docHTML" : "The max number of characters for each cell that is returned by eager evaluation. This only takes effect when spark.sql.repl.eagerEval.enabled is set to true."
+}, {
+    "caption" : "spark.sql.avro.compression.codec",
+    "value" : "spark.sql.avro.compression.codec = snappy",
+    "meta" : "default: snappy",
+    "version" : "2.4.0",
+    "docHTML" : "Compression codec used in writing of AVRO files. Supported codecs: uncompressed, deflate, snappy, bzip2, xz and zstandard. Default codec is snappy."
+}, {
+    "caption" : "spark.sql.avro.deflate.level",
+    "value" : "spark.sql.avro.deflate.level = -1",
+    "meta" : "default: -1",
+    "version" : "2.4.0",
+    "docHTML" : "Compression level for the deflate codec used in writing of AVRO files. Valid value must be in the range of from 1 to 9 inclusive or -1. The default value is -1 which corresponds to 6 level in the current implementation."
+}, {
+    "caption" : "spark.sql.legacy.sizeOfNull",
+    "value" : "spark.sql.legacy.sizeOfNull = true",
+    "meta" : "default: true",
+    "version" : "2.4.0",
+    "docHTML" : "If it is set to false, or spark.sql.ansi.enabled is true, then size of null returns null. Otherwise, it returns -1, which was inherited from Hive."
+}, {
+    "caption" : "spark.sql.debug.maxToStringFields",
+    "value" : "spark.sql.debug.maxToStringFields = 25",
+    "meta" : "default: 25",
+    "version" : "3.0.0",
+    "docHTML" : "Maximum number of fields of sequence-like entries can be converted to strings in debug output. Any elements beyond the limit will be dropped and replaced by a \"... N more fields\" placeholder."
+}, {
+    "caption" : "spark.sql.maxPlanStringLength",
+    "value" : "spark.sql.maxPlanStringLength = 2147483632",
+    "meta" : "default: 2147483632",
+    "version" : "3.0.0",
+    "docHTML" : "Maximum number of characters to output for a plan string.  If the plan is longer, further output will be truncated.  The default setting always generates a full plan.  Set this to a lower value such as 8k if plan strings are taking up too much memory or are causing OutOfMemory errors in the driver or UI processes."
+}, {
+    "caption" : "spark.sql.timestampType",
+    "value" : "spark.sql.timestampType = TIMESTAMP_LTZ",
+    "meta" : "default: TIMESTAMP_LTZ",
+    "version" : "3.4.0",
+    "docHTML" : "Configures the default timestamp type of Spark SQL, including SQL DDL, Cast clause and type literal. Setting the configuration as TIMESTAMP_NTZ will use TIMESTAMP WITHOUT TIME ZONE as the default type while putting it as TIMESTAMP_LTZ will use TIMESTAMP WITH LOCAL TIME ZONE. Before the 3.4.0 release, Spark only supports the TIMESTAMP WITH LOCAL TIME ZONE type."
+}, {
+    "caption" : "spark.sql.ui.explainMode",
+    "value" : "spark.sql.ui.explainMode = formatted",
+    "meta" : "default: formatted",
+    "version" : "3.1.0",
+    "docHTML" : "Configures the query explain mode used in the Spark SQL UI. The value can be 'simple', 'extended', 'codegen', 'cost', or 'formatted'. The default value is 'formatted'."
+}, {
+    "caption" : "spark.sql.defaultCatalog",
+    "value" : "spark.sql.defaultCatalog = spark_catalog",
+    "meta" : "default: spark_catalog",
+    "version" : "3.0.0",
+    "docHTML" : "Name of the default catalog. This will be the current catalog if users have not explicitly set the current catalog yet."
+}, {
+    "caption" : "spark.sql.mapKeyDedupPolicy",
+    "value" : "spark.sql.mapKeyDedupPolicy = EXCEPTION",
+    "meta" : "default: EXCEPTION",
+    "version" : "3.0.0",
+    "docHTML" : "The policy to deduplicate map keys in builtin function: CreateMap, MapFromArrays, MapFromEntries, StringToMap, MapConcat and TransformKeys. When EXCEPTION, the query fails if duplicated map keys are detected. When LAST_WIN, the map key that is inserted at last takes precedence."
+}, {
+    "caption" : "spark.sql.legacy.doLooseUpcast",
+    "value" : "spark.sql.legacy.doLooseUpcast = false",
+    "meta" : "default: false",
+    "version" : "3.0.0",
+    "docHTML" : "When true, the upcast will be loose and allows string to atomic types."
+}, {
+    "caption" : "spark.sql.addPartitionInBatch.size",
+    "value" : "spark.sql.addPartitionInBatch.size = 100",
+    "meta" : "default: 100",
+    "version" : "3.0.0",
+    "docHTML" : "The number of partitions to be handled in one turn when use `AlterTableAddPartitionCommand` or `RepairTableCommand` to add partitions into table. The smaller batch size is, the less memory is required for the real handler, e.g. Hive Metastore."
+}, {
+    "caption" : "spark.sql.avro.datetimeRebaseModeInRead",
+    "value" : "spark.sql.avro.datetimeRebaseModeInRead = EXCEPTION",
+    "meta" : "default: EXCEPTION",
+    "version" : "3.0.0",
+    "docHTML" : "When LEGACY, Spark will rebase dates/timestamps from the legacy hybrid (Julian + Gregorian) calendar to Proleptic Gregorian calendar when reading Avro files. When CORRECTED, Spark will not do rebase and read the dates/timestamps as it is. When EXCEPTION, which is the default, Spark will fail the reading if it sees ancient dates/timestamps that are ambiguous between the two calendars. This config is only effective if the writer info (like Spark, Hive) of the Avro files is unknown."
+}, {
+    "caption" : "spark.sql.charAsVarchar",
+    "value" : "spark.sql.charAsVarchar = false",
+    "meta" : "default: false",
+    "version" : "3.3.0",
+    "docHTML" : "When true, Spark replaces CHAR type with VARCHAR type in CREATE/REPLACE/ALTER TABLE commands, so that newly created/updated tables will not have CHAR type columns/fields. Existing tables with CHAR type columns/fields are not affected by this config."
+}, {
+    "caption" : "spark.sql.cli.print.header",
+    "value" : "spark.sql.cli.print.header = false",
+    "meta" : "default: false",
+    "version" : "3.2.0",
+    "docHTML" : "When set to true, spark-sql CLI prints the names of the columns in query output."
+}, {
+    "caption" : "spark.sql.legacy.interval.enabled",
+    "value" : "spark.sql.legacy.interval.enabled = false",
+    "meta" : "default: false",
+    "version" : "3.2.0",
+    "docHTML" : "When set to true, Spark SQL uses the mixed legacy interval type `CalendarIntervalType` instead of the ANSI compliant interval types `YearMonthIntervalType` and `DayTimeIntervalType`. For instance, the date subtraction expression returns `CalendarIntervalType` when the SQL config is set to `true` otherwise an ANSI interval."
+}, {
+    "caption" : "spark.sql.legacy.useV1Command",
+    "value" : "spark.sql.legacy.useV1Command = false",
+    "meta" : "default: false",
+    "version" : "3.3.0",
+    "docHTML" : "When true, Spark will use legacy V1 SQL commands."
+}, {
+    "caption" : "spark.sql.hive.convertMetastoreParquet.mergeSchema",
+    "value" : "spark.sql.hive.convertMetastoreParquet.mergeSchema = false",
+    "meta" : "default: false",
+    "version" : "1.3.1",
+    "docHTML" : "When true, also tries to merge possibly different but compatible Parquet schemas in different Parquet data files. This configuration is only effective when \"spark.sql.hive.convertMetastoreParquet\" is true."
+}, {
+    "caption" : "spark.sql.hive.convertMetastoreParquet",
+    "value" : "spark.sql.hive.convertMetastoreParquet = true",
+    "meta" : "default: true",
+    "version" : "1.1.1",
+    "docHTML" : "When set to true, the built-in Parquet reader and writer are used to process parquet tables created by using the HiveQL syntax, instead of Hive serde."
+}, {
+    "caption" : "spark.sql.hive.convertInsertingPartitionedTable",
+    "value" : "spark.sql.hive.convertInsertingPartitionedTable = true",
+    "meta" : "default: true",
+    "version" : "3.0.0",
+    "docHTML" : "When set to true, and `spark.sql.hive.convertMetastoreParquet` or `spark.sql.hive.convertMetastoreOrc` is true, the built-in ORC/Parquet writer is usedto process inserting into partitioned ORC/Parquet tables created by using the HiveSQL syntax."
+}, {
+    "caption" : "spark.sql.hive.convertMetastoreInsertDir",
+    "value" : "spark.sql.hive.convertMetastoreInsertDir = true",
+    "meta" : "default: true",
+    "version" : "3.3.0",
+    "docHTML" : "When set to true,  Spark will try to use built-in data source writer instead of Hive serde in INSERT OVERWRITE DIRECTORY. This flag is effective only if `spark.sql.hive.convertMetastoreParquet` or `spark.sql.hive.convertMetastoreOrc` is enabled respectively for Parquet and ORC formats"
+}, {
+    "caption" : "spark.sql.hive.metastore.sharedPrefixes",
+    "value" : "spark.sql.hive.metastore.sharedPrefixes = ",
+    "version" : "1.4.0",
+    "docHTML" : "A comma separated list of class prefixes that should be loaded using the classloader that is shared between Spark SQL and a specific version of Hive. An example of classes that should be shared is JDBC drivers that are needed to talk to the metastore. Other classes that need to be shared are those that interact with classes that are already shared. For example, custom appenders that are used by log4j."
+}, {
+    "caption" : "spark.sql.hive.metastore.barrierPrefixes",
+    "value" : "spark.sql.hive.metastore.barrierPrefixes = ",
+    "version" : "1.4.0",
+    "docHTML" : "A comma separated list of class prefixes that should explicitly be reloaded for each version of Hive that Spark SQL is communicating with. For example, Hive UDFs that are declared in a prefix that typically would be shared (i.e. <code>org.apache.spark.*</code>)."
 }, {
     "caption" : "spark.sql.hive.version",
     "value" : "spark.sql.hive.version = 2.3.9",
@@ -3578,7 +3625,7 @@ let SPARK_CONFIG_OPTIONS = [ {
     "docHTML" : "\n Location of the jars that should be used to instantiate the HiveMetastoreClient.\n This property can be one of four options:\n 1. \"builtin\"\n   Use Hive 2.3.9, which is bundled with the Spark assembly when\n   <code>-Phive</code> is enabled. When this option is chosen,\n   <code>spark.sql.hive.metastore.version</code> must be either\n   <code>2.3.9</code> or not defined.\n 2. \"maven\"\n   Use Hive jars of specified version downloaded from Maven repositories.\n 3. \"path\"\n   Use Hive jars configured by `spark.sql.hive.metastore.jars.path`\n   in comma separated format. Support both local or remote paths.The provided jars\n   should be the same version as `spark.sql.hive.metastore.version`.\n 4. A classpath in the standard format for both Hive and Hadoop. The provided jars\n   should be the same version as `spark.sql.hive.metastore.version`.\n      "
 }, {
     "caption" : "spark.sql.hive.metastore.jars.path",
-    "value" : "spark.sql.hive.metastore.jars.path",
+    "value" : "spark.sql.hive.metastore.jars.path = ",
     "version" : "3.1.0",
     "docHTML" : "\n Comma-separated paths of the jars that used to instantiate the HiveMetastoreClient.\n This configuration is useful only when `spark.sql.hive.metastore.jars` is set as `path`.\n The paths can be any of the following format:\n 1. file://path/to/jar/foo.jar\n 2. hdfs://nameservice/path/to/jar/foo.jar\n 3. /path/to/jar/ (path without URI scheme follow conf `fs.defaultFS`'s URI schema)\n 4. [http/https/ftp]://path/to/jar/foo.jar\n Note that 1, 2, and 3 support wildcard. For example:\n 1. file://path/to/jar/*,file://path2/to/jar/*/*.jar\n 2. hdfs://nameservice/path/to/jar/*,hdfs://nameservice2/path/to/jar/*/*.jar\n      "
 }, {
@@ -3600,39 +3647,71 @@ let SPARK_CONFIG_OPTIONS = [ {
     "version" : "1.5.0",
     "docHTML" : "When set to true, Hive Thrift server executes SQL queries in an asynchronous way."
 }, {
-    "caption" : "spark.sql.hive.convertMetastoreParquet",
-    "value" : "spark.sql.hive.convertMetastoreParquet = true",
-    "meta" : "default: true",
-    "version" : "1.1.1",
-    "docHTML" : "When set to true, the built-in Parquet reader and writer are used to process parquet tables created by using the HiveQL syntax, instead of Hive serde."
-}, {
-    "caption" : "spark.sql.hive.convertInsertingPartitionedTable",
-    "value" : "spark.sql.hive.convertInsertingPartitionedTable = true",
+    "caption" : "spark.history.custom.executor.log.url.applyIncompleteApplication",
+    "value" : "spark.history.custom.executor.log.url.applyIncompleteApplication = true",
     "meta" : "default: true",
     "version" : "3.0.0",
-    "docHTML" : "When set to true, and `spark.sql.hive.convertMetastoreParquet` or `spark.sql.hive.convertMetastoreOrc` is true, the built-in ORC/Parquet writer is usedto process inserting into partitioned ORC/Parquet tables created by using the HiveSQL syntax."
+    "docHTML" : "Whether to apply custom executor log url, as specified by spark.history.custom.executor.log.url, to incomplete application as well. Even if this is true, this still only affects the behavior of the history server, not running spark applications."
 }, {
-    "caption" : "spark.sql.hive.convertMetastoreInsertDir",
-    "value" : "spark.sql.hive.convertMetastoreInsertDir = true",
-    "meta" : "default: true",
-    "version" : "3.3.0",
-    "docHTML" : "When set to true,  Spark will try to use built-in data source writer instead of Hive serde in INSERT OVERWRITE DIRECTORY. This flag is effective only if `spark.sql.hive.convertMetastoreParquet` or `spark.sql.hive.convertMetastoreOrc` is enabled respectively for Parquet and ORC formats"
+    "caption" : "spark.history.fs.safemodeCheck.interval",
+    "value" : "spark.history.fs.safemodeCheck.interval = 5s",
+    "meta" : "default: 5s",
+    "version" : "1.6.0",
+    "docHTML" : ""
 }, {
-    "caption" : "spark.sql.hive.metastore.sharedPrefixes",
-    "value" : "spark.sql.hive.metastore.sharedPrefixes",
-    "version" : "1.4.0",
-    "docHTML" : "A comma separated list of class prefixes that should be loaded using the classloader that is shared between Spark SQL and a specific version of Hive. An example of classes that should be shared is JDBC drivers that are needed to talk to the metastore. Other classes that need to be shared are those that interact with classes that are already shared. For example, custom appenders that are used by log4j."
+    "caption" : "spark.history.fs.endEventReparseChunkSize",
+    "value" : "spark.history.fs.endEventReparseChunkSize = 1m",
+    "meta" : "default: 1m",
+    "version" : "2.4.0",
+    "docHTML" : "How many bytes to parse at the end of log files looking for the end event. This is used to speed up generation of application listings by skipping unnecessary parts of event log files. It can be disabled by setting this config to 0."
 }, {
-    "caption" : "spark.sql.hive.metastore.barrierPrefixes",
-    "value" : "spark.sql.hive.metastore.barrierPrefixes",
-    "version" : "1.4.0",
-    "docHTML" : "A comma separated list of class prefixes that should explicitly be reloaded for each version of Hive that Spark SQL is communicating with. For example, Hive UDFs that are declared in a prefix that typically would be shared (i.e. <code>org.apache.spark.*</code>)."
+    "caption" : "spark.history.fs.eventLog.rolling.maxFilesToRetain",
+    "value" : "spark.history.fs.eventLog.rolling.maxFilesToRetain = 2147483647",
+    "meta" : "default: 2147483647",
+    "version" : "3.0.0",
+    "docHTML" : "The maximum number of event log files which will be retained as non-compacted. By default, all event log files will be retained. Please set the configuration and spark.eventLog.rolling.maxFileSize accordingly if you want to control the overall size of event log files."
 }, {
-    "caption" : "spark.sql.hive.convertMetastoreParquet.mergeSchema",
-    "value" : "spark.sql.hive.convertMetastoreParquet.mergeSchema = false",
+    "caption" : "spark.history.fs.eventLog.rolling.compaction.score.threshold",
+    "value" : "spark.history.fs.eventLog.rolling.compaction.score.threshold = 0.7",
+    "meta" : "default: 0.7",
+    "version" : "3.0.0",
+    "docHTML" : "The threshold score to determine whether it's good to do the compaction or not. The compaction score is calculated in analyzing, and being compared to this value. Compaction will proceed only when the score is higher than the threshold value."
+}, {
+    "caption" : "spark.history.fs.driverlog.cleaner.enabled",
+    "version" : "3.0.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.history.fs.driverlog.cleaner.interval",
+    "version" : "3.0.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.history.ui.acls.enable",
+    "value" : "spark.history.ui.acls.enable = false",
     "meta" : "default: false",
-    "version" : "1.3.1",
-    "docHTML" : "When true, also tries to merge possibly different but compatible Parquet schemas in different Parquet data files. This configuration is only effective when \"spark.sql.hive.convertMetastoreParquet\" is true."
+    "version" : "1.0.1",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.history.ui.admin.acls",
+    "value" : "spark.history.ui.admin.acls = ",
+    "version" : "2.1.1",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.history.ui.admin.acls.groups",
+    "value" : "spark.history.ui.admin.acls.groups = ",
+    "version" : "2.1.1",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.history.store.hybridStore.maxMemoryUsage",
+    "value" : "spark.history.store.hybridStore.maxMemoryUsage = 2g",
+    "meta" : "default: 2g",
+    "version" : "3.1.0",
+    "docHTML" : "Maximum memory space that can be used to create HybridStore. The HybridStore co-uses the heap memory, so the heap memory should be increased through the memory option for SHS if the HybridStore is enabled."
+}, {
+    "caption" : "spark.history.store.hybridStore.diskBackend",
+    "value" : "spark.history.store.hybridStore.diskBackend = LEVELDB",
+    "meta" : "default: LEVELDB",
+    "version" : "3.3.0",
+    "docHTML" : "Specifies a disk-based store used in hybrid store; LEVELDB or ROCKSDB."
 }, {
     "caption" : "spark.history.fs.logDirectory",
     "value" : "spark.history.fs.logDirectory = file:/tmp/spark-events",
@@ -3716,74 +3795,31 @@ let SPARK_CONFIG_OPTIONS = [ {
     "version" : "3.1.0",
     "docHTML" : "Whether to use HybridStore as the store when parsing event logs. HybridStore will first write data to an in-memory store and having a background thread that dumps data to a disk store after the writing to in-memory store is completed."
 }, {
-    "caption" : "spark.history.fs.safemodeCheck.interval",
-    "value" : "spark.history.fs.safemodeCheck.interval = 5s",
-    "meta" : "default: 5s",
-    "version" : "1.6.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.history.fs.endEventReparseChunkSize",
-    "value" : "spark.history.fs.endEventReparseChunkSize = 1m",
-    "meta" : "default: 1m",
-    "version" : "2.4.0",
-    "docHTML" : "How many bytes to parse at the end of log files looking for the end event. This is used to speed up generation of application listings by skipping unnecessary parts of event log files. It can be disabled by setting this config to 0."
-}, {
-    "caption" : "spark.history.fs.eventLog.rolling.maxFilesToRetain",
-    "value" : "spark.history.fs.eventLog.rolling.maxFilesToRetain = 2147483647",
-    "meta" : "default: 2147483647",
-    "version" : "3.0.0",
-    "docHTML" : "The maximum number of event log files which will be retained as non-compacted. By default, all event log files will be retained. Please set the configuration and spark.eventLog.rolling.maxFileSize accordingly if you want to control the overall size of event log files."
-}, {
-    "caption" : "spark.history.fs.eventLog.rolling.compaction.score.threshold",
-    "value" : "spark.history.fs.eventLog.rolling.compaction.score.threshold = 0.7",
-    "meta" : "default: 0.7",
-    "version" : "3.0.0",
-    "docHTML" : "The threshold score to determine whether it's good to do the compaction or not. The compaction score is calculated in analyzing, and being compared to this value. Compaction will proceed only when the score is higher than the threshold value."
-}, {
-    "caption" : "spark.history.fs.driverlog.cleaner.enabled",
-    "version" : "3.0.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.history.fs.driverlog.cleaner.interval",
-    "version" : "3.0.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.history.ui.acls.enable",
-    "value" : "spark.history.ui.acls.enable = false",
+    "caption" : "spark.kryo.registrationRequired",
+    "value" : "spark.kryo.registrationRequired = false",
     "meta" : "default: false",
-    "version" : "1.0.1",
+    "version" : "1.1.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.history.ui.admin.acls",
-    "value" : "spark.history.ui.admin.acls",
-    "version" : "2.1.1",
+    "caption" : "spark.kryoserializer.buffer",
+    "value" : "spark.kryoserializer.buffer = 64k",
+    "meta" : "default: 64k",
+    "version" : "1.4.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.history.ui.admin.acls.groups",
-    "value" : "spark.history.ui.admin.acls.groups",
-    "version" : "2.1.1",
+    "caption" : "spark.kryoserializer.buffer.max",
+    "value" : "spark.kryoserializer.buffer.max = 64m",
+    "meta" : "default: 64m",
+    "version" : "1.4.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.history.store.hybridStore.maxMemoryUsage",
-    "value" : "spark.history.store.hybridStore.maxMemoryUsage = 2g",
-    "meta" : "default: 2g",
-    "version" : "3.1.0",
-    "docHTML" : "Maximum memory space that can be used to create HybridStore. The HybridStore co-uses the heap memory, so the heap memory should be increased through the memory option for SHS if the HybridStore is enabled."
-}, {
-    "caption" : "spark.history.store.hybridStore.diskBackend",
-    "value" : "spark.history.store.hybridStore.diskBackend = LEVELDB",
-    "meta" : "default: LEVELDB",
-    "version" : "3.3.0",
-    "docHTML" : "Specifies a disk-based store used in hybrid store; LEVELDB or ROCKSDB."
-}, {
-    "caption" : "spark.history.custom.executor.log.url.applyIncompleteApplication",
-    "value" : "spark.history.custom.executor.log.url.applyIncompleteApplication = true",
-    "meta" : "default: true",
-    "version" : "3.0.0",
-    "docHTML" : "Whether to apply custom executor log url, as specified by spark.history.custom.executor.log.url, to incomplete application as well. Even if this is true, this still only affects the behavior of the history server, not running spark applications."
+    "caption" : "spark.kryo.classesToRegister",
+    "value" : "spark.kryo.classesToRegister = ",
+    "version" : "1.2.0",
+    "docHTML" : ""
 }, {
     "caption" : "spark.kryo.registrator",
-    "value" : "spark.kryo.registrator",
+    "value" : "spark.kryo.registrator = ",
     "version" : "0.5.0",
     "docHTML" : ""
 }, {
@@ -3805,28 +3841,17 @@ let SPARK_CONFIG_OPTIONS = [ {
     "version" : "0.8.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.kryo.classesToRegister",
-    "value" : "spark.kryo.classesToRegister",
-    "version" : "1.2.0",
+    "caption" : "spark.python.authenticate.socketTimeout",
+    "value" : "spark.python.authenticate.socketTimeout = 15s",
+    "meta" : "default: 15s",
+    "version" : "3.1.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.kryoserializer.buffer",
-    "value" : "spark.kryoserializer.buffer = 64k",
-    "meta" : "default: 64k",
-    "version" : "1.4.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.kryo.registrationRequired",
-    "value" : "spark.kryo.registrationRequired = false",
+    "caption" : "spark.python.worker.faulthandler.enabled",
+    "value" : "spark.python.worker.faulthandler.enabled = false",
     "meta" : "default: false",
-    "version" : "1.1.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.kryoserializer.buffer.max",
-    "value" : "spark.kryoserializer.buffer.max = 64m",
-    "meta" : "default: 64m",
-    "version" : "1.4.0",
-    "docHTML" : ""
+    "version" : "3.2.0",
+    "docHTML" : "When true, Python workers set up the faulthandler for the case when the Python worker exits unexpectedly (crashes), and shows the stack trace of the moment the Python worker crashes in the error message if captured successfully."
 }, {
     "caption" : "spark.python.worker.reuse",
     "value" : "spark.python.worker.reuse = true",
@@ -3846,17 +3871,47 @@ let SPARK_CONFIG_OPTIONS = [ {
     "version" : "2.3.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.python.authenticate.socketTimeout",
-    "value" : "spark.python.authenticate.socketTimeout = 15s",
-    "meta" : "default: 15s",
-    "version" : "3.1.0",
+    "caption" : "spark.ui.consoleProgress.update.interval",
+    "value" : "spark.ui.consoleProgress.update.interval = 200ms",
+    "meta" : "default: 200ms",
+    "version" : "2.1.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.python.worker.faulthandler.enabled",
-    "value" : "spark.python.worker.faulthandler.enabled = false",
-    "meta" : "default: false",
+    "caption" : "spark.ui.xContentTypeOptions.enabled",
+    "value" : "spark.ui.xContentTypeOptions.enabled = true",
+    "meta" : "default: true",
+    "version" : "2.3.0",
+    "docHTML" : "Set to 'true' for setting X-Content-Type-Options HTTP response header to 'nosniff'"
+}, {
+    "caption" : "spark.ui.timeline.tasks.maximum",
+    "value" : "spark.ui.timeline.tasks.maximum = 1000",
+    "meta" : "default: 1000",
+    "version" : "1.4.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.ui.timeline.stages.maximum",
+    "value" : "spark.ui.timeline.stages.maximum = 500",
+    "meta" : "default: 500",
     "version" : "3.2.0",
-    "docHTML" : "When true, Python workers set up the faulthandler for the case when the Python worker exits unexpectedly (crashes), and shows the stack trace of the moment the Python worker crashes in the error message if captured successfully."
+    "docHTML" : ""
+}, {
+    "caption" : "spark.ui.timeline.executors.maximum",
+    "value" : "spark.ui.timeline.executors.maximum = 250",
+    "meta" : "default: 250",
+    "version" : "3.2.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.master.ui.decommission.allow.mode",
+    "value" : "spark.master.ui.decommission.allow.mode = LOCAL",
+    "meta" : "default: LOCAL",
+    "version" : "3.1.0",
+    "docHTML" : "Specifies the behavior of the Master Web UI's /workers/kill endpoint. Possible choices are: `LOCAL` means allow this endpoint from IP's that are local to the machine running the Master, `DENY` means to completely disable this endpoint, `ALLOW` means to allow calling this endpoint from any IP."
+}, {
+    "caption" : "spark.ui.port",
+    "value" : "spark.ui.port = 4040",
+    "meta" : "default: 4040",
+    "version" : "0.7.0",
+    "docHTML" : "Port for your application's dashboard, which shows memory and workload data."
 }, {
     "caption" : "spark.user.groups.mapping",
     "value" : "spark.user.groups.mapping = org.apache.spark.security.ShellBasedGroupsMappingProvider",
@@ -3864,26 +3919,8 @@ let SPARK_CONFIG_OPTIONS = [ {
     "version" : "2.0.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.ui.showConsoleProgress",
-    "value" : "spark.ui.showConsoleProgress = false",
-    "meta" : "default: false",
-    "version" : "1.2.1",
-    "docHTML" : "When true, show the progress bar in the console."
-}, {
-    "caption" : "spark.ui.enabled",
-    "value" : "spark.ui.enabled = true",
-    "meta" : "default: true",
-    "version" : "1.1.1",
-    "docHTML" : "Whether to run the web UI for the Spark application."
-}, {
-    "caption" : "spark.ui.reverseProxy",
-    "value" : "spark.ui.reverseProxy = false",
-    "meta" : "default: false",
-    "version" : "2.1.0",
-    "docHTML" : "Enable running Spark Master as reverse proxy for worker and application UIs. In this mode, Spark master will reverse proxy the worker and application UIs to enable access without requiring direct access to their hosts. Use it with caution, as worker and application UI will not be accessible directly, you will only be able to access themthrough spark master/proxy public URL. This setting affects all the workers and application UIs running in the cluster and must be set on all the workers, drivers  and masters."
-}, {
     "caption" : "spark.ui.filters",
-    "value" : "spark.ui.filters",
+    "value" : "spark.ui.filters = ",
     "version" : "1.0.0",
     "docHTML" : "Comma separated list of filter class names to apply to the Spark Web UI."
 }, {
@@ -3930,76 +3967,118 @@ let SPARK_CONFIG_OPTIONS = [ {
     "docHTML" : ""
 }, {
     "caption" : "spark.ui.view.acls",
-    "value" : "spark.ui.view.acls",
+    "value" : "spark.ui.view.acls = ",
     "version" : "1.0.0",
     "docHTML" : ""
 }, {
     "caption" : "spark.ui.view.acls.groups",
-    "value" : "spark.ui.view.acls.groups",
+    "value" : "spark.ui.view.acls.groups = ",
     "version" : "2.0.0",
     "docHTML" : ""
 }, {
     "caption" : "spark.admin.acls",
-    "value" : "spark.admin.acls",
+    "value" : "spark.admin.acls = ",
     "version" : "1.1.0",
     "docHTML" : ""
 }, {
     "caption" : "spark.admin.acls.groups",
-    "value" : "spark.admin.acls.groups",
+    "value" : "spark.admin.acls.groups = ",
     "version" : "2.0.0",
     "docHTML" : ""
 }, {
     "caption" : "spark.modify.acls",
-    "value" : "spark.modify.acls",
+    "value" : "spark.modify.acls = ",
     "version" : "1.1.0",
     "docHTML" : ""
 }, {
     "caption" : "spark.modify.acls.groups",
-    "value" : "spark.modify.acls.groups",
+    "value" : "spark.modify.acls.groups = ",
     "version" : "2.0.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.ui.port",
-    "value" : "spark.ui.port = 4040",
-    "meta" : "default: 4040",
-    "version" : "0.7.0",
-    "docHTML" : "Port for your application's dashboard, which shows memory and workload data."
+    "caption" : "spark.ui.showConsoleProgress",
+    "value" : "spark.ui.showConsoleProgress = false",
+    "meta" : "default: false",
+    "version" : "1.2.1",
+    "docHTML" : "When true, show the progress bar in the console."
 }, {
-    "caption" : "spark.ui.consoleProgress.update.interval",
-    "value" : "spark.ui.consoleProgress.update.interval = 200ms",
-    "meta" : "default: 200ms",
-    "version" : "2.1.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.ui.xContentTypeOptions.enabled",
-    "value" : "spark.ui.xContentTypeOptions.enabled = true",
+    "caption" : "spark.ui.enabled",
+    "value" : "spark.ui.enabled = true",
     "meta" : "default: true",
-    "version" : "2.3.0",
-    "docHTML" : "Set to 'true' for setting X-Content-Type-Options HTTP response header to 'nosniff'"
+    "version" : "1.1.1",
+    "docHTML" : "Whether to run the web UI for the Spark application."
 }, {
-    "caption" : "spark.ui.timeline.tasks.maximum",
-    "value" : "spark.ui.timeline.tasks.maximum = 1000",
-    "meta" : "default: 1000",
-    "version" : "1.4.0",
+    "caption" : "spark.ui.reverseProxy",
+    "value" : "spark.ui.reverseProxy = false",
+    "meta" : "default: false",
+    "version" : "2.1.0",
+    "docHTML" : "Enable running Spark Master as reverse proxy for worker and application UIs. In this mode, Spark master will reverse proxy the worker and application UIs to enable access without requiring direct access to their hosts. Use it with caution, as worker and application UI will not be accessible directly, you will only be able to access themthrough spark master/proxy public URL. This setting affects all the workers and application UIs running in the cluster and must be set on all the workers, drivers  and masters."
+}, {
+    "caption" : "spark.history.custom.executor.log.url.applyIncompleteApplication",
+    "value" : "spark.history.custom.executor.log.url.applyIncompleteApplication = true",
+    "meta" : "default: true",
+    "version" : "3.0.0",
+    "docHTML" : "Whether to apply custom executor log url, as specified by spark.history.custom.executor.log.url, to incomplete application as well. Even if this is true, this still only affects the behavior of the history server, not running spark applications."
+}, {
+    "caption" : "spark.history.fs.safemodeCheck.interval",
+    "value" : "spark.history.fs.safemodeCheck.interval = 5s",
+    "meta" : "default: 5s",
+    "version" : "1.6.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.ui.timeline.stages.maximum",
-    "value" : "spark.ui.timeline.stages.maximum = 500",
-    "meta" : "default: 500",
-    "version" : "3.2.0",
+    "caption" : "spark.history.fs.endEventReparseChunkSize",
+    "value" : "spark.history.fs.endEventReparseChunkSize = 1m",
+    "meta" : "default: 1m",
+    "version" : "2.4.0",
+    "docHTML" : "How many bytes to parse at the end of log files looking for the end event. This is used to speed up generation of application listings by skipping unnecessary parts of event log files. It can be disabled by setting this config to 0."
+}, {
+    "caption" : "spark.history.fs.eventLog.rolling.maxFilesToRetain",
+    "value" : "spark.history.fs.eventLog.rolling.maxFilesToRetain = 2147483647",
+    "meta" : "default: 2147483647",
+    "version" : "3.0.0",
+    "docHTML" : "The maximum number of event log files which will be retained as non-compacted. By default, all event log files will be retained. Please set the configuration and spark.eventLog.rolling.maxFileSize accordingly if you want to control the overall size of event log files."
+}, {
+    "caption" : "spark.history.fs.eventLog.rolling.compaction.score.threshold",
+    "value" : "spark.history.fs.eventLog.rolling.compaction.score.threshold = 0.7",
+    "meta" : "default: 0.7",
+    "version" : "3.0.0",
+    "docHTML" : "The threshold score to determine whether it's good to do the compaction or not. The compaction score is calculated in analyzing, and being compared to this value. Compaction will proceed only when the score is higher than the threshold value."
+}, {
+    "caption" : "spark.history.fs.driverlog.cleaner.enabled",
+    "version" : "3.0.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.ui.timeline.executors.maximum",
-    "value" : "spark.ui.timeline.executors.maximum = 250",
-    "meta" : "default: 250",
-    "version" : "3.2.0",
+    "caption" : "spark.history.fs.driverlog.cleaner.interval",
+    "version" : "3.0.0",
     "docHTML" : ""
 }, {
-    "caption" : "spark.master.ui.decommission.allow.mode",
-    "value" : "spark.master.ui.decommission.allow.mode = LOCAL",
-    "meta" : "default: LOCAL",
+    "caption" : "spark.history.ui.acls.enable",
+    "value" : "spark.history.ui.acls.enable = false",
+    "meta" : "default: false",
+    "version" : "1.0.1",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.history.ui.admin.acls",
+    "value" : "spark.history.ui.admin.acls = ",
+    "version" : "2.1.1",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.history.ui.admin.acls.groups",
+    "value" : "spark.history.ui.admin.acls.groups = ",
+    "version" : "2.1.1",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.history.store.hybridStore.maxMemoryUsage",
+    "value" : "spark.history.store.hybridStore.maxMemoryUsage = 2g",
+    "meta" : "default: 2g",
     "version" : "3.1.0",
-    "docHTML" : "Specifies the behavior of the Master Web UI's /workers/kill endpoint. Possible choices are: `LOCAL` means allow this endpoint from IP's that are local to the machine running the Master, `DENY` means to completely disable this endpoint, `ALLOW` means to allow calling this endpoint from any IP."
+    "docHTML" : "Maximum memory space that can be used to create HybridStore. The HybridStore co-uses the heap memory, so the heap memory should be increased through the memory option for SHS if the HybridStore is enabled."
+}, {
+    "caption" : "spark.history.store.hybridStore.diskBackend",
+    "value" : "spark.history.store.hybridStore.diskBackend = LEVELDB",
+    "meta" : "default: LEVELDB",
+    "version" : "3.3.0",
+    "docHTML" : "Specifies a disk-based store used in hybrid store; LEVELDB or ROCKSDB."
 }, {
     "caption" : "spark.history.fs.logDirectory",
     "value" : "spark.history.fs.logDirectory = file:/tmp/spark-events",
@@ -4083,96 +4162,6 @@ let SPARK_CONFIG_OPTIONS = [ {
     "version" : "3.1.0",
     "docHTML" : "Whether to use HybridStore as the store when parsing event logs. HybridStore will first write data to an in-memory store and having a background thread that dumps data to a disk store after the writing to in-memory store is completed."
 }, {
-    "caption" : "spark.history.fs.safemodeCheck.interval",
-    "value" : "spark.history.fs.safemodeCheck.interval = 5s",
-    "meta" : "default: 5s",
-    "version" : "1.6.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.history.fs.endEventReparseChunkSize",
-    "value" : "spark.history.fs.endEventReparseChunkSize = 1m",
-    "meta" : "default: 1m",
-    "version" : "2.4.0",
-    "docHTML" : "How many bytes to parse at the end of log files looking for the end event. This is used to speed up generation of application listings by skipping unnecessary parts of event log files. It can be disabled by setting this config to 0."
-}, {
-    "caption" : "spark.history.fs.eventLog.rolling.maxFilesToRetain",
-    "value" : "spark.history.fs.eventLog.rolling.maxFilesToRetain = 2147483647",
-    "meta" : "default: 2147483647",
-    "version" : "3.0.0",
-    "docHTML" : "The maximum number of event log files which will be retained as non-compacted. By default, all event log files will be retained. Please set the configuration and spark.eventLog.rolling.maxFileSize accordingly if you want to control the overall size of event log files."
-}, {
-    "caption" : "spark.history.fs.eventLog.rolling.compaction.score.threshold",
-    "value" : "spark.history.fs.eventLog.rolling.compaction.score.threshold = 0.7",
-    "meta" : "default: 0.7",
-    "version" : "3.0.0",
-    "docHTML" : "The threshold score to determine whether it's good to do the compaction or not. The compaction score is calculated in analyzing, and being compared to this value. Compaction will proceed only when the score is higher than the threshold value."
-}, {
-    "caption" : "spark.history.fs.driverlog.cleaner.enabled",
-    "version" : "3.0.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.history.fs.driverlog.cleaner.interval",
-    "version" : "3.0.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.history.ui.acls.enable",
-    "value" : "spark.history.ui.acls.enable = false",
-    "meta" : "default: false",
-    "version" : "1.0.1",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.history.ui.admin.acls",
-    "value" : "spark.history.ui.admin.acls",
-    "version" : "2.1.1",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.history.ui.admin.acls.groups",
-    "value" : "spark.history.ui.admin.acls.groups",
-    "version" : "2.1.1",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.history.store.hybridStore.maxMemoryUsage",
-    "value" : "spark.history.store.hybridStore.maxMemoryUsage = 2g",
-    "meta" : "default: 2g",
-    "version" : "3.1.0",
-    "docHTML" : "Maximum memory space that can be used to create HybridStore. The HybridStore co-uses the heap memory, so the heap memory should be increased through the memory option for SHS if the HybridStore is enabled."
-}, {
-    "caption" : "spark.history.store.hybridStore.diskBackend",
-    "value" : "spark.history.store.hybridStore.diskBackend = LEVELDB",
-    "meta" : "default: LEVELDB",
-    "version" : "3.3.0",
-    "docHTML" : "Specifies a disk-based store used in hybrid store; LEVELDB or ROCKSDB."
-}, {
-    "caption" : "spark.history.custom.executor.log.url.applyIncompleteApplication",
-    "value" : "spark.history.custom.executor.log.url.applyIncompleteApplication = true",
-    "meta" : "default: true",
-    "version" : "3.0.0",
-    "docHTML" : "Whether to apply custom executor log url, as specified by spark.history.custom.executor.log.url, to incomplete application as well. Even if this is true, this still only affects the behavior of the history server, not running spark applications."
-}, {
-    "caption" : "spark.appStateStore.asyncTracking.enable",
-    "value" : "spark.appStateStore.asyncTracking.enable = true",
-    "meta" : "default: true",
-    "version" : "2.3.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.ui.retainedJobs",
-    "value" : "spark.ui.retainedJobs = 1000",
-    "meta" : "default: 1000",
-    "version" : "1.2.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.ui.retainedStages",
-    "value" : "spark.ui.retainedStages = 1000",
-    "meta" : "default: 1000",
-    "version" : "0.9.0",
-    "docHTML" : ""
-}, {
-    "caption" : "spark.ui.dagGraph.retainedRootRDDs",
-    "value" : "spark.ui.dagGraph.retainedRootRDDs = 2147483647",
-    "meta" : "default: 2147483647",
-    "version" : "2.1.0",
-    "docHTML" : ""
-}, {
     "caption" : "spark.ui.liveUpdate.period",
     "value" : "spark.ui.liveUpdate.period = 100ms",
     "meta" : "default: 100ms",
@@ -4202,4 +4191,28 @@ let SPARK_CONFIG_OPTIONS = [ {
     "meta" : "default: false",
     "version" : "3.0.0",
     "docHTML" : "Whether Dropwizard/Codahale metrics will be reported for the status of the running spark app."
+}, {
+    "caption" : "spark.appStateStore.asyncTracking.enable",
+    "value" : "spark.appStateStore.asyncTracking.enable = true",
+    "meta" : "default: true",
+    "version" : "2.3.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.ui.retainedJobs",
+    "value" : "spark.ui.retainedJobs = 1000",
+    "meta" : "default: 1000",
+    "version" : "1.2.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.ui.retainedStages",
+    "value" : "spark.ui.retainedStages = 1000",
+    "meta" : "default: 1000",
+    "version" : "0.9.0",
+    "docHTML" : ""
+}, {
+    "caption" : "spark.ui.dagGraph.retainedRootRDDs",
+    "value" : "spark.ui.dagGraph.retainedRootRDDs = 2147483647",
+    "meta" : "default: 2147483647",
+    "version" : "2.1.0",
+    "docHTML" : ""
 } ]
