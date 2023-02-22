@@ -73,7 +73,7 @@ Spark 任务运行环境：Hadoop 2.7.7，Spark 3.3.1。为避免每次任务运
 上传 spark-jobserver-0.1.0.tar.gz 文件到服务器，直接解压生成目录：spark-jobserver-0.1.0
 > tar -zxf spark-jobserver-0.1.0.tar.gz
 
-创建数据jobserver，执行 script/jobserver.sql 脚本，创建表。
+创建数据jobserver，执行[jobserver.sql](build/script) 脚本，创建表。
 
 ### 4、集群相关参数
 
