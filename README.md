@@ -1,10 +1,21 @@
 ## REST job server for Apache Spark (Spark as a Service)
 
 job server 来源以前做[大数据平台](https://github.com/melin/superior-sql-parser/tree/master/imgs)的设计，同时支持sql、jar、python 任务提交运行，对比其他常见解决方案：
-![主流方案对比](imgs/compare.png)
+
+| 表头   | Spark JobServer                                                                                                                                                                                                                                                               | Kyuubi                                                                                                                           | Spark ThriftServer(Spark on Hive) | HiveServer2(Hive on Spark) |
+|:-------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------|:----------------------------------|:---------------------------|
+| 任务类型 | SQL/JAR/Python                                                                                                                                                                                                                                                                | SQL                                                                                                                              | SQL                               | SQL                        |
+| 提交方式 | Rest API                                                                                                                                                                                                                                                                      | JDBC                                                                                                                             | JDBC                              | JDBC                       |
+| 编译   | Spark Catalyst/引擎端                                                                                                                                                                                                                                                            | Spark Catalyst/引擎端                                                                                                               | Spark Catalyst/服务端                | HiveOptimizer/服务端          |
+| 执行   | Spark App共享策略：可以根据Yarn 资源评估能够启动多少spark app, Jobserver 管理Spark app数量和生命周期。spark app 支持共享和非共享两种模式<br/><b>共享</b>：同时只能运行一个任务，任务运行结束，spark app 状态为空闲，可以接收新的任务运行，比较适合对资源没有特殊要求的任务；<br/><b>非共享</b>：启动一个新的spark app运行任务，任务运行结束，spark app会关闭，比适合任务运行需要很多资源，需要单独设置内存、cpu、executor数量的场景。 | 多种Spark APP共享测录：Server、User、Group、Connection。<br/>这些策略都不能做到真正的资源隔离，例如user测试，如果用户同时多个任务运行，会存在一个spark app 运行多个任务，相互争抢资源，大任务可能饿死小任务 | 所有任务共享一个spark app                 | 提交查询对应一个app，相比原生spark执行慢   |
+
+Spark JobServer特点:
+1. 支持sql、jar、python 任务执行。
+2. 细粒度到任务资源完全隔离，避免大任务饿死小任务，kyuubi 隔离级别还是比较粗，最小是User级别隔离，存在同个用户多个任务相互争抢资源，不能做到任务级别隔离。
+3. Spark APP 资源池管理，根据计算集群资源数量，管理spark app 数量。避免过多任务提交到yarn，在yarn等待队列中，kyuubi不管理spark app 数量
+4. 大数据平台交互查询场景，不需要等待spark app 启动，快速执行sql 等任务。
 
 主要特点
-
 1. 通过Rest API 提交spark 作业运行，支持sql，java/scala，python类型作业，解耦业务系统与spark 集群。
 2. Spark Job 运行资源相互隔离以及高可用性，每一个job 独立运行在一个Spark driver中。
 3. 预启动 Spark Driver，提高Job 启动速度，Driver 共享运行多个Job(同时只有一个job运行)
@@ -17,7 +28,8 @@ job server 来源以前做[大数据平台](https://github.com/melin/superior-sq
 10. 支持kerberos 认证
 
 @TODO
-1. 集成k8s
+1. 支持 JDBC
+2. 集成k8s
 2. 支持作业定时调度, 可以减少其它调度系统依赖。(一个简易的方案，每天凌晨生成当天需要运行的作业实例，再轮训作业实例表，阿里云dataworks 每天千万级别的任务实例，也是轮训数据库方案)
 3. 集成数据权限、数据血缘(借鉴 kyuubi，但不依赖ranger)
 4. 完善调度任务优先级。

@@ -152,12 +152,16 @@ public class CommonUtils {
         List<Character> chars = Lists.newArrayList();
         List<Character> delChars = Lists.newArrayList();
 
+        char preCh = 0;
         for (int i = 0, len = sql.length(); i < len; i++) {
             char ch = sql.charAt(i);
 
             if ((i + 1) < len) {
                 char nextCh = sql.charAt(i + 1);
                 if (ch == '-' && nextCh == '-' && !singleLineComment) {
+                    if (i > 0) {
+                        preCh = sql.charAt(i - 1);
+                    }
                     singleLineComment = true;
                 }
             }
@@ -168,7 +172,9 @@ public class CommonUtils {
 
             if (singleLineComment && ch == '\n') {
                 singleLineComment = false;
-                chars.add(ch);
+                if (preCh != ch) {
+                    chars.add(ch);
+                }
             }
         }
 
