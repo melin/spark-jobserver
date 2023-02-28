@@ -15,7 +15,7 @@ Spark JobServer特点:
 3. Spark APP 资源池管理，根据计算集群资源数量，管理spark app 数量。避免过多任务提交到yarn，在yarn等待队列中，kyuubi不管理spark app 数量
 4. 大数据平台交互查询场景，不需要等待spark app 启动，快速执行sql 等任务。
 
-主要特点
+主要功能: 
 1. 通过Rest API 提交spark 作业运行，支持sql，java/scala，python类型作业，解耦业务系统与spark 集群。
 2. Spark Job 运行资源相互隔离以及高可用性，每一个job 独立运行在一个Spark driver中。
 3. 预启动 Spark Driver，提高Job 启动速度，Driver 共享运行多个Job(同时只有一个job运行)
