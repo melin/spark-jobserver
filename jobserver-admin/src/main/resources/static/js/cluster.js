@@ -14,6 +14,7 @@ var Cluster = function () {
             if (currentLine.indexOf("=") > 0) { callback(null, []); return }
             if (prefix.length === 0) { callback(null, []); return }
 
+            SPARK_CONFIG_OPTIONS.push(...HUDI_CONFIG_OPTIONS);
             callback(null, SPARK_CONFIG_OPTIONS)
         }
     }
