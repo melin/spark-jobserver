@@ -3,6 +3,7 @@ package io.github.melin.spark.jobserver.driver.aspectj;
 import io.github.melin.spark.jobserver.core.entity.DataConnector;
 import io.github.melin.spark.jobserver.core.service.DataConnectorService;
 import io.github.melin.spark.jobserver.driver.util.CatalogUtils;
+import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.connector.catalog.CatalogNotFoundException;
 import org.apache.spark.sql.connector.catalog.CatalogPlugin;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -40,6 +41,8 @@ public class SparkCatalogAspectj implements ApplicationContextAware {
             if (catalogName.equalsIgnoreCase(SESSION_CATALOG_NAME)) {
                 return pjp.proceed();
             }
+
+            SparkSession.getActiveSession().get().conf().get("spark.sql.job.env");
 
             CatalogPlugin catalog = catalogs.get(catalogName);
             if (catalog != null) {

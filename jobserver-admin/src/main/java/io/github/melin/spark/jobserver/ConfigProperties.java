@@ -18,7 +18,7 @@ public class ConfigProperties {
     /**
      * aspectj jar version
      */
-    private String aspectjVersion = "1.9.9.1";
+    private String aspectjVersion = "1.9.19";
 
     /**
      * jobserver 相关配置文件，包含spark-default.conf, core-site.xml，hdfs-site.xml, yarn-site.xml 等配置文件
