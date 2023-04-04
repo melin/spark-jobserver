@@ -1,6 +1,6 @@
 package io.github.melin.spark.jobserver.driver.util;
 
-import com.gitee.melin.bee.core.jdbc.DataSourceType;
+import com.gitee.melin.bee.core.jdbc.enums.DataSourceType;
 import com.google.common.collect.Maps;
 import io.github.melin.spark.jobserver.core.entity.DataConnector;
 import io.github.melin.spark.jobserver.core.util.AESUtils;

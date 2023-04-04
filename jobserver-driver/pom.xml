@@ -22,7 +22,18 @@
         <dependency>
             <groupId>io.github.melin</groupId>
             <artifactId>superior-sql-parser</artifactId>
-            <version>3.3.0.4</version>
+            <version>3.3.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
         </dependency>
 
         <dependency>
@@ -228,6 +239,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <showWeaveInfo>true</showWeaveInfo>
                     <complianceLevel>${java.version}</complianceLevel>
                     <source>${java.version}</source>
                     <target>${java.version}</target>

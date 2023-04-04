@@ -1,6 +1,6 @@
 package io.github.melin.spark.jobserver.web.controller;
 
-import com.gitee.melin.bee.core.jdbc.DataSourceInfo;
+import com.gitee.melin.bee.core.jdbc.relational.DataSourceInfo;
 import com.gitee.melin.bee.core.support.Pagination;
 import com.gitee.melin.bee.core.support.Result;
 import com.google.common.collect.Lists;

@@ -1,10 +1,10 @@
 package io.github.melin.spark.jobserver.core.service;
 
 import com.gitee.melin.bee.core.hibernate5.HibernateBaseDao;
-import com.gitee.melin.bee.core.jdbc.AbstractDialect;
-import com.gitee.melin.bee.core.jdbc.ConnectionDesc;
-import com.gitee.melin.bee.core.jdbc.DataSourceInfo;
 import com.gitee.melin.bee.core.jdbc.JdbcDialectHolder;
+import com.gitee.melin.bee.core.jdbc.dialect.JdbcDialect;
+import com.gitee.melin.bee.core.jdbc.relational.ConnectionInfo;
+import com.gitee.melin.bee.core.jdbc.relational.DataSourceInfo;
 import com.gitee.melin.bee.core.service.BaseServiceImpl;
 import io.github.melin.spark.jobserver.core.dao.DataConnectorDao;
 import io.github.melin.spark.jobserver.core.entity.DataConnector;
@@ -29,8 +29,8 @@ public class DataConnectorService extends BaseServiceImpl<DataConnector, Long> {
     }
 
     public DataSourceInfo testConnection(DataConnector dataConnector) throws SQLException {
-        ConnectionDesc connector = dataConnector.buildDataConnector();
-        AbstractDialect dialect = JdbcDialectHolder.getJdbcDialect(connector);
+        ConnectionInfo connector = dataConnector.buildDataConnector();
+        JdbcDialect dialect = JdbcDialectHolder.getJdbcDialect(connector);
         return dialect.testConnection();
     }
 
