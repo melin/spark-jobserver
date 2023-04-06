@@ -293,6 +293,8 @@ public abstract class AbstractDriverDeployer {
                 .setDeployMode("cluster")
                 .setConf("spark.yarn.applicationType", "spark-jobserver")
                 .setConf("spark.jobserver.host", hostName)
+                .setConf("spark.driver.userClassPathFirst", "true")
+                .setConf("spark.executor.userClassPathFirst", "true")
                 .setConf("spark.driver.extraJavaOptions", sparkDriverExtraJavaOptionsConf)
                 .setConf("spark.executor.extraJavaOptions", sparkExecutorExtraJavaOptionsConf)
                 .setMainClass("io.github.melin.spark.jobserver.driver.SparkDriverServer")
