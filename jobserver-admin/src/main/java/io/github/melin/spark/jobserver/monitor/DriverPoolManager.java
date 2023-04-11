@@ -65,7 +65,7 @@ public class DriverPoolManager implements InitializingBean {
             try {
                 if (redisLeaderElection.checkLeader(LeaderTypeEnum.DRIVER_POOL_MANAGER)) {
                     List<Cluster> clusters = clusterService.findByNamedParam("status", true);
-                    if (clusters.size() == 0 ) {
+                    if (clusters.size() == 0) {
                         LOG.warn("No cluster available");
                         TimeUnit.SECONDS.sleep(60);
                     }

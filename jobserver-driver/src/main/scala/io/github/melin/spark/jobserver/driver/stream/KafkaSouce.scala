@@ -1,9 +1,9 @@
 package io.github.melin.spark.jobserver.driver.stream
 
-import com.github.melin.superior.sql.parser.model.StreamTable
 import com.google.common.collect.Lists
 import io.github.melin.spark.jobserver.core.exception.SparkJobException
 import io.github.melin.spark.jobserver.driver.util.LogUtils
+import io.github.melin.superior.common.relational.StreamTable
 import org.apache.commons.lang3.StringUtils
 import org.apache.kafka.clients.admin.AdminClient
 import org.apache.spark.internal.Logging

@@ -1,8 +1,8 @@
 package io.github.melin.spark.jobserver.driver.util
 
-import com.github.melin.superior.sql.parser.model.StreamInsertStatement
 import com.typesafe.scalalogging.Logger
 import io.github.melin.spark.jobserver.core.exception.SparkJobException
+import io.github.melin.superior.common.relational.StreamInsertStatement
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hudi.DataSourceWriteOptions

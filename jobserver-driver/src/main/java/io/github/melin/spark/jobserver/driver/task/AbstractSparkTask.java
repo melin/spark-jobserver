@@ -18,7 +18,7 @@ import io.github.melin.spark.jobserver.driver.util.LogUtils;
 import io.github.melin.spark.jobserver.driver.util.MetricsUtils;
 import com.gitee.melin.bee.core.support.Result;
 import com.gitee.melin.bee.util.RestTemplateUtils;
-import com.github.melin.superior.sql.parser.SQLParserException;
+import io.github.melin.superior.common.SQLParserException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.spark.sql.AnalysisException;

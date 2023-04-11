@@ -1,17 +1,17 @@
 package io.github.melin.spark.jobserver.driver.task;
 
 import com.gitee.melin.bee.util.JsonUtils;
-import com.github.melin.superior.sql.parser.SQLParserException;
-import com.github.melin.superior.sql.parser.model.TableData;
 import io.github.melin.spark.jobserver.core.util.CommonUtils;
 import io.github.melin.spark.jobserver.core.util.HttpClientUtils;
 import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
 import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.driver.support.ConfigClient;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
-import com.github.melin.superior.sql.parser.StatementType;
-import com.github.melin.superior.sql.parser.model.StatementData;
-import com.github.melin.superior.sql.parser.spark.SparkSQLHelper;
+import io.github.melin.superior.common.SQLParserException;
+import io.github.melin.superior.common.StatementType;
+import io.github.melin.superior.common.relational.StatementData;
+import io.github.melin.superior.common.relational.dml.QueryStmt;
+import io.github.melin.superior.parser.spark.SparkSQLHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -23,8 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
-
-import static com.github.melin.superior.sql.parser.StatementType.*;
 
 /**
  * huaixin 2022/4/7 6:03 PM
@@ -48,8 +46,8 @@ public class SparkSqlTask extends AbstractSparkTask {
                 StatementData statementData = SparkSQLHelper.getStatementData(sql);
                 StatementType type = statementData.getType();
 
-                if (SELECT == type) {
-                    TableData tableData = (TableData) statementData.getStatement();
+                if (StatementType.SELECT == type) {
+                    QueryStmt tableData = (QueryStmt) statementData.getStatement();
                     int maxRecords = ConfigClient.getInstance()
                             .getInt("jobserver.driver.sql.query.max.records", 1000);
 
@@ -81,7 +79,7 @@ public class SparkSqlTask extends AbstractSparkTask {
                     } else {
                         callbackResultData(dataSet, instanceCode, resultCallbackUri, sql);
                     }
-                } else if (CALL == type || SHOW == type) {
+                } else if (StatementType.CALL == type || StatementType.SHOW == type || StatementType.DESC == type) {
                     Dataset<Row> dataSet = SparkDriverEnv.sql(sql);
                     if (StringUtils.isBlank(resultCallbackUri)) {
                         String result = dataSet.showString(20, 20, false);

@@ -1,8 +1,5 @@
 package io.github.melin.spark.jobserver.driver.task;
 
-import com.github.melin.superior.sql.parser.StatementType;
-import com.github.melin.superior.sql.parser.model.*;
-import com.github.melin.superior.sql.parser.spark.SparkStreamSQLHelper;
 import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.core.exception.SparkJobException;
 import io.github.melin.spark.jobserver.core.util.CommonUtils;
@@ -11,6 +8,9 @@ import io.github.melin.spark.jobserver.driver.stream.KafkaSouce;
 import io.github.melin.spark.jobserver.driver.task.udf.GenericUDTFJsonExtractValue;
 import io.github.melin.spark.jobserver.driver.util.HudiUtils;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
+import io.github.melin.superior.common.StatementType;
+import io.github.melin.superior.common.relational.*;
+import io.github.melin.superior.parser.spark.SparkStreamSQLHelper;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.sql.SparkSession;

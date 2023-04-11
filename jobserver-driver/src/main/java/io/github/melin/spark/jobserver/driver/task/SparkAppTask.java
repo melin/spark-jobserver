@@ -8,10 +8,10 @@ import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
 import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.driver.support.SparkClassLoader;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
-import com.github.melin.superior.sql.parser.job.JobTaskHelper;
-import com.github.melin.superior.sql.parser.model.JobData;
-import com.github.melin.superior.sql.parser.model.Statement;
-import com.github.melin.superior.sql.parser.model.StatementData;
+import io.github.melin.superior.common.relational.Statement;
+import io.github.melin.superior.common.relational.StatementData;
+import io.github.melin.superior.parser.appjar.AppJarHelper;
+import io.github.melin.superior.parser.appjar.AppJarInfo;
 import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,12 +40,12 @@ public class SparkAppTask extends AbstractSparkTask {
             Configuration hadoopConf = SparkDriverEnv.hadoopConfiguration();
 
             String noCommentJobText = CommonUtils.cleanSqlComment(instanceDto.getJobText());
-            List<StatementData> statementDatas = JobTaskHelper.getStatementData(noCommentJobText);
+            List<StatementData> statementDatas = AppJarHelper.getStatementData(noCommentJobText);
             boolean executeJar = false;
             for (StatementData statementData : statementDatas) {
                 Statement statement = statementData.getStatement();
-                if (statement instanceof JobData) {
-                    JobData data = (JobData) statement;
+                if (statement instanceof AppJarInfo) {
+                    AppJarInfo data = (AppJarInfo) statement;
                     String filePath = data.getResourceName();
                     String className = data.getClassName();
                     List<String> params = data.getParams();
