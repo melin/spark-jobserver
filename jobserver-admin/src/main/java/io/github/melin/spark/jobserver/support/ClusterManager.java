@@ -320,10 +320,10 @@ public class ClusterManager implements InitializingBean {
                         .keytabFile(keytabFile)
                         .principal(cluster.getKerberosUser()).build();
                 CLUSTER_KERBEROS_INFO_MAP.put(clusterCode, kerberosInfo);
-
-                yarnConfigDirLists.put(clusterCode, destDir);
-                hadoopConfList.put(clusterCode, configuration);
             }
+
+            yarnConfigDirLists.put(clusterCode, destDir);
+            hadoopConfList.put(clusterCode, configuration);
         }
     }
 
