@@ -119,7 +119,7 @@ public class JobServerServiceImpl implements InitializingBean {
                 instanceInfo.setErrorMsg(instanceContent.getErrorMsg());
             }
         } else {
-            throw new SparkJobServerException("instanceCode " + instanceCode + " not exists");
+            throw new SparkJobServerException("instanceCode {} not exists", instanceCode);
         }
 
         return instanceInfo;

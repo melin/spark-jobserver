@@ -74,7 +74,7 @@ public class SparkAppTask extends AbstractSparkTask {
 
                         Thread.currentThread().setContextClassLoader(SparkAppTask.class.getClassLoader());
                     } else {
-                        throw new SparkJobServerException(className + " 不是SparkJob的实例");
+                        throw new SparkJobServerException("{} 不是SparkJob的实例", className);
                     }
 
                     executeJar = true;

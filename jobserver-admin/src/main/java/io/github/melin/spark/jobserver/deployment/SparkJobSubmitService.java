@@ -286,7 +286,7 @@ public class SparkJobSubmitService implements InitializingBean {
                     watch.getTime(), url, JsonUtils.toJSONString(instanceDto));
         } catch (Exception e) {
             instanceService.unLockInstance(instanceCode);
-            throw new SparkJobServerException("提交作业到 " + applicationId + " 失败: " + e.getMessage());
+            throw new SparkJobServerException("提交作业到 {} 失败: {}", applicationId, e.getMessage());
         }
 
         if (result != null && !result.isSuccess()) {
