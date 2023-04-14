@@ -130,10 +130,10 @@ public class YarnSparkDriverDeployer extends AbstractDriverDeployer {
                     if (sparkAppHandle.getState() == SparkAppHandle.State.FAILED) {
                         if (sparkAppHandle.getError().isPresent()) {
                             String error = ExceptionUtils.getStackTrace(sparkAppHandle.getError().get());
-                            throw new RuntimeException("启动 jobserver 失败, Spark App Status："
+                            throw new RuntimeException("启动 jobserver 失败, applicationId: " + applicationId + ", Spark App Status："
                                     + sparkAppHandle.getState().name() + ", 失败原因: " + error);
                         } else {
-                            throw new RuntimeException("启动 jobserver 失败, Spark App Status："
+                            throw new RuntimeException("启动 jobserver 失败, applicationId: " + applicationId + ", Spark App Status："
                                     + sparkAppHandle.getState().name());
                         }
                     }

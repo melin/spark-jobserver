@@ -357,9 +357,9 @@ public class ClusterManager implements InitializingBean {
         return CLUSTER_KERBEROS_INFO_MAP.get(clusterCode);
     }
 
-    private YarnResource getResource(String addr) {
+    private YarnResource getResource(String yarnRMWebAppAddr) {
         try {
-            String url = "http://" + addr + "/ws/v1/cluster/metrics";
+            String url = "http://" + yarnRMWebAppAddr + "/ws/v1/cluster/metrics";
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             Map<String, Object> data = JsonUtils.toJavaObject(response.getBody(), new TypeReference<Map<String, Object>>() {});
             LinkedHashMap<String, Object> metrics = (LinkedHashMap<String, Object>) data.get("clusterMetrics");
@@ -367,14 +367,14 @@ public class ClusterManager implements InitializingBean {
             int availableVirtualCores = (Integer) metrics.get("availableVirtualCores");
             return new YarnResource(availableMemoryMB, availableVirtualCores);
         } catch (Exception e) {
-            LOGGER.error("get cluster metrics {} error:{}", addr, e.getMessage());
+            LOGGER.error("get cluster metrics {} error:{}", yarnRMWebAppAddr, e.getMessage());
             return null;
         }
     }
 
     private YarnResource getResourceByCluster(String clusterCode) {
-        String addr = yarnRMWebAppAddrMap.get(clusterCode);
-        YarnResource yarnResource = getResource(addr);
+        String yarnRMWebAppAddr = yarnRMWebAppAddrMap.get(clusterCode);
+        YarnResource yarnResource = getResource(yarnRMWebAppAddr);
         if (yarnResource == null) {
             Configuration conf = hadoopConfList.get(clusterCode);
             String rmAddr = initYarnAddress(clusterCode, conf);
