@@ -12,7 +12,7 @@ public class JobServerException extends RuntimeException {
         super();
     }
 
-    public JobServerException(String message, String... params) {
+    public JobServerException(String message, Object... params) {
         fillInStackTrace();
         detailMessage = formatMessage(message, params);
     }
@@ -23,7 +23,7 @@ public class JobServerException extends RuntimeException {
         this.cause = cause;
     }
 
-    public JobServerException(Throwable cause, String message, String... params) {
+    public JobServerException(Throwable cause, String message, Object... params) {
         fillInStackTrace();
         detailMessage = formatMessage(message, params);
         this.cause = cause;
@@ -45,7 +45,7 @@ public class JobServerException extends RuntimeException {
         return detailMessage;
     }
 
-    private String formatMessage(String message, String... params) {
+    private String formatMessage(String message, Object... params) {
         if (params.length > 0) {
             String format = message;
             message = MessageFormatter.arrayFormat(format, params).getMessage();

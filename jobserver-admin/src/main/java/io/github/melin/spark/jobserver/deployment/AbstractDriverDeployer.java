@@ -108,20 +108,20 @@ public abstract class AbstractDriverDeployer {
                 if (StringUtils.isNotBlank(applicationId)) {
                     yarnClientService.killYarnApp(clusterCode, applicationId);
                 }
-                throw new SubmitTimeoutException(hostName + ", Submit to yarn" +
-                        " timed out(" + submitTimeOut + "s), applicationId: " + applicationId);
+                throw new SubmitTimeoutException("{}, Submit to yarn timed out({}s), applicationId: {}",
+                        hostName, submitTimeOut, applicationId);
             }
             if (sparkAppHandle.getState() == SparkAppHandle.State.KILLED) {
-                throw new RuntimeException(hostName + ", Submit to yarn failed , yarn status: " + state.name());
+                throw new SparkJobException("{}, Submit to yarn failed , yarn status: {}", hostName, state.name());
             }
 
             if (StringUtils.isBlank(applicationId)) {
                 if (sparkAppHandle.getState() == SparkAppHandle.State.FAILED) {
                     if (sparkAppHandle.getError().isPresent()) {
                         Throwable error = sparkAppHandle.getError().get();
-                        throw new RuntimeException("InstanceCode: " + jobInstanceCode + " 启动 jobserver 失败", error);
+                        throw new SparkJobException(error, "InstanceCode: {} 启动 jobserver 失败", jobInstanceCode);
                     } else {
-                        throw new RuntimeException("InstanceCode: " + jobInstanceCode + " 启动 jobserver 失败");
+                        throw new SparkJobException("InstanceCode: {} 启动 jobserver 失败", jobInstanceCode);
                     }
                 }
             } else {
@@ -130,11 +130,9 @@ public abstract class AbstractDriverDeployer {
                 if (applicationReport.getYarnApplicationState() == YarnApplicationState.FAILED) {
                     if (sparkAppHandle.getError().isPresent()) {
                         Throwable error = sparkAppHandle.getError().get();
-                        throw new RuntimeException("InstanceCode: " + jobInstanceCode +
-                                "启动 jobserver 失败, applicationId " + applicationId, error);
+                        throw new SparkJobException(error, "InstanceCode: {} 启动 jobserver 失败, applicationId {}", jobInstanceCode, applicationId);
                     } else {
-                        throw new RuntimeException("InstanceCode: " + jobInstanceCode +
-                                " 启动 jobserver 失败, applicationId " + applicationId);
+                        throw new SparkJobException("InstanceCode: {} 启动 jobserver 失败, applicationId {}", jobInstanceCode, applicationId);
                     }
                 }
             }
@@ -158,7 +156,7 @@ public abstract class AbstractDriverDeployer {
                 if (driver != null && driver.getStatus() != DriverStatus.INIT) {
                     break;
                 }
-                LOG.info("InstanceCode: " + jobInstanceCode + ", " + "waiting address for application: " + applicationId);
+                LOG.info("InstanceCode: {}, waiting address for application: {}", jobInstanceCode, applicationId);
 
                 Thread.sleep(2000);
                 driver = driverService.queryDriverByAppId(applicationId);
@@ -170,7 +168,7 @@ public abstract class AbstractDriverDeployer {
 
         long execTime = (System.currentTimeMillis() - getServerTime) / 1000;
         msg =  "driver application " + applicationId + " 启动耗时：" + execTime + " s";
-        LOG.info("InstanceCode: " + jobInstanceCode + ", " + msg);
+        LOG.info("InstanceCode: {}, {}", jobInstanceCode, msg);
 
         String sparkDriverUrl = driver.getSparkDriverUrl();
         LOG.info("InstanceCode {} Application {} stared at {}", jobInstanceCode, applicationId, sparkDriverUrl);

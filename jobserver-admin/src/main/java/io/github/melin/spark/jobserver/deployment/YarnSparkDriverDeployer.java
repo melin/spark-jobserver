@@ -1,5 +1,6 @@
 package io.github.melin.spark.jobserver.deployment;
 
+import io.github.melin.spark.jobserver.core.exception.SparkJobException;
 import io.github.melin.spark.jobserver.deployment.dto.DriverInfo;
 import io.github.melin.spark.jobserver.deployment.dto.JobInstanceInfo;
 import io.github.melin.spark.jobserver.support.ClusterConfig;
@@ -119,22 +120,22 @@ public class YarnSparkDriverDeployer extends AbstractDriverDeployer {
                     if (StringUtils.isNotBlank(applicationId)) {
                         yarnClientService.killYarnApp(cluster.getCode(), applicationId);
                     }
-                    throw new SubmitTimeoutException(", Submit to yarn timeout(" + driverSubmitTimeOut +
-                            "s), applicationId: " + applicationId);
+                    throw new SubmitTimeoutException("Submit to yarn timeout({}s), applicationId: {}",
+                            driverSubmitTimeOut, applicationId);
                 }
                 if (sparkAppHandle.getState() == SparkAppHandle.State.KILLED) {
-                    throw new RuntimeException("Submit to yarn failed , yarn status: " + state.name());
+                    throw new SparkJobException("Submit to yarn failed , yarn status: {}", state.name());
                 }
 
                 if (StringUtils.isBlank(applicationId)) {
                     if (sparkAppHandle.getState() == SparkAppHandle.State.FAILED) {
                         if (sparkAppHandle.getError().isPresent()) {
                             String error = ExceptionUtils.getStackTrace(sparkAppHandle.getError().get());
-                            throw new RuntimeException("启动 jobserver 失败, Spark App Status："
-                                    + sparkAppHandle.getState().name() + ", 失败原因: " + error);
+                            throw new SparkJobException("启动 jobserver 失败, Spark App Status：{}, 失败原因: {}",
+                                    sparkAppHandle.getState().name(), error);
                         } else {
-                            throw new RuntimeException("启动 jobserver 失败, Spark App Status："
-                                    + sparkAppHandle.getState().name());
+                            throw new SparkJobException("启动 jobserver 失败, Spark App Status：{}",
+                                    sparkAppHandle.getState().name());
                         }
                     }
                 } else {
@@ -143,9 +144,9 @@ public class YarnSparkDriverDeployer extends AbstractDriverDeployer {
                     if (applicationReport.getYarnApplicationState() == YarnApplicationState.FAILED) {
                         if (sparkAppHandle.getError().isPresent()) {
                             Throwable error = sparkAppHandle.getError().get();
-                            throw new RuntimeException("预启动 jobserver 失败, applicationId " + applicationId, error);
+                            throw new SparkJobException(error, "预启动 jobserver 失败, applicationId {}", applicationId);
                         } else {
-                            throw new RuntimeException("预启动 jobserver 失败, applicationId " + applicationId);
+                            throw new SparkJobException("预启动 jobserver 失败, applicationId {}", applicationId);
                         }
                     }
                 }

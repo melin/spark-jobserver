@@ -6,7 +6,11 @@ package io.github.melin.spark.jobserver.core.exception;
  */
 public class SubmitTimeoutException extends SparkJobException {
 
-    public SubmitTimeoutException(String message) {
-        super(message);
+    public SubmitTimeoutException(Throwable cause, String message, Object... params) {
+        super(cause, message, params);
+    }
+
+    public SubmitTimeoutException(String message, Object... params) {
+        super(message, params);
     }
 }
