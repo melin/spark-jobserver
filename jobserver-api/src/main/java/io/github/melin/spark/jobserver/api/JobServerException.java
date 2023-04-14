@@ -2,34 +2,34 @@ package io.github.melin.spark.jobserver.api;
 
 import org.slf4j.helpers.MessageFormatter;
 
-public class SparkJobServerException extends RuntimeException {
+public class JobServerException extends RuntimeException {
 
     private String detailMessage;
 
     private Throwable cause = this;
 
-    public SparkJobServerException() {
+    public JobServerException() {
         super();
     }
 
-    public SparkJobServerException(String message, String... params) {
+    public JobServerException(String message, String... params) {
         fillInStackTrace();
         detailMessage = formatMessage(message, params);
     }
 
-    public SparkJobServerException(String message, Throwable cause) {
+    public JobServerException(String message, Throwable cause) {
         fillInStackTrace();
         detailMessage = message;
         this.cause = cause;
     }
 
-    public SparkJobServerException(Throwable cause, String message, String... params) {
+    public JobServerException(Throwable cause, String message, String... params) {
         fillInStackTrace();
         detailMessage = formatMessage(message, params);
         this.cause = cause;
     }
 
-    public SparkJobServerException(Throwable cause) {
+    public JobServerException(Throwable cause) {
         fillInStackTrace();
         detailMessage = (cause==null ? null : cause.toString());
         this.cause = cause;

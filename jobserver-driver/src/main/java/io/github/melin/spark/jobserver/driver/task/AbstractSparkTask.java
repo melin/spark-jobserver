@@ -1,7 +1,7 @@
 package io.github.melin.spark.jobserver.driver.task;
 
 import com.gitee.melin.bee.util.NetUtils;
-import io.github.melin.spark.jobserver.api.SparkJobServerException;
+import io.github.melin.spark.jobserver.api.JobServerException;
 import io.github.melin.spark.jobserver.core.entity.SparkDriver;
 import io.github.melin.spark.jobserver.core.enums.InstanceStatus;
 import io.github.melin.spark.jobserver.core.exception.SparkJobException;
@@ -148,7 +148,7 @@ public abstract class AbstractSparkTask {
 
         String errMsg;
         if (root instanceof SparkJobException || root instanceof SecurityException
-                || root instanceof SparkJobServerException || root instanceof SQLException
+                || root instanceof JobServerException || root instanceof SQLException
                 || root instanceof SQLParserException || root instanceof UnsupportedOperationException
                 || root instanceof AnalysisException || root instanceof IllegalStateException
                 || root instanceof IllegalArgumentException) {

@@ -6,7 +6,7 @@ import io.github.melin.spark.jobserver.logs.SparkLogService;
 import io.github.melin.spark.jobserver.support.ClusterManager;
 import io.github.melin.spark.jobserver.support.YarnClientService;
 import io.github.melin.spark.jobserver.util.DateUtils;
-import io.github.melin.spark.jobserver.api.SparkJobServerException;
+import io.github.melin.spark.jobserver.api.JobServerException;
 import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.core.entity.JobInstance;
 import io.github.melin.spark.jobserver.core.enums.DriverInstance;
@@ -286,13 +286,13 @@ public class SparkJobSubmitService implements InitializingBean {
                     watch.getTime(), url, JsonUtils.toJSONString(instanceDto));
         } catch (Exception e) {
             instanceService.unLockInstance(instanceCode);
-            throw new SparkJobServerException("提交作业到 {} 失败: {}", applicationId, e.getMessage());
+            throw new JobServerException("提交作业到 {} 失败: {}", applicationId, e.getMessage());
         }
 
         if (result != null && !result.isSuccess()) {
             sparkLogService.removeLogThread(instanceCode);
             instanceService.unLockInstance(instanceCode);
-            throw new SparkJobServerException(result.getMessage());
+            throw new JobServerException(result.getMessage());
         }
     }
 

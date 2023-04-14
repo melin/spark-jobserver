@@ -5,7 +5,7 @@ import com.gitee.melin.bee.util.JsonUtils;
 import com.google.common.collect.Maps;
 import io.github.melin.spark.jobserver.core.enums.SchedulerType;
 import io.github.melin.spark.jobserver.deployment.dto.YarnResource;
-import io.github.melin.spark.jobserver.api.SparkJobServerException;
+import io.github.melin.spark.jobserver.api.JobServerException;
 import io.github.melin.spark.jobserver.core.entity.Cluster;
 import io.github.melin.spark.jobserver.core.exception.ResouceLimitException;
 import io.github.melin.spark.jobserver.core.service.ClusterService;
@@ -142,7 +142,7 @@ public class ClusterManager implements InitializingBean {
             return userGroupInformation.doAs((PrivilegedExceptionAction<T>) securedCallable::call);
         } catch (Exception e) {
             String msg = "authentication: " + authentication + ", 集群: " + cluserCode + " 登录失败: " + e.getMessage();
-            throw new SparkJobServerException(msg, e);
+            throw new JobServerException(msg, e);
         }
     }
 

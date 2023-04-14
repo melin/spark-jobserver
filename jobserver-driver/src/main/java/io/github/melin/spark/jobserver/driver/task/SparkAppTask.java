@@ -1,7 +1,7 @@
 package io.github.melin.spark.jobserver.driver.task;
 
 import io.github.melin.spark.jobserver.api.SparkJob;
-import io.github.melin.spark.jobserver.api.SparkJobServerException;
+import io.github.melin.spark.jobserver.api.JobServerException;
 import io.github.melin.spark.jobserver.core.util.CommonUtils;
 import io.github.melin.spark.jobserver.driver.InstanceContext;
 import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
@@ -74,7 +74,7 @@ public class SparkAppTask extends AbstractSparkTask {
 
                         Thread.currentThread().setContextClassLoader(SparkAppTask.class.getClassLoader());
                     } else {
-                        throw new SparkJobServerException("{} 不是SparkJob的实例", className);
+                        throw new JobServerException("{} 不是SparkJob的实例", className);
                     }
 
                     executeJar = true;

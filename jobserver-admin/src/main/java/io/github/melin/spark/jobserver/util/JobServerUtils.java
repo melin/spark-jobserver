@@ -1,6 +1,6 @@
 package io.github.melin.spark.jobserver.util;
 
-import io.github.melin.spark.jobserver.api.SparkJobServerException;
+import io.github.melin.spark.jobserver.api.JobServerException;
 import io.github.melin.spark.jobserver.core.entity.JobInstance;
 import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
@@ -96,7 +96,7 @@ public class JobServerUtils {
             });
         } catch (Exception e) {
             LOG.error("parse job config failure", e);
-            throw new SparkJobServerException("parse job config failure: " + e.getMessage());
+            throw new JobServerException("parse job config failure: " + e.getMessage());
         }
     }
 

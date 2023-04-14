@@ -1,7 +1,7 @@
 package io.github.melin.spark.jobserver.support.leader;
 
 import com.gitee.melin.bee.util.NetUtils;
-import io.github.melin.spark.jobserver.api.SparkJobServerException;
+import io.github.melin.spark.jobserver.api.JobServerException;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -80,7 +80,7 @@ public class RedisLeaderElection implements InitializingBean {
 
     public void buildLeader(LeaderTypeEnum leaderType) {
         if (leaders.containsKey(leaderType)) {
-            throw new SparkJobServerException("leaderType exist");
+            throw new JobServerException("leaderType exist");
         } else {
             leaders.putIfAbsent(leaderType, new AtomicBoolean(false));
         }
@@ -89,7 +89,7 @@ public class RedisLeaderElection implements InitializingBean {
     public boolean checkLeader(LeaderTypeEnum leaderType) {
         AtomicBoolean isLeader = leaders.get(leaderType);
         if (isLeader == null) {
-            throw new SparkJobServerException("leaderType not exist");
+            throw new JobServerException("leaderType not exist");
         }
 
         boolean leader = isLeader.get();

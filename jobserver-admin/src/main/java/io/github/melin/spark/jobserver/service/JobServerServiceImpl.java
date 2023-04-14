@@ -7,7 +7,7 @@ import io.github.melin.spark.jobserver.util.JobServerUtils;
 import io.github.melin.spark.jobserver.util.RandomUniqueIdGenerator;
 import io.github.melin.spark.jobserver.rest.dto.JobSubmitRequet;
 import io.github.melin.spark.jobserver.rest.dto.InstanceInfo;
-import io.github.melin.spark.jobserver.api.SparkJobServerException;
+import io.github.melin.spark.jobserver.api.JobServerException;
 import io.github.melin.spark.jobserver.core.entity.JobInstance;
 import io.github.melin.spark.jobserver.core.entity.JobInstanceContent;
 import io.github.melin.spark.jobserver.core.enums.InstanceStatus;
@@ -67,7 +67,7 @@ public class JobServerServiceImpl implements InitializingBean {
 
         String jobText = request.getJobText();
         if (StringUtils.isBlank(jobText)) {
-            throw new SparkJobServerException("jobText can not blank");
+            throw new JobServerException("jobText can not blank");
         }
 
         String jobConfig = request.getJobConfig();
@@ -119,7 +119,7 @@ public class JobServerServiceImpl implements InitializingBean {
                 instanceInfo.setErrorMsg(instanceContent.getErrorMsg());
             }
         } else {
-            throw new SparkJobServerException("instanceCode {} not exists", instanceCode);
+            throw new JobServerException("instanceCode {} not exists", instanceCode);
         }
 
         return instanceInfo;
