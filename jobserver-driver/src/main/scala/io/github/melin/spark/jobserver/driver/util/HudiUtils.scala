@@ -2,7 +2,7 @@ package io.github.melin.spark.jobserver.driver.util
 
 import com.typesafe.scalalogging.Logger
 import io.github.melin.spark.jobserver.core.exception.SparkJobException
-import io.github.melin.superior.common.relational.StreamInsertStatement
+import io.github.melin.superior.common.relational.dml.InsertTable
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hudi.DataSourceWriteOptions
@@ -79,16 +79,16 @@ object HudiUtils {
    * delta insert select 操作
    */
   def deltaInsertStreamSelectAdapter(spark: SparkSession,
-                                     statement: StreamInsertStatement): Unit = {
-    val querySql = statement.getQuerySql
-    val dbName = getDbName(spark, statement.getDatabaseName)
-    val tableName = statement.getTableName
-    val catalogTable = spark.sessionState.catalog.getTableMetadata(TableIdentifier(tableName, Some(dbName)))
-    val properties = spark.sessionState.catalog.externalCatalog.getTable(dbName, tableName).properties
+                                     insertTable: InsertTable): Unit = {
+    val querySql = insertTable.getQuerySql
+    val schemaName = getDbName(spark, insertTable.firstTableId().getSchemaName)
+    val tableName = insertTable.firstTableId().getTableName
+    val catalogTable = spark.sessionState.catalog.getTableMetadata(TableIdentifier(tableName, Some(schemaName)))
+    val properties = spark.sessionState.catalog.externalCatalog.getTable(schemaName, tableName).properties
     val primaryKey = getHudiTablePrimaryKey(spark, catalogTable, properties)
 
     val driverHdfsHome = System.getProperties.getProperty("driver.hdfs.home")
-    val checkpointLocation = s"$driverHdfsHome/spark-checkpoints/$dbName.db/$tableName"
+    val checkpointLocation = s"$driverHdfsHome/spark-checkpoints/$schemaName.db/$tableName"
     mkCheckpointDir(spark, checkpointLocation)
 
     val streamingInput = spark.sql(querySql)
@@ -109,7 +109,7 @@ object HudiUtils {
       .outputMode(OutputMode.Append)
 
     writer.option(HoodieSyncConfig.META_SYNC_TABLE_NAME.key, tableName)
-      .option(HoodieSyncConfig.META_SYNC_DATABASE_NAME.key, dbName)
+      .option(HoodieSyncConfig.META_SYNC_DATABASE_NAME.key, schemaName)
       .option(HiveSyncConfigHolder.HIVE_SYNC_MODE.key, "HMS")
       .option(HiveSyncConfigHolder.HIVE_SYNC_ENABLED.key, "true")
       .option(HoodieSyncConfig.META_SYNC_ENABLED.key, "false")

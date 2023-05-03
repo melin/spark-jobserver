@@ -10,7 +10,10 @@ import io.github.melin.spark.jobserver.driver.util.HudiUtils;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
 import io.github.melin.superior.common.StatementType;
 import io.github.melin.superior.common.relational.*;
-import io.github.melin.superior.parser.spark.SparkStreamSQLHelper;
+import io.github.melin.superior.common.relational.common.SetData;
+import io.github.melin.superior.common.relational.create.CreateTable;
+import io.github.melin.superior.common.relational.dml.InsertTable;
+import io.github.melin.superior.parser.spark.SparkStreamSqlHelper;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.sql.SparkSession;
@@ -41,18 +44,18 @@ public class SparkStreamSqlTask extends AbstractSparkTask {
 
         String noCommentJobText = CommonUtils.cleanSqlComment(instanceDto.getJobText());
 
-        List<StatementData> statementDatas = SparkStreamSQLHelper.getStatementData(noCommentJobText);
+        List<StatementData> statementDatas = SparkStreamSqlHelper.getStatementData(noCommentJobText);
         statementDatas.forEach(statementData -> {
             if (!checkValidSql(statementData.getType())) {
                 LogUtils.info("不支持sql 类型: " + statementData.getType());
             } else {
                 Statement statement = statementData.getStatement();
-                if (statement instanceof StreamTable) {
-                    StreamTable streamTable = (StreamTable) statement;
-                    buildSourceTable(streamTable);
-                } else if (statement instanceof StreamInsertStatement) {
+                if (statement instanceof CreateTable) {
+                    CreateTable createTable = (CreateTable) statement;
+                    buildSourceTable(createTable);
+                } else if (statement instanceof InsertTable) {
                     HudiUtils.deltaInsertStreamSelectAdapter(SparkDriverEnv.getSparkSession(),
-                            (StreamInsertStatement) statement);
+                            (InsertTable) statement);
                 } else if (statement instanceof SetData) {
                     SetData setData = (SetData) statement;
                     String sql = "set " + setData.getKey() + " = " + setData.getValue();
@@ -62,9 +65,9 @@ public class SparkStreamSqlTask extends AbstractSparkTask {
         });
     }
 
-    private void buildSourceTable(StreamTable streamTable) {
+    private void buildSourceTable(CreateTable createTable) {
         try {
-            String sourceType = streamTable.getProperties().get("type");
+            String sourceType = createTable.getProperties().get("type");
 
             if (!ArrayUtils.contains(SOURCE_TYPES, sourceType)) {
                 throw new IllegalArgumentException("not support source type: " + sourceType);
@@ -72,11 +75,11 @@ public class SparkStreamSqlTask extends AbstractSparkTask {
 
             if ("kafka".equals(sourceType)) {
                 KafkaSouce kafkaSouce = new KafkaSouce();
-                kafkaSouce.createStreamTempTable(SparkDriverEnv.getSparkSession(), streamTable);
+                kafkaSouce.createStreamTempTable(SparkDriverEnv.getSparkSession(), createTable);
             } else if ("hudi".equals(sourceType)) {
                 SparkSession spark = SparkDriverEnv.getSparkSession();
-                String databaseName = streamTable.getProperties().get("databaseName");
-                String tableName = streamTable.getProperties().get("tableName");
+                String databaseName = createTable.getProperties().get("databaseName");
+                String tableName = createTable.getProperties().get("tableName");
                 if (StringUtils.isBlank(databaseName) || StringUtils.isBlank(tableName)) {
                     throw new IllegalArgumentException("databaseName and tableName cannot be empty");
                 }
@@ -87,7 +90,7 @@ public class SparkStreamSqlTask extends AbstractSparkTask {
                 LOG.info("hudi table: {}.{}, location: {}", databaseName, tableName, location);
 
                 SparkDriverEnv.getSparkSession().readStream().format("hudi")
-                        .load(location).createGlobalTempView(streamTable.getTableName());
+                        .load(location).createGlobalTempView(createTable.getTableId().getTableName());
             }
         } catch (Exception e) {
             throw new SparkJobException("create source table failed", e);
@@ -95,7 +98,7 @@ public class SparkStreamSqlTask extends AbstractSparkTask {
     }
 
     private boolean checkValidSql(StatementType sqlType) {
-        if (StatementType.INSERT_SELECT == sqlType ||
+        if (StatementType.INSERT == sqlType ||
                 StatementType.CREATE_TABLE == sqlType ||
                 StatementType.SET == sqlType) {
             return true;

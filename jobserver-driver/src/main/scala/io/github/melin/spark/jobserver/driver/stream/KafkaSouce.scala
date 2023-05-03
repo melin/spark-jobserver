@@ -3,7 +3,7 @@ package io.github.melin.spark.jobserver.driver.stream
 import com.google.common.collect.Lists
 import io.github.melin.spark.jobserver.core.exception.SparkJobException
 import io.github.melin.spark.jobserver.driver.util.LogUtils
-import io.github.melin.superior.common.relational.StreamTable
+import io.github.melin.superior.common.relational.create.CreateTable
 import org.apache.commons.lang3.StringUtils
 import org.apache.kafka.clients.admin.AdminClient
 import org.apache.spark.internal.Logging
@@ -18,19 +18,19 @@ import scala.collection.JavaConverters._
  */
 class KafkaSouce extends Logging {
 
-  def createStreamTempTable(spark: SparkSession, statement: StreamTable) {
-    val tableName = statement.getTableName
-    val properties = statement.getProperties
+  def createStreamTempTable(spark: SparkSession, createTable: CreateTable) {
+    val tableName = createTable.getTableId.getTableName
+    val properties = createTable.getProperties
     checkConfig(properties);
     checkKafkaStatus(properties)
 
     val format = properties.get("format")
     val lineRow = createDataSet(spark, properties)
     if ("json".equalsIgnoreCase(format)) {
-      val ds = convertJsonDataSet(spark, lineRow, statement)
+      val ds = convertJsonDataSet(spark, lineRow, createTable)
       ds.createOrReplaceTempView(tableName);
     } else {
-      val ds = convertTextDataSet(spark, lineRow, statement)
+      val ds = convertTextDataSet(spark, lineRow, createTable)
       ds.createOrReplaceTempView(tableName);
     }
   }
@@ -98,14 +98,14 @@ class KafkaSouce extends Logging {
     }
   }
 
-  private def convertJsonDataSet(spark: SparkSession, lineRow: Dataset[Row], statement: StreamTable): Dataset[Row] = {
-    val tableName = "tdl_stream_" + statement.getTableName
+  private def convertJsonDataSet(spark: SparkSession, lineRow: Dataset[Row], createTable: CreateTable): Dataset[Row] = {
+    val tableName = "tdl_stream_" + createTable.getTableId.getTableName
     lineRow.createOrReplaceTempView(tableName);
 
     val jsonPaths = Lists.newArrayList[String]()
     val fieldNames = Lists.newArrayList[String]()
     val kafkaFields = Lists.newArrayList[String]()
-    for (column <- statement.getColumns.asScala) {
+    for (column <- createTable.getColumnRels.asScala) {
       var jsonPath = column.getJsonPath
       val fieldName = column.getName
       if (!StringUtils.startsWith(column.getName, "kafka_")) {
@@ -131,17 +131,17 @@ class KafkaSouce extends Logging {
     }
 
     log.info("stream sql: {}", streamSql)
-    streamSql = convertDataType(streamSql, statement)
+    streamSql = convertDataType(streamSql, createTable)
     spark.sql(streamSql)
   }
 
-  private def convertTextDataSet(spark: SparkSession, lineRow: Dataset[Row], statement: StreamTable): Dataset[Row] = {
-    val tableName = "tdl_stream_" + statement.getTableName
+  private def convertTextDataSet(spark: SparkSession, lineRow: Dataset[Row], createTable: CreateTable): Dataset[Row] = {
+    val tableName = "tdl_stream_" + createTable.getTableId.getTableName
     lineRow.createOrReplaceTempView(tableName)
 
     val kafkaFields = Lists.newArrayList[String]()
     val colNames = Lists.newArrayList[String]()
-    for (column <- statement.getColumns.asScala) {
+    for (column <- createTable.getColumnRels.asScala) {
       if (StringUtils.startsWith(column.getName, "kafka_")) {
         kafkaFields.add(column.getName)
       } else {
@@ -164,9 +164,9 @@ class KafkaSouce extends Logging {
   }
 
   // 支持数据类型: STRING | BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | DATE  | TIMESTAMP
-  private def convertDataType(streamSql: String, statement: StreamTable): String = {
+  private def convertDataType(streamSql: String, createTable: CreateTable): String = {
     val fieldNames = Lists.newArrayList[String]()
-    for (column <- statement.getColumns.asScala) {
+    for (column <- createTable.getColumnRels.asScala) {
       if ("int".equalsIgnoreCase(column.getType)) {
         fieldNames.add(column.getName)
       } else if ("bigint".equalsIgnoreCase(column.getType)) {
