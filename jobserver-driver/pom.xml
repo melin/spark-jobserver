@@ -22,12 +22,12 @@
         <dependency>
             <groupId>io.github.melin.superior</groupId>
             <artifactId>spark-sql-parser</artifactId>
-            <version>3.4.0</version>
+            <version>${sql-parser.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.melin.superior</groupId>
             <artifactId>appjar-parser</artifactId>
-            <version>3.4.0</version>
+            <version>${sql-parser.version}</version>
         </dependency>
 
         <dependency>

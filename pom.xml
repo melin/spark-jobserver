@@ -33,8 +33,9 @@
         <iceberg.version>1.2.0</iceberg.version>
         <bee.version>1.6.0</bee.version>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
-        <kafka.version>3.3.1</kafka.version>
+        <kafka.version>3.4.0</kafka.version>
         <hudi.version>0.13.0</hudi.version>
+        <sql-parser.version>3.4.0-SNAPSHOT</sql-parser.version>
 
         <!-- 与spark 版本一致 -->
         <netty.version>4.1.74.Final</netty.version>
@@ -50,7 +51,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.10</version>
+        <version>2.7.11</version>
     </parent>
 
     <dependencies>
