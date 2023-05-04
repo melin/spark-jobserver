@@ -22,6 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <libScope>compile</libScope>
 
         <spark.version>3.3.2</spark.version>
         <hadoop.version>3.3.5</hadoop.version>
@@ -35,11 +36,13 @@
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <kafka.version>3.4.0</kafka.version>
         <hudi.version>0.13.0</hudi.version>
+        <zip4j.version>2.11.5</zip4j.version>
         <sql-parser.version>3.4.0-SNAPSHOT</sql-parser.version>
 
         <!-- 与spark 版本一致 -->
         <netty.version>4.1.74.Final</netty.version>
         <scala.plugin.version>4.8.1</scala.plugin.version>
+        <shade.plugin.version>3.3.0</shade.plugin.version>
 
         <curator.version>2.13.0</curator.version>
         <commons-io.version>2.11.0</commons-io.version>
