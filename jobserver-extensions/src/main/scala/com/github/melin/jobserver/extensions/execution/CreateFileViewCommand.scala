@@ -19,9 +19,8 @@ case class CreateFileViewCommand(createFileView: CreateFileView) extends LeafRun
     val hadoopConf = sparkSession.sparkContext.hadoopConfiguration
     val fs = FileSystem.get(hadoopConf)
     if (!fs.exists(new Path(filePath))) {
-      throw new JobServerException()("文件不存在: " + filePath + ", 可以是HDFS完整路径，或者我的资源下路径")
+      throw new JobServerException("文件不存在: " + filePath + ", 可以是HDFS完整路径，或者我的资源下路径")
     }
-
 
     if (filePath.endsWith(".zip")) {
       val zipFileRDD = sparkSession.sparkContext.newAPIHadoopFile(

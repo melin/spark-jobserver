@@ -1,13 +1,12 @@
 package com.github.melin.jobserver.extensions.util
 
-import com.github.melin.superior.jobserver.common.InstanceContext
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.math.NumberUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.io.IOUtils
 import org.apache.spark.sql.catalyst.catalog.CatalogTable
-import org.apache.spark.sql.{DataFrameWriter, SuperiorSQLException}
+import org.apache.spark.sql.DataFrameWriter
 
 import java.io.IOException
 import scala.util.Try
@@ -15,14 +14,7 @@ import scala.util.Try
 object CommonUtils {
 
   def getCurrentDatabase(schemaName: String): String = {
-    val workspaceCode = InstanceContext.getWorkspaceCode
-    if (schemaName != null) {
-      schemaName
-    } else if (StringUtils.isNotBlank(workspaceCode)) {
-      workspaceCode
-    } else {
-      throw new SuperiorSQLException("必须指定数据库名")
-    }
+    schemaName
   }
 
   /**

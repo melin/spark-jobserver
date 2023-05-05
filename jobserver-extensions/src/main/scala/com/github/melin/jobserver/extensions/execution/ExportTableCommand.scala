@@ -159,7 +159,7 @@ case class ExportTableCommand(
         fs.delete(new Path(dstPath), true)
       } else {
         if (fs.exists(new Path(dstPath))) {
-          throw new JobServerException()("file " + exportFileName + " already exists in " + dstPath)
+          throw new JobServerException("file " + exportFileName + " already exists in " + dstPath)
         }
       }
 

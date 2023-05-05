@@ -43,6 +43,7 @@
         <netty.version>4.1.74.Final</netty.version>
         <scala.plugin.version>4.8.1</scala.plugin.version>
         <shade.plugin.version>3.3.0</shade.plugin.version>
+        <spark-excel.version>3.3.1_0.18.7</spark-excel.version>
 
         <curator.version>2.13.0</curator.version>
         <commons-io.version>2.11.0</commons-io.version>
