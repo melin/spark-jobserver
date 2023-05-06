@@ -25,6 +25,8 @@ object SparkMaskDemo {
         |FORMAT csv
         |COMPRESSION gz
               """.stripMargin
-    spark.sql(sql).show()
+
+    spark.read.option("header", "true")
+      .csv("vfs://tgz:ftp://fcftp:fcftp@172.18.1.52/csv.tar.gz!/csv").show()
   }
 }
