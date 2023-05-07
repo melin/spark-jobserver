@@ -1,6 +1,5 @@
 package com.github.melin.jobserver.extensions.vfs;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.vfs2.*;
 import org.apache.commons.vfs2.provider.ftp.FtpFileSystemConfigBuilder;
 import org.apache.hadoop.conf.Configuration;
@@ -67,7 +66,14 @@ public class VfsFileSystem extends FileSystem {
 
     @Override
     public FSDataOutputStream create(Path path, FsPermission fsPermission, boolean b, int i, short i1, long l, Progressable progressable) throws IOException {
-        return null;
+        FileSystemManager fsManager = VFS.getManager();
+        FileSystemOptions options = new FileSystemOptions();
+        FtpFileSystemConfigBuilder.getInstance().setPassiveMode(options, true);
+
+        String file = FileSystemUtils.buildUri(getConf(), path);
+        FileObject fileObject = fsManager.resolveFile(file, options);
+
+        return new FSDataOutputStream(fileObject.getContent().getOutputStream(), statistics);
     }
 
     @Override
@@ -76,13 +82,53 @@ public class VfsFileSystem extends FileSystem {
     }
 
     @Override
-    public boolean rename(Path path, Path path1) throws IOException {
-        return false;
+    public boolean rename(Path src, Path dst) throws IOException {
+        FileSystemManager fsManager = VFS.getManager();
+        FileSystemOptions options = new FileSystemOptions();
+        FtpFileSystemConfigBuilder.getInstance().setPassiveMode(options, true);
+
+        String srcPath = FileSystemUtils.buildUri(getConf(), src);
+        String dstPath = FileSystemUtils.buildUri(getConf(), dst);
+
+        FileObject srcObject = fsManager.resolveFile(srcPath, options);
+        FileObject dstObject = fsManager.resolveFile(dstPath, options);
+        srcObject.moveTo(dstObject);
+        return true;
     }
 
     @Override
-    public boolean delete(Path path, boolean b) throws IOException {
-        return false;
+    public boolean delete(Path path, boolean recursive) throws IOException {
+        FileSystemManager fsManager = VFS.getManager();
+        FileSystemOptions options = new FileSystemOptions();
+        FtpFileSystemConfigBuilder.getInstance().setPassiveMode(options, true);
+
+        delete(fsManager, options, path, recursive);
+        return true;
+    }
+
+    /**
+     * Convenience method, so that we don't open a new connection when using this
+     * method from within another method. Otherwise every API invocation incurs
+     * the overhead of opening/closing a TCP connection.
+     */
+    private boolean delete(FileSystemManager fsManager, FileSystemOptions options,
+                           Path path, boolean recursive) throws IOException {
+
+        String file = FileSystemUtils.buildUri(getConf(), path);
+        FileObject fileObject = fsManager.resolveFile(file, options);
+
+        if (FileType.FILE == fileObject.getType() || FileType.IMAGINARY == fileObject.getType()) {
+            return fileObject.delete();
+        }
+
+        FileObject[] dirEntries = fileObject.getChildren();
+        if (dirEntries != null && dirEntries.length > 0 && !(recursive)) {
+            throw new IOException("Directory: " + file + " is not empty.");
+        }
+        for (FileObject dirEntry : dirEntries) {
+            delete(fsManager, options, new Path("vfs://" + dirEntry.getURI().toString()), recursive);
+        }
+        return fileObject.delete();
     }
 
     @Override
@@ -107,7 +153,7 @@ public class VfsFileSystem extends FileSystem {
 
     @Override
     public void setWorkingDirectory(Path path) {
-
+        System.out.println(path.toString());
     }
 
     @Override

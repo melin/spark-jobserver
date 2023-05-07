@@ -1,7 +1,8 @@
 package com.github.melin.jobserver.extensions.sql
 
 import com.github.melin.jobserver.extensions.SparkJobserverExtensions
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
+import org.apache.spark.sql.{Row, SparkSession}
 
 object SparkMaskDemo {
   def main(args: Array[String]): Unit = {
@@ -26,7 +27,24 @@ object SparkMaskDemo {
         |COMPRESSION gz
               """.stripMargin
 
-    spark.read.option("header", "true")
-      .csv("vfs://tgz:ftp://fcftp:fcftp@172.18.1.52/csv.tar.gz!/csv").show()
+    //spark.read.option("header", "true")
+    //  .csv("vfs://tgz:ftp://fcftp:fcftp@172.18.1.52/csv.tar.gz!/csv").show()
+
+
+    val data = Seq(
+      Row("James", 12),
+      Row("Michael", 23),
+      Row("Robert", 37),
+      Row("Washington", null)
+    )
+
+    val arrayStructSchema = new StructType()
+      .add("name", StringType)
+      .add("age", IntegerType)
+
+    val df = spark.createDataFrame(spark.sparkContext
+      .parallelize(data), arrayStructSchema)
+
+    df.write.json("vfs://ftp://fcftp:fcftp@172.18.1.52/users.json")
   }
 }
