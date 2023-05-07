@@ -1,7 +1,6 @@
 package com.github.melin.jobserver.extensions.vfs;
 
 import org.apache.commons.vfs2.*;
-import org.apache.commons.vfs2.provider.ftp.FtpFileSystemConfigBuilder;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.fs.FileSystem;
@@ -12,9 +11,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 
+import static com.github.melin.jobserver.extensions.vfs.FileSystemUtils.buildFileSystemOptions;
+
 public class VfsFileSystem extends FileSystem {
 
     public static final int DEFAULT_BLOCK_SIZE = 4 * 1024;
+
+    private FileSystemManager fsManager;
 
     @Override
     public String getScheme() {
@@ -23,24 +26,12 @@ public class VfsFileSystem extends FileSystem {
 
     private URI uri;
 
-    /**
-     * Set configuration from UI.
-     *
-     * @param uriInfo
-     * @param conf
-     * @throws IOException
-     */
-    private void setConfigurationFromURI(URI uriInfo, Configuration conf)
-            throws IOException {
-    }
-
     @Override
     public void initialize(URI uriInfo, Configuration conf) throws IOException {
         super.initialize(uriInfo, conf);
-
-        setConfigurationFromURI(uriInfo, conf);
-        setConf(conf);
         this.uri = uriInfo;
+
+        fsManager = VFS.getManager();
     }
 
     @Override
@@ -50,10 +41,7 @@ public class VfsFileSystem extends FileSystem {
 
     @Override
     public FSDataInputStream open(Path path, int i) throws IOException {
-        FileSystemManager fsManager = VFS.getManager();
-        FileSystemOptions options = new FileSystemOptions();
-        FtpFileSystemConfigBuilder.getInstance().setPassiveMode(options, true);
-
+        FileSystemOptions options = buildFileSystemOptions(getConf(), path);
         String file = FileSystemUtils.buildUri(getConf(), path);
         FileObject fileObject = fsManager.resolveFile(file, options);
         if (FileType.FOLDER == fileObject.getType()) {
@@ -66,10 +54,7 @@ public class VfsFileSystem extends FileSystem {
 
     @Override
     public FSDataOutputStream create(Path path, FsPermission fsPermission, boolean b, int i, short i1, long l, Progressable progressable) throws IOException {
-        FileSystemManager fsManager = VFS.getManager();
-        FileSystemOptions options = new FileSystemOptions();
-        FtpFileSystemConfigBuilder.getInstance().setPassiveMode(options, true);
-
+        FileSystemOptions options = buildFileSystemOptions(getConf(), path);
         String file = FileSystemUtils.buildUri(getConf(), path);
         FileObject fileObject = fsManager.resolveFile(file, options);
 
@@ -78,14 +63,12 @@ public class VfsFileSystem extends FileSystem {
 
     @Override
     public FSDataOutputStream append(Path path, int i, Progressable progressable) throws IOException {
-        return null;
+        throw new RuntimeException("not support");
     }
 
     @Override
     public boolean rename(Path src, Path dst) throws IOException {
-        FileSystemManager fsManager = VFS.getManager();
-        FileSystemOptions options = new FileSystemOptions();
-        FtpFileSystemConfigBuilder.getInstance().setPassiveMode(options, true);
+        FileSystemOptions options = buildFileSystemOptions(getConf(), src);
 
         String srcPath = FileSystemUtils.buildUri(getConf(), src);
         String dstPath = FileSystemUtils.buildUri(getConf(), dst);
@@ -98,10 +81,7 @@ public class VfsFileSystem extends FileSystem {
 
     @Override
     public boolean delete(Path path, boolean recursive) throws IOException {
-        FileSystemManager fsManager = VFS.getManager();
-        FileSystemOptions options = new FileSystemOptions();
-        FtpFileSystemConfigBuilder.getInstance().setPassiveMode(options, true);
-
+        FileSystemOptions options = buildFileSystemOptions(getConf(), path);
         delete(fsManager, options, path, recursive);
         return true;
     }
@@ -132,10 +112,8 @@ public class VfsFileSystem extends FileSystem {
     }
 
     @Override
-    public FileStatus[] listStatus(Path path) throws FileNotFoundException, IOException {
-        FileSystemManager fsManager = VFS.getManager();
-        FileSystemOptions options = new FileSystemOptions();
-        FtpFileSystemConfigBuilder.getInstance().setPassiveMode(options, true);
+    public FileStatus[] listStatus(Path path) throws IOException {
+        FileSystemOptions options = buildFileSystemOptions(getConf(), path);
 
         String file = FileSystemUtils.buildUri(getConf(), path);
         FileObject fileObject = fsManager.resolveFile(file, options);
@@ -153,32 +131,29 @@ public class VfsFileSystem extends FileSystem {
 
     @Override
     public void setWorkingDirectory(Path path) {
-        System.out.println(path.toString());
+        throw new RuntimeException("not support");
     }
 
     @Override
     public Path getWorkingDirectory() {
-        return new Path("vfs:///ftp:///fcftp:fcftp@172.18.1.52/");
+        return new Path("/");
     }
 
     @Override
     public boolean mkdirs(Path path, FsPermission fsPermission) throws IOException {
-        return false;
+        throw new RuntimeException("not support");
     }
 
     @Override
     public FileStatus getFileStatus(Path path) throws IOException {
-        FileSystemManager fsManager = VFS.getManager();
-        FileSystemOptions options = new FileSystemOptions();
-        FtpFileSystemConfigBuilder.getInstance().setPassiveMode(options, true);
+        FileSystemOptions options = buildFileSystemOptions(getConf(), path);
         String file = FileSystemUtils.buildUri(getConf(), path);
         FileObject fileObject = fsManager.resolveFile(file, options);
 
         return getFileStatus(fileObject, path);
     }
 
-    private FileStatus getFileStatus(FileObject fileObject, Path file)
-            throws IOException {
+    private FileStatus getFileStatus(FileObject fileObject, Path file) throws IOException {
         long length = -1;
         boolean isDir = true;
         long modTime = -1;

@@ -1,8 +1,15 @@
 package com.github.melin.jobserver.extensions.vfs;
 
+import com.amazonaws.ClientConfiguration;
+import com.github.vfss3.S3FileSystemConfigBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.vfs2.FileSystemOptions;
+import org.apache.commons.vfs2.provider.ftp.FtpFileSystemConfigBuilder;
+import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+
+import java.io.File;
 
 public class FileSystemUtils {
 
@@ -14,5 +21,25 @@ public class FileSystemUtils {
             filePath = StringUtils.substringBefore(filePath, "?");
         }
         return filePath;
+    }
+
+    public static FileSystemOptions buildFileSystemOptions(Configuration conf, Path path) {
+        String pathStr = path.toString();
+        FileSystemOptions options = new FileSystemOptions();
+        if (StringUtils.contains(pathStr, "ftp:/")) {
+            FtpFileSystemConfigBuilder.getInstance().setPassiveMode(options, true);
+        } else if (StringUtils.contains(pathStr, "sftp:/")) {
+
+            SftpFileSystemConfigBuilder.getInstance().setIdentities(options, new File[0]);
+        } else if (StringUtils.contains(pathStr, "sftp:/")) {
+            S3FileSystemConfigBuilder.getInstance().setUseHttps(options, false);
+            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setMaxErrorRetry(3);
+            S3FileSystemConfigBuilder.getInstance().setClientConfiguration(options, clientConfiguration);
+        } else {
+            throw new RuntimeException("not support, path: " + pathStr);
+        }
+
+        return options;
     }
 }

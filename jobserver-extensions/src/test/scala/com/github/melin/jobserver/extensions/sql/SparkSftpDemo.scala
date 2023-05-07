@@ -4,7 +4,7 @@ import com.github.melin.jobserver.extensions.SparkJobserverExtensions
 import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
 import org.apache.spark.sql.{Row, SparkSession}
 
-object SparkMaskDemo {
+object SparkSftpDemo {
   def main(args: Array[String]): Unit = {
     val spark = SparkSession.builder
       .enableHiveSupport
@@ -27,8 +27,8 @@ object SparkMaskDemo {
         |COMPRESSION gz
               """.stripMargin
 
-    //spark.read.option("header", "true")
-    //  .csv("vfs://tgz:ftp://fcftp:fcftp@172.18.1.52/csv.tar.gz!/csv").show()
+    spark.read.option("header", "true")
+      .csv("vfs://tgz:sftp:///test:test2023@172.18.5.46:22/ftpdata/csv.tar.gz!/csv").show()
 
 
     val data = Seq(
@@ -45,6 +45,6 @@ object SparkMaskDemo {
     val df = spark.createDataFrame(spark.sparkContext
       .parallelize(data), arrayStructSchema)
 
-    df.write.json("vfs://ftp://fcftp:fcftp@172.18.1.52/users.json")
+    //df.write.json("vfs://ftp://fcftp:fcftp@172.18.1.52/users.json")
   }
 }
