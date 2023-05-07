@@ -28,8 +28,8 @@ object SparkS3Demo {
               """.stripMargin
 
     spark.read.option("header", "true")
-      .csv("vfs://s3://BxiljVd5YZa3mRUn:3Mq9dsmdMbN1JipE1TlOF7OuDkuYBYpe@cdh1:9300/demo-bucket/demo.csv").show()
-      //.csv("vfs://tgz:s3://BxiljVd5YZa3mRUn:3Mq9dsmdMbN1JipE1TlOF7OuDkuYBYpe@cdh1:9300/demo-bucket/csv.tar.gz!/csv").show()
+      //.csv("vfs://s3://BxiljVd5YZa3mRUn:3Mq9dsmdMbN1JipE1TlOF7OuDkuYBYpe@cdh1:9300/demo-bucket/demo.csv").show()
+      .csv("vfs://tgz:s3://BxiljVd5YZa3mRUn:3Mq9dsmdMbN1JipE1TlOF7OuDkuYBYpe@cdh1:9300/demo-bucket/csv.tar.gz!/csv/demo1.csv").show()
 
 
     val data = Seq(
