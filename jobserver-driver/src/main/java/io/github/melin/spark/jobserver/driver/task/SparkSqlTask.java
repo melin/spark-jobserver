@@ -9,7 +9,7 @@ import io.github.melin.spark.jobserver.driver.support.ConfigClient;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
 import io.github.melin.superior.common.SQLParserException;
 import io.github.melin.superior.common.StatementType;
-import io.github.melin.superior.common.relational.StatementData;
+import io.github.melin.superior.common.relational.Statement;
 import io.github.melin.superior.common.relational.dml.QueryStmt;
 import io.github.melin.superior.parser.spark.SparkSqlHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -43,11 +43,11 @@ public class SparkSqlTask extends AbstractSparkTask {
         for (String row : sqls) {
             String sql = StringUtils.trim(row);
             if (StringUtils.isNotBlank(sql)) {
-                StatementData statementData = SparkSqlHelper.getStatementData(sql);
-                StatementType type = statementData.getType();
+                Statement statement = SparkSqlHelper.getStatementData(sql);
+                StatementType type = statement.getStatementType();
 
                 if (StatementType.SELECT == type) {
-                    QueryStmt tableData = (QueryStmt) statementData.getStatement();
+                    QueryStmt tableData = (QueryStmt) statement;
                     int maxRecords = ConfigClient.getInstance()
                             .getInt("jobserver.driver.sql.query.max.records", 1000);
 

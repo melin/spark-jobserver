@@ -81,8 +81,8 @@ object HudiUtils {
   def deltaInsertStreamSelectAdapter(spark: SparkSession,
                                      insertTable: InsertTable): Unit = {
     val querySql = insertTable.getQuerySql
-    val schemaName = getDbName(spark, insertTable.firstTableId().getSchemaName)
-    val tableName = insertTable.firstTableId().getTableName
+    val schemaName = getDbName(spark, insertTable.getTableId.getSchemaName)
+    val tableName = insertTable.getTableId.getTableName
     val catalogTable = spark.sessionState.catalog.getTableMetadata(TableIdentifier(tableName, Some(schemaName)))
     val properties = spark.sessionState.catalog.externalCatalog.getTable(schemaName, tableName).properties
     val primaryKey = getHudiTablePrimaryKey(spark, catalogTable, properties)

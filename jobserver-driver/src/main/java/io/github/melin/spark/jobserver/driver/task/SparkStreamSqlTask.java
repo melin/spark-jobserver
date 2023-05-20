@@ -10,7 +10,7 @@ import io.github.melin.spark.jobserver.driver.util.HudiUtils;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
 import io.github.melin.superior.common.StatementType;
 import io.github.melin.superior.common.relational.*;
-import io.github.melin.superior.common.relational.common.SetData;
+import io.github.melin.superior.common.relational.common.SetStatement;
 import io.github.melin.superior.common.relational.create.CreateTable;
 import io.github.melin.superior.common.relational.dml.InsertTable;
 import io.github.melin.superior.parser.spark.SparkStreamSqlHelper;
@@ -44,20 +44,19 @@ public class SparkStreamSqlTask extends AbstractSparkTask {
 
         String noCommentJobText = CommonUtils.cleanSqlComment(instanceDto.getJobText());
 
-        List<StatementData> statementDatas = SparkStreamSqlHelper.getStatementData(noCommentJobText);
-        statementDatas.forEach(statementData -> {
-            if (!checkValidSql(statementData.getType())) {
-                LogUtils.info("不支持sql 类型: " + statementData.getType());
+        List<Statement> statements = SparkStreamSqlHelper.getStatementData(noCommentJobText);
+        statements.forEach(statement -> {
+            if (!checkValidSql(statement.getStatementType())) {
+                LogUtils.info("不支持sql 类型: " + statement.getStatementType());
             } else {
-                Statement statement = statementData.getStatement();
                 if (statement instanceof CreateTable) {
                     CreateTable createTable = (CreateTable) statement;
                     buildSourceTable(createTable);
                 } else if (statement instanceof InsertTable) {
                     HudiUtils.deltaInsertStreamSelectAdapter(SparkDriverEnv.getSparkSession(),
                             (InsertTable) statement);
-                } else if (statement instanceof SetData) {
-                    SetData setData = (SetData) statement;
+                } else if (statement instanceof SetStatement) {
+                    SetStatement setData = (SetStatement) statement;
                     String sql = "set " + setData.getKey() + " = " + setData.getValue();
                     SparkDriverEnv.sql(sql);
                 }

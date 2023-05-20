@@ -37,7 +37,7 @@
         <kafka.version>3.4.0</kafka.version>
         <hudi.version>0.13.0</hudi.version>
         <zip4j.version>2.11.5</zip4j.version>
-        <sql-parser.version>3.4.0-SNAPSHOT</sql-parser.version>
+        <sql-parser.version>4.0.0-SNAPSHOT</sql-parser.version>
 
         <!-- 与spark 版本一致 -->
         <netty.version>4.1.74.Final</netty.version>
@@ -55,7 +55,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.11</version>
+        <version>2.7.12</version>
     </parent>
 
     <dependencies>

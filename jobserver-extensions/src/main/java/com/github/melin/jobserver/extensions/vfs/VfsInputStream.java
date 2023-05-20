@@ -12,12 +12,19 @@ import java.io.InputStream;
 class VfsInputStream extends FSInputStream {
 
     private final FileContent fileContent;
+
     private final String path;
+
     private InputStream wrappedStream;
+
     private FileSystem.Statistics stats;
+
     private boolean closed;
+
     private long pos;
+
     private long nextPos;
+
     private long contentLength;
 
     VfsInputStream(FileContent fileContent, String path, FileSystem.Statistics stats)

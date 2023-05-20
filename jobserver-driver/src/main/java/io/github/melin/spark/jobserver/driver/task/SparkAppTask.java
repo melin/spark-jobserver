@@ -9,7 +9,6 @@ import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.driver.support.SparkClassLoader;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
 import io.github.melin.superior.common.relational.Statement;
-import io.github.melin.superior.common.relational.StatementData;
 import io.github.melin.superior.parser.appjar.AppJarHelper;
 import io.github.melin.superior.parser.appjar.AppJarInfo;
 import org.apache.hadoop.conf.Configuration;
@@ -40,10 +39,9 @@ public class SparkAppTask extends AbstractSparkTask {
             Configuration hadoopConf = SparkDriverEnv.hadoopConfiguration();
 
             String noCommentJobText = CommonUtils.cleanSqlComment(instanceDto.getJobText());
-            List<StatementData> statementDatas = AppJarHelper.getStatementData(noCommentJobText);
+            List<Statement> statements = AppJarHelper.getStatementData(noCommentJobText);
             boolean executeJar = false;
-            for (StatementData statementData : statementDatas) {
-                Statement statement = statementData.getStatement();
+            for (Statement statement : statements) {
                 if (statement instanceof AppJarInfo) {
                     AppJarInfo data = (AppJarInfo) statement;
                     String filePath = data.getResourceName();

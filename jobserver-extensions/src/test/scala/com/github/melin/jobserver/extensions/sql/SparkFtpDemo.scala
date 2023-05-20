@@ -45,6 +45,6 @@ object SparkFtpDemo {
     val df = spark.createDataFrame(spark.sparkContext
       .parallelize(data), arrayStructSchema)
 
-    //df.write.json("vfs://ftp://fcftp:fcftp@172.18.1.52/users.json")
+    // df.write.json("vfs://ftp://fcftp:fcftp@172.18.1.52/users.json")
   }
 }
