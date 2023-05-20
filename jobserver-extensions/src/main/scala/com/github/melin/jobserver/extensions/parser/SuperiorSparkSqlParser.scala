@@ -234,22 +234,20 @@ class SuperiorSqlAstBuilder extends SparkSqlParserBaseVisitor[AnyRef] {
 
   override def visitCreateFileView(ctx: CreateFileViewContext): LogicalPlan = withOrigin(ctx) {
     val tableId = parseTableName(ctx.multipartIdentifier())
-    val pattern = if (ctx.PATTERN() != null) true else false
     val path = CommonUtils.cleanQuote(ctx.path.getText)
     val properties = parseOptions(ctx.propertyList())
 
-    var fileFormat: String = null
+    var fileFormat: String = CommonUtils.cleanQuote(ctx.tableProvider().multipartIdentifier().getText)
     var compression: String = null
     var sizeLimit: String = null
 
     val causes = ctx.createFileViewClauses()
     if (causes != null) {
-      if (causes.fileformatName != null) fileFormat = causes.fileformatName.getText
       if (causes.compressionName != null) compression = causes.compressionName.getText
       if (causes.sizelimit != null) sizeLimit = causes.sizelimit.getText
     }
 
-    val createFileView = new CreateFileView(tableId, pattern, path, properties, fileFormat, compression, sizeLimit)
+    val createFileView = new CreateFileView(tableId, path, properties, fileFormat, compression, sizeLimit)
     CreateFileViewCommand(createFileView)
   }
 
