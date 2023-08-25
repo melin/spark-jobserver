@@ -107,8 +107,8 @@ class KafkaSouce extends Logging {
     val kafkaFields = Lists.newArrayList[String]()
     for (column <- createTable.getColumnRels.asScala) {
       var jsonPath = column.getJsonPath
-      val fieldName = column.getName
-      if (!StringUtils.startsWith(column.getName, "kafka_")) {
+      val fieldName = column.getColumnName
+      if (!StringUtils.startsWith(column.getColumnName, "kafka_")) {
         if (StringUtils.isBlank(jsonPath)) {
           jsonPath = "'/" + fieldName + "'"
         } else {
@@ -118,7 +118,7 @@ class KafkaSouce extends Logging {
         jsonPaths.add(jsonPath)
         fieldNames.add(fieldName)
       } else {
-        kafkaFields.add(column.getName)
+        kafkaFields.add(column.getColumnName)
       }
     }
 
@@ -142,10 +142,10 @@ class KafkaSouce extends Logging {
     val kafkaFields = Lists.newArrayList[String]()
     val colNames = Lists.newArrayList[String]()
     for (column <- createTable.getColumnRels.asScala) {
-      if (StringUtils.startsWith(column.getName, "kafka_")) {
-        kafkaFields.add(column.getName)
+      if (StringUtils.startsWith(column.getColumnName, "kafka_")) {
+        kafkaFields.add(column.getColumnName)
       } else {
-        colNames.add(column.getName)
+        colNames.add(column.getColumnName)
       }
     }
 
@@ -167,24 +167,24 @@ class KafkaSouce extends Logging {
   private def convertDataType(streamSql: String, createTable: CreateTable): String = {
     val fieldNames = Lists.newArrayList[String]()
     for (column <- createTable.getColumnRels.asScala) {
-      if ("int".equalsIgnoreCase(column.getType)) {
-        fieldNames.add(column.getName)
-      } else if ("bigint".equalsIgnoreCase(column.getType)) {
-        fieldNames.add(column.getName)
-      } else if ("boolean".equalsIgnoreCase(column.getType)) {
-        fieldNames.add(column.getName)
-      } else if ("float".equalsIgnoreCase(column.getType)) {
-        fieldNames.add(column.getName)
-      } else if ("double".equalsIgnoreCase(column.getType)) {
-        fieldNames.add(column.getName)
-      } else if ("date".equalsIgnoreCase(column.getType)) {
-        fieldNames.add(column.getName)
-      } else if ("timestamp".equalsIgnoreCase(column.getType)) {
-        fieldNames.add(column.getName)
-      } else if ("string".equalsIgnoreCase(column.getType)) {
-        fieldNames.add(column.getName)
+      if ("int".equalsIgnoreCase(column.getTypeName)) {
+        fieldNames.add(column.getColumnName)
+      } else if ("bigint".equalsIgnoreCase(column.getTypeName)) {
+        fieldNames.add(column.getColumnName)
+      } else if ("boolean".equalsIgnoreCase(column.getTypeName)) {
+        fieldNames.add(column.getColumnName)
+      } else if ("float".equalsIgnoreCase(column.getTypeName)) {
+        fieldNames.add(column.getColumnName)
+      } else if ("double".equalsIgnoreCase(column.getTypeName)) {
+        fieldNames.add(column.getColumnName)
+      } else if ("date".equalsIgnoreCase(column.getTypeName)) {
+        fieldNames.add(column.getColumnName)
+      } else if ("timestamp".equalsIgnoreCase(column.getTypeName)) {
+        fieldNames.add(column.getColumnName)
+      } else if ("string".equalsIgnoreCase(column.getTypeName)) {
+        fieldNames.add(column.getColumnName)
       } else {
-        throw new SparkJobException("不支持的数据类型: " + column.getType)
+        throw new SparkJobException("不支持的数据类型: " + column.getTypeName)
       }
     }
 
