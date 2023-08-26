@@ -43,7 +43,7 @@ public class SparkSqlTask extends AbstractSparkTask {
         for (String row : sqls) {
             String sql = StringUtils.trim(row);
             if (StringUtils.isNotBlank(sql)) {
-                Statement statement = SparkSqlHelper.getStatementData(sql);
+                Statement statement = SparkSqlHelper.parseStatement(sql);
                 StatementType type = statement.getStatementType();
 
                 if (StatementType.SELECT == type) {

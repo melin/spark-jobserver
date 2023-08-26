@@ -39,7 +39,7 @@ public class SparkAppTask extends AbstractSparkTask {
             Configuration hadoopConf = SparkDriverEnv.hadoopConfiguration();
 
             String noCommentJobText = CommonUtils.cleanSqlComment(instanceDto.getJobText());
-            List<Statement> statements = AppJarHelper.getStatementData(noCommentJobText);
+            List<Statement> statements = AppJarHelper.parseStatement(noCommentJobText);
             boolean executeJar = false;
             for (Statement statement : statements) {
                 if (statement instanceof AppJarInfo) {
