@@ -44,7 +44,7 @@ public class SparkStreamSqlTask extends AbstractSparkTask {
 
         String noCommentJobText = CommonUtils.cleanSqlComment(instanceDto.getJobText());
 
-        List<Statement> statements = SparkStreamSqlHelper.getStatementData(noCommentJobText);
+        List<Statement> statements = SparkStreamSqlHelper.parseStatement(noCommentJobText);
         statements.forEach(statement -> {
             if (!checkValidSql(statement.getStatementType())) {
                 LogUtils.info("不支持sql 类型: " + statement.getStatementType());
