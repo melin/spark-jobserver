@@ -28,8 +28,7 @@ Spark JobServer特点:
 10. 支持kerberos 认证
 
 @TODO
-1. 支持 JDBC
-2. 集成k8s
+1. 集成k8s
 2. 支持作业定时调度, 可以减少其它调度系统依赖。(一个简易的方案，每天凌晨生成当天需要运行的作业实例，再轮训作业实例表，阿里云dataworks 每天千万级别的任务实例，也是轮训数据库方案)
 3. 集成数据权限、数据血缘(借鉴 kyuubi，但不依赖ranger)
 4. 完善调度任务优先级。
@@ -49,7 +48,7 @@ mvn clean package -Prelease,cdh6 -DlibScope=provided
 ```
 
 ## 二、作业实例接口
-包含作业实例提交、作业实例状态查询、作业实例运行日志查询、终止作业实例接口，具体接口：[Rest API](https://github.com/melin/spark-jobserver/blob/master/jobserver-admin/src/main/java/io/github/melin/spark/jobserver/web/rest/JobServerRestApi.java)
+包含作业实例提交、作业实例状态查询、作业实例运行日志查询、终止作业实例接口，具体接口：[Rest API](https://github.com/melin/spark-jobserver/blob/master/jobserver-admin/src/main/java/io/github/melin/spark/jobserver/rest/JobServerRestApi.java)
 
 ## 三、作业开发
 spark jar和python 作业类型，作业代码中不需要初始化sparkSession，SparkJobserver 初始化sparkSession，传递给作业，目的是为了统一规范作业配置，以及共享sparkSession。
