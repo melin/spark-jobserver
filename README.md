@@ -39,6 +39,15 @@ Spark JobServer特点:
 ![实例运行日志](imgs/instance.png)
 ![与大数据开发平台集成，作业执行流程](imgs/jobflow.png)
 
+
+-------------------------------------------------------------------------------------------------------------------------------------
+现在生产状态效果：
+
+![hadoop](imgs/hadoop.png)
+![kubernetes](imgs/kubernetes.png)
+![spark](imgs/spark.png)
+![flink](imgs/flink.png)
+
 ## 一、Build
 
 ```
