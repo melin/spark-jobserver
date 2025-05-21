@@ -40,15 +40,17 @@ Spark JobServer特点:
 ![与大数据开发平台集成，作业执行流程](imgs/jobflow.png)
 
 
+## 一、标准产品
 -------------------------------------------------------------------------------------------------------------------------------------
-标准产品效果，支持 Yarn 和 Kubernetes, Kubernetes 基于 native 模式，Jobserver 可以替代 Operator 扩展，例如 Spark On Kubernetes，支持 NodePort.
+
+标准产品效果，支持 Yarn 和 Kubernetes, Kubernetes 基于 native 模式，Jobserver 可以替代 Operator 扩展，例如 Spark On Kubernetes，增强添加 NodePort，暴露 Spark webUI.
 
 ![hadoop](imgs/hadoop.png)
 ![kubernetes](imgs/kubernetes.png)
 ![spark](imgs/spark.png)
 ![flink](imgs/flink.png)
 
-## 一、Build
+## 二、Build
 
 ```
 mvn clean package -Prelease,hadoop-2 -DlibScope=provided
@@ -56,10 +58,10 @@ mvn clean package -Prelease,hadoop-3 -DlibScope=provided
 mvn clean package -Prelease,cdh6 -DlibScope=provided
 ```
 
-## 二、作业实例接口
+## 三、作业实例接口
 包含作业实例提交、作业实例状态查询、作业实例运行日志查询、终止作业实例接口，具体接口：[Rest API](https://github.com/melin/spark-jobserver/blob/master/jobserver-admin/src/main/java/io/github/melin/spark/jobserver/rest/JobServerRestApi.java)
 
-## 三、作业开发
+## 四、作业开发
 spark jar和python 作业类型，作业代码中不需要初始化sparkSession，SparkJobserver 初始化sparkSession，传递给作业，目的是为了统一规范作业配置，以及共享sparkSession。
 
 ### 1、Spark jar 作业
@@ -72,7 +74,7 @@ def main(sparkSession):
   print("hello world")
 ```
 
-## 四、Yarn Cluster 模式部署
+## 五、Yarn Cluster 模式部署
 ### 1、准备环境
 Spark 任务运行环境：Hadoop 2.7.7，Spark 3.3.2。为避免每次任务运行上传jar，提前把相关jar 上传到 hdfs 路径。根路径：/user/superior/spark-jobserver (可以在集群管理中通过，修改jobserver.driver.home 参数设置)，根路径下有不同jar 和 目录
 1. spark-jobserver-driver-0.1.0.jar  -- spark jobserver driver jar，jar 参考编译spark jobserver 部分。
@@ -110,7 +112,7 @@ Spark 任务运行环境：Hadoop 2.7.7，Spark 3.3.2。为避免每次任务运
 
 Web Console: http://ip:9001, 默认账号/密码: jobserver/jobserver2022
 
-## 五、相关项目
+## 六、相关项目
 1. https://gitee.com/melin/bee
 2. https://github.com/melin/superior-sql-parser
 3. https://github.com/melin/superior-sql-formatter
