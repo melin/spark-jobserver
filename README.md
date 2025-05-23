@@ -35,9 +35,6 @@ Spark JobServer特点:
 5. spark jar 上传管理
 
 ![架构](imgs/jobserver.png)
-![Hadoop 集群管理](imgs/cluster.png)
-![实例运行日志](imgs/instance.png)
-![与大数据开发平台集成，作业执行流程](imgs/jobflow.png)
 
 
 ## 一、标准产品
