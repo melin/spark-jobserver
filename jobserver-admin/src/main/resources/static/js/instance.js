@@ -515,7 +515,7 @@ var Instance = function () {
         queryInstanceStatistics : function() {
             $.ajax({
                 async: true,
-                type: "POST",
+                type: "GET",
                 url: '/instance/queryInstanceStatistics',
                 success: function (result) {
                     if (result.success) {
