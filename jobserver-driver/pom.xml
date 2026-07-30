@@ -170,43 +170,6 @@
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.14.0</version>
-                <configuration>
-                    <showWeaveInfo>true</showWeaveInfo>
-                    <complianceLevel>${java.version}</complianceLevel>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <verbose>true</verbose>
-                    <Xlint>ignore</Xlint>
-                    <encoding>UTF-8</encoding>
-                    <sources>
-                        <source>
-                            <basedir>${project.basedir}/src/main/java</basedir>
-                            <includes>
-                                <include>io/github/melin/spark/jobserver/driver/aspectj/*Aspectj.java</include>
-                            </includes>
-                        </source>
-                    </sources>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjtools</artifactId>
-                        <version>1.9.7</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
                 <version>${scala.plugin.version}</version>

@@ -6,13 +6,11 @@ import io.github.melin.spark.jobserver.core.util.CommonUtils;
 import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
 import io.github.melin.spark.jobserver.driver.stream.KafkaSouce;
 import io.github.melin.spark.jobserver.driver.task.udf.GenericUDTFJsonExtractValue;
-import io.github.melin.spark.jobserver.driver.util.HudiUtils;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
 import io.github.melin.superior.common.StatementType;
 import io.github.melin.superior.common.relational.*;
 import io.github.melin.superior.common.relational.common.SetStatement;
 import io.github.melin.superior.common.relational.create.CreateTable;
-import io.github.melin.superior.common.relational.dml.InsertTable;
 import io.github.melin.superior.parser.spark.SparkStreamSqlHelper;
 import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
@@ -43,7 +41,7 @@ public class SparkStreamSqlTask extends AbstractSparkTask {
 
         String noCommentJobText = CommonUtils.cleanSqlComment(instanceDto.getJobText());
 
-        List<Statement> statements = SparkStreamSqlHelper.getStatementData(noCommentJobText);
+        List<Statement> statements = SparkStreamSqlHelper.parseStatement(noCommentJobText);
         statements.forEach(statement -> {
             if (!checkValidSql(statement.getStatementType())) {
                 LogUtils.info("不支持sql 类型: " + statement.getStatementType());
@@ -51,8 +49,6 @@ public class SparkStreamSqlTask extends AbstractSparkTask {
                 if (statement instanceof CreateTable) {
                     CreateTable createTable = (CreateTable) statement;
                     buildSourceTable(createTable);
-                } else if (statement instanceof InsertTable) {
-                    HudiUtils.deltaInsertStreamSelectAdapter(SparkDriverEnv.getSparkSession(), (InsertTable) statement);
                 } else if (statement instanceof SetStatement) {
                     SetStatement setData = (SetStatement) statement;
                     String sql = "set " + setData.getKey() + " = " + setData.getValue();

@@ -19,7 +19,6 @@
         <module>jobserver-common</module>
         <module>jobserver-admin</module>
         <module>jobserver-driver</module>
-        <module>jobserver-extensions</module>
         <module>jobserver-examples</module>
     </modules>
 
