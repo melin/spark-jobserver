@@ -20,7 +20,6 @@
         <module>jobserver-admin</module>
         <module>jobserver-driver</module>
         <module>jobserver-extensions</module>
-        <module>jobserver-lineage</module>
         <module>jobserver-examples</module>
     </modules>
 
