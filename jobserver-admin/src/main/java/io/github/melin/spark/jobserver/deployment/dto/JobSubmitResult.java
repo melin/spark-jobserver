@@ -12,8 +12,7 @@ public class JobSubmitResult {
 
     private Long jobserverId;
 
-    public JobSubmitResult() {
-    }
+    public JobSubmitResult() {}
 
     public JobSubmitResult(DriverInstance status, String message) {
         this.status = status;

@@ -16,7 +16,6 @@ public class SwaggerConfig {
                         .title("JobServer 系统API")
                         .version("1.0")
                         .description("JobServer 系统API")
-                        .license(new License().name("Apache 2.0")
-                                .url("https://github.com/melin/spark-jobserver")));
+                        .license(new License().name("Apache 2.0").url("https://github.com/melin/spark-jobserver")));
     }
 }

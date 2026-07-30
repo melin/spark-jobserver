@@ -14,7 +14,7 @@ public enum StorageType implements BaseStringEnum {
 
     private String name;
 
-    private StorageType(String name){
+    private StorageType(String name) {
         this.name = name;
     }
 

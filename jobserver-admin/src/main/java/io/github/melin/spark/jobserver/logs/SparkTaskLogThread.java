@@ -1,28 +1,27 @@
 package io.github.melin.spark.jobserver.logs;
 
+import static io.github.melin.spark.jobserver.core.enums.InstanceStatus.*;
+import static io.github.melin.spark.jobserver.core.enums.JobType.*;
+import static io.github.melin.spark.jobserver.core.util.TaskStatusFlag.*;
+
 import io.github.melin.spark.jobserver.ConfigProperties;
-import io.github.melin.spark.jobserver.support.DriverClientService;
-import io.github.melin.spark.jobserver.support.YarnClientService;
-import io.github.melin.spark.jobserver.util.DateUtils;
 import io.github.melin.spark.jobserver.api.LogLevel;
 import io.github.melin.spark.jobserver.core.entity.JobInstance;
 import io.github.melin.spark.jobserver.core.enums.InstanceType;
 import io.github.melin.spark.jobserver.core.enums.JobType;
 import io.github.melin.spark.jobserver.core.service.JobInstanceService;
 import io.github.melin.spark.jobserver.core.util.LogRecord;
+import io.github.melin.spark.jobserver.support.DriverClientService;
+import io.github.melin.spark.jobserver.support.YarnClientService;
+import io.github.melin.spark.jobserver.util.DateUtils;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.hadoop.yarn.api.records.YarnApplicationState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.context.ApplicationContext;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static io.github.melin.spark.jobserver.core.enums.InstanceStatus.*;
-import static io.github.melin.spark.jobserver.core.enums.JobType.*;
-import static io.github.melin.spark.jobserver.core.util.TaskStatusFlag.*;
 
 public class SparkTaskLogThread extends Thread {
 
@@ -82,8 +81,10 @@ public class SparkTaskLogThread extends Thread {
                     }
 
                     for (LogRecord log : logs) {
-                        if (TASK_ERROR_FLAG == log.getFlag() || TASK_END_FLAG == log.getFlag()
-                                || TASK_STOP_FLAG == log.getFlag() || STAGE_ERROR_FLAG == log.getFlag()) {
+                        if (TASK_ERROR_FLAG == log.getFlag()
+                                || TASK_END_FLAG == log.getFlag()
+                                || TASK_STOP_FLAG == log.getFlag()
+                                || STAGE_ERROR_FLAG == log.getFlag()) {
                             logRecord = log;
                             break OUT;
                         } else {
@@ -108,7 +109,7 @@ public class SparkTaskLogThread extends Thread {
                             if (JobType.isBatchJob(jobType)) {
                                 checkInstanceStatus(instanceCode, applicationId);
                             } else {
-                                //@TODO 支持流任务
+                                // @TODO 支持流任务
                             }
                             break;
                         } else {
@@ -149,7 +150,7 @@ public class SparkTaskLogThread extends Thread {
                 if (JobType.isBatchJob(jobType)) {
                     updateInstanceStatus(logTaskDto, instanceType, message);
                 } else {
-                    //@TODO 支持流任务
+                    // @TODO 支持流任务
                 }
             }
         } catch (Exception e) {
@@ -192,15 +193,14 @@ public class SparkTaskLogThread extends Thread {
      */
     private void checkInstanceStatus(String instanceCode, String appId) {
         JobInstance jobInstance = instanceService.queryJobInstanceByCode(instanceCode);
-        if (jobInstance.getStatus() == RUNNING) { //运行状态
+        if (jobInstance.getStatus() == RUNNING) { // 运行状态
             YarnApplicationState state = yarnClientService.getApplicationStatus(jobInstance.getClusterCode(), appId);
             if (YarnApplicationState.RUNNING != state && YarnApplicationState.ACCEPTED != state) {
-                jobInstance.setStatus(FAILED); //失败状态
+                jobInstance.setStatus(FAILED); // 失败状态
                 instanceService.updateEntity(jobInstance);
             } else {
                 yarnClientService.killApplicationOnYarn(jobInstance.getClusterCode(), appId);
             }
         }
     }
-
 }

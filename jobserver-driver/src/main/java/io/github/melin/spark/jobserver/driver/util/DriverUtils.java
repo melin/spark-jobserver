@@ -1,10 +1,5 @@
 package io.github.melin.spark.jobserver.driver.util;
 
-import org.apache.spark.sql.Row;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.sparkproject.guava.hash.HashCodes;
-
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -15,6 +10,10 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.apache.spark.sql.Row;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sparkproject.guava.hash.HashCodes;
 
 /**
  * @author melin 2021/8/20 2:15 下午
@@ -33,8 +32,8 @@ public class DriverUtils {
             Field factoryField = null;
             while (factoryField == null && index < fields.length) {
                 final Field current = fields[index];
-                if (Modifier.isStatic(current.getModifiers()) &&
-                        current.getType().equals(URLStreamHandlerFactory.class)){
+                if (Modifier.isStatic(current.getModifiers())
+                        && current.getType().equals(URLStreamHandlerFactory.class)) {
                     factoryField = current;
                     factoryField.setAccessible(true);
                 } else {
@@ -90,15 +89,15 @@ public class DriverUtils {
                 .toArray(Object[]::new);
     }
 
-    private abstract static class ParentAwareURLStreamHandlerFactory implements URLStreamHandlerFactory{
+    private abstract static class ParentAwareURLStreamHandlerFactory implements URLStreamHandlerFactory {
 
         protected URLStreamHandlerFactory parentFactory;
 
-        public void setParentFactory(URLStreamHandlerFactory factory){
+        public void setParentFactory(URLStreamHandlerFactory factory) {
             this.parentFactory = factory;
         }
 
-        public URLStreamHandlerFactory getParent(){
+        public URLStreamHandlerFactory getParent() {
             return parentFactory;
         }
 
@@ -113,5 +112,4 @@ public class DriverUtils {
 
         protected abstract URLStreamHandler create(String protocol);
     }
-
 }

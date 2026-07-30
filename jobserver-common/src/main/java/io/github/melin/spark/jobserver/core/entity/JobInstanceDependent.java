@@ -1,18 +1,16 @@
 package io.github.melin.spark.jobserver.core.entity;
 
-import com.gitee.melin.bee.model.IEntity;
+import com.gitee.melin.bee.core.model.IEntity;
+import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.*;
-
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
-
 @Entity
 @Table(name = "sjs_job_instance_dependent")
 public class JobInstanceDependent implements IEntity {

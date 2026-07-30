@@ -1,13 +1,10 @@
 package io.github.melin.spark.jobserver.deployment;
 
+import static io.github.melin.spark.jobserver.SparkJobServerConf.*;
+
+import com.gitee.melin.bee.util.NetUtils;
+import com.google.common.collect.Lists;
 import io.github.melin.spark.jobserver.ConfigProperties;
-import io.github.melin.spark.jobserver.support.ClusterConfig;
-import io.github.melin.spark.jobserver.support.ClusterManager;
-import io.github.melin.spark.jobserver.support.KerberosInfo;
-import io.github.melin.spark.jobserver.support.YarnClientService;
-import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
-import io.github.melin.spark.jobserver.util.FSUtils;
-import io.github.melin.spark.jobserver.util.JobServerUtils;
 import io.github.melin.spark.jobserver.core.entity.SparkDriver;
 import io.github.melin.spark.jobserver.core.enums.ComputeType;
 import io.github.melin.spark.jobserver.core.enums.DriverStatus;
@@ -16,11 +13,26 @@ import io.github.melin.spark.jobserver.core.exception.SparkJobException;
 import io.github.melin.spark.jobserver.core.exception.SubmitTimeoutException;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
 import io.github.melin.spark.jobserver.core.util.CommonUtils;
-import com.gitee.melin.bee.util.NetUtils;
-import com.google.common.collect.Lists;
 import io.github.melin.spark.jobserver.deployment.dto.DriverInfo;
 import io.github.melin.spark.jobserver.deployment.dto.JobInstanceInfo;
 import io.github.melin.spark.jobserver.deployment.dto.SubmitYarnResult;
+import io.github.melin.spark.jobserver.support.ClusterConfig;
+import io.github.melin.spark.jobserver.support.ClusterManager;
+import io.github.melin.spark.jobserver.support.KerberosInfo;
+import io.github.melin.spark.jobserver.support.YarnClientService;
+import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
+import io.github.melin.spark.jobserver.util.FSUtils;
+import io.github.melin.spark.jobserver.util.JobServerUtils;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
@@ -33,19 +45,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
-
-import static io.github.melin.spark.jobserver.SparkJobServerConf.*;
 
 /**
  * huaixin 2022/4/14 21:08
@@ -86,7 +85,8 @@ public abstract class AbstractDriverDeployer {
 
     private static final String hostName = NetUtils.getLocalHost();
 
-    public abstract DriverInfo allocateDriver(JobInstanceInfo jobInstanceInfo, ComputeType computeType, boolean shareDriver);
+    public abstract DriverInfo allocateDriver(
+            JobInstanceInfo jobInstanceInfo, ComputeType computeType, boolean shareDriver);
 
     /**
      * 通过spark-submit提交任务到集群
@@ -108,8 +108,8 @@ public abstract class AbstractDriverDeployer {
                 if (StringUtils.isNotBlank(applicationId)) {
                     yarnClientService.killYarnApp(clusterCode, applicationId);
                 }
-                throw new SubmitTimeoutException("{}, Submit to yarn timed out({}s), applicationId: {}",
-                        hostName, submitTimeOut, applicationId);
+                throw new SubmitTimeoutException(
+                        "{}, Submit to yarn timed out({}s), applicationId: {}", hostName, submitTimeOut, applicationId);
             }
             if (sparkAppHandle.getState() == SparkAppHandle.State.KILLED) {
                 throw new SparkJobException("{}, Submit to yarn failed , yarn status: {}", hostName, state.name());
@@ -125,14 +125,20 @@ public abstract class AbstractDriverDeployer {
                     }
                 }
             } else {
-                //启动jobserver 失败
-                ApplicationReport applicationReport = yarnClientService.getYarnApplicationReport(clusterCode, applicationId);
+                // 启动jobserver 失败
+                ApplicationReport applicationReport =
+                        yarnClientService.getYarnApplicationReport(clusterCode, applicationId);
                 if (applicationReport.getYarnApplicationState() == YarnApplicationState.FAILED) {
                     if (sparkAppHandle.getError().isPresent()) {
                         Throwable error = sparkAppHandle.getError().get();
-                        throw new SparkJobException(error, "InstanceCode: {} 启动 jobserver 失败, applicationId {}", jobInstanceCode, applicationId);
+                        throw new SparkJobException(
+                                error,
+                                "InstanceCode: {} 启动 jobserver 失败, applicationId {}",
+                                jobInstanceCode,
+                                applicationId);
                     } else {
-                        throw new SparkJobException("InstanceCode: {} 启动 jobserver 失败, applicationId {}", jobInstanceCode, applicationId);
+                        throw new SparkJobException(
+                                "InstanceCode: {} 启动 jobserver 失败, applicationId {}", jobInstanceCode, applicationId);
                     }
                 }
             }
@@ -167,7 +173,7 @@ public abstract class AbstractDriverDeployer {
         }
 
         long execTime = (System.currentTimeMillis() - getServerTime) / 1000;
-        msg =  "driver application " + applicationId + " 启动耗时：" + execTime + " s";
+        msg = "driver application " + applicationId + " 启动耗时：" + execTime + " s";
         LOG.info("InstanceCode: {}, {}", jobInstanceCode, msg);
 
         String sparkDriverUrl = driver.getSparkDriverUrl();
@@ -178,7 +184,8 @@ public abstract class AbstractDriverDeployer {
     /**
      * 构造SparkLauncher
      */
-    protected SparkAppHandle startApplication(JobInstanceInfo jobInstanceInfo, Long driverId, String yarnQueue) throws Exception {
+    protected SparkAppHandle startApplication(JobInstanceInfo jobInstanceInfo, Long driverId, String yarnQueue)
+            throws Exception {
         String clusterCode = jobInstanceInfo.getClusterCode();
         String sparkHome = clusterConfig.getValue(clusterCode, JOBSERVER_SPARK_HOME);
         if (StringUtils.isBlank(sparkHome)) {
@@ -189,7 +196,7 @@ public abstract class AbstractDriverDeployer {
         }
         String confDir = clusterManager.loadYarnConfig(clusterCode);
 
-        //获取 SPARK_HOME 地址
+        // 获取 SPARK_HOME 地址
         Configuration hadoopConf = clusterManager.getHadoopConf(clusterCode);
         String defaultFS = hadoopConf.get("fs.defaultFS", "hdfs://dzcluster");
         String hadoopUserName = clusterConfig.getDriverHadoopUserName(clusterCode);
@@ -246,7 +253,8 @@ public abstract class AbstractDriverDeployer {
 
         boolean remoteDebug = clusterConfig.getBoolean(clusterCode, JOBSERVER_DRIVER_REMOTE_DEBUG_ENABLED);
         if (remoteDebug) {
-            sparkDriverExtraJavaOptionsConf += " -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=50112 ";
+            sparkDriverExtraJavaOptionsConf +=
+                    " -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=50112 ";
         }
 
         String sparkExecutorExtraJavaOptionsConf = "-javaagent:" + aspectjweaverJar + " " + executorExtraOptions;
@@ -268,22 +276,27 @@ public abstract class AbstractDriverDeployer {
         }
 
         LOG.info("driver kerberos enabled: {}, hive enabled: {}", kerberosEnabled, hiveEnabled);
-        List<String> programArgs = Lists.newArrayList("-j", String.valueOf(driverId),
-                "-type", "driverserver",
-                "-conf", conf,
-                "-k", String.valueOf(kerberosEnabled));
+        List<String> programArgs = Lists.newArrayList(
+                "-j",
+                String.valueOf(driverId),
+                "-type",
+                "driverserver",
+                "-conf",
+                conf,
+                "-k",
+                String.valueOf(kerberosEnabled));
         if (hiveEnabled) {
             programArgs.add("-hive");
         }
 
         pythonEnvConf(sparkLauncher, clusterCode);
-        //driverJar 包 hdfs 地址
-        String driverJarFile = driverHome + "/" +
-                clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_JAR_NAME);
+        // driverJar 包 hdfs 地址
+        String driverJarFile = driverHome + "/" + clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_JAR_NAME);
 
         LOG.info("directory: {}", sparkHome);
         String appName = JobServerUtils.appName(profiles);
-        return sparkLauncher.setAppName(appName)
+        return sparkLauncher
+                .setAppName(appName)
                 .setVerbose(false)
                 .setSparkHome(sparkHome)
                 .setMaster("yarn")
@@ -335,9 +348,15 @@ public abstract class AbstractDriverDeployer {
     /*
      * 设置spark.yarn.jars 参数
      */
-    private void setSparkConf(String clusterCode, SparkLauncher sparkLauncher, Configuration hadoopConf,
-                              String defaultFS, String yarnQueue, String driverHome) throws Exception {
-        //设置队列
+    private void setSparkConf(
+            String clusterCode,
+            SparkLauncher sparkLauncher,
+            Configuration hadoopConf,
+            String defaultFS,
+            String yarnQueue,
+            String driverHome)
+            throws Exception {
+        // 设置队列
         if (StringUtils.isNotBlank(yarnQueue)) {
             sparkLauncher.setConf("spark.yarn.queue", yarnQueue);
         } else {
@@ -361,7 +380,7 @@ public abstract class AbstractDriverDeployer {
         String sparkVersion = clusterConfig.getValue(clusterCode, JOBSERVER_SPARK_VERSION);
         String sparkYarnJarsDir = driverHome + "/spark-" + sparkVersion;
         FSUtils.checkHdfsPathExist(hadoopConf, sparkYarnJarsDir);
-        String yarnJars =  sparkYarnJarsDir + "/*";
+        String yarnJars = sparkYarnJarsDir + "/*";
         String driverJar = driverHome + "/" + clusterConfig.getValue(clusterCode, JOBSERVER_DRIVER_JAR_NAME);
         yarnJars = yarnJars + "," + driverJar;
 
@@ -391,9 +410,9 @@ public abstract class AbstractDriverDeployer {
      */
     private String getJvmOpts(String clusterCode, Properties params, String role) {
         String key = String.format("spark.job.%s.java.opts", role);
-        String jvmOptions = "driver".equals(role) ?
-                clusterConfig.getValue(clusterCode, JOBSERVER_JOB_DRIVER_JAVA_OPTS) :
-                clusterConfig.getValue(clusterCode, JOBSERVER_JOB_EXECUTOR_JAVA_OPTS);
+        String jvmOptions = "driver".equals(role)
+                ? clusterConfig.getValue(clusterCode, JOBSERVER_JOB_DRIVER_JAVA_OPTS)
+                : clusterConfig.getValue(clusterCode, JOBSERVER_JOB_EXECUTOR_JAVA_OPTS);
 
         if (StringUtils.isNotBlank(jvmOptions)) {
             jvmOptions = jvmOptions + " " + params.getProperty(key, "");
@@ -417,8 +436,8 @@ public abstract class AbstractDriverDeployer {
         String availableMemorySizeRead = CommonUtils.convertUnit(availableMemorySize);
 
         if (availableMemorySize < (minAvailableMem * 1024)) {
-            String msg = "当前系统总内存: " + totalMemorySizeRead + ", 可用内存: " + availableMemorySizeRead
-                    + ", 要求最小可用内存: " + minAvailableMem + "m " + NetUtils.getLocalHost();
+            String msg = "当前系统总内存: " + totalMemorySizeRead + ", 可用内存: " + availableMemorySizeRead + ", 要求最小可用内存: "
+                    + minAvailableMem + "m " + NetUtils.getLocalHost();
             msg = msg + ", 可调整参数：jobserver.local-min-memory-mb, 单位兆";
             LOG.warn(msg);
             throw new ResouceLimitException(msg);
@@ -441,7 +460,8 @@ public abstract class AbstractDriverDeployer {
             LOG.info("Get redis lock");
 
             long initDriverCount = driverService.queryCount("status", DriverStatus.INIT);
-            long maxConcurrentSubmitCount = clusterConfig.getInt(clusterCode, JOBSERVER_SUBMIT_DRIVER_MAX_CONCURRENT_COUNT);
+            long maxConcurrentSubmitCount =
+                    clusterConfig.getInt(clusterCode, JOBSERVER_SUBMIT_DRIVER_MAX_CONCURRENT_COUNT);
             if (initDriverCount > maxConcurrentSubmitCount) {
                 String msg = "当前正在提交jobserver数量: " + initDriverCount + ", 最大提交数量: " + maxConcurrentSubmitCount
                         + ", 可调整参数: jobserver.concurrent.submit.max.num";

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.MissingNode;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentLengthException;
@@ -15,9 +17,6 @@ import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.io.Text;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
 
 /**
  * @author melin 2021/9/13 10:08 上午
@@ -43,7 +42,7 @@ public class GenericUDTFJsonExtractValue extends GenericUDTF {
         }
 
         ArrayList<String> fieldNames = new ArrayList<String>();
-        ArrayList<ObjectInspector> fieldOIs   = new ArrayList<ObjectInspector>();
+        ArrayList<ObjectInspector> fieldOIs = new ArrayList<ObjectInspector>();
         for (int i = 1; i < arguments.length; i++) {
             fieldNames.add("col" + i);
             fieldOIs.add(PrimitiveObjectInspectorFactory.javaStringObjectInspector);
@@ -99,6 +98,5 @@ public class GenericUDTFJsonExtractValue extends GenericUDTF {
     }
 
     @Override
-    public void close() throws HiveException {
-    }
+    public void close() throws HiveException {}
 }

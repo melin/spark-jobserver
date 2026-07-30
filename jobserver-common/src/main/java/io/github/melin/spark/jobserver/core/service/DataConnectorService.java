@@ -1,19 +1,18 @@
 package io.github.melin.spark.jobserver.core.service;
 
 import com.gitee.melin.bee.core.hibernate5.HibernateBaseDao;
-import com.gitee.melin.bee.core.jdbc.JdbcDialectHolder;
 import com.gitee.melin.bee.core.jdbc.dialect.JdbcDialect;
+import com.gitee.melin.bee.core.jdbc.dialect.JdbcDialectHolder;
 import com.gitee.melin.bee.core.jdbc.relational.ConnectionInfo;
-import com.gitee.melin.bee.core.jdbc.relational.DataSourceInfo;
+import com.gitee.melin.bee.core.jdbc.relational.MetaDataSource;
 import com.gitee.melin.bee.core.service.BaseServiceImpl;
 import io.github.melin.spark.jobserver.core.dao.DataConnectorDao;
 import io.github.melin.spark.jobserver.core.entity.DataConnector;
+import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.sql.SQLException;
 
 @Service
 public class DataConnectorService extends BaseServiceImpl<DataConnector, Long> {
@@ -28,10 +27,10 @@ public class DataConnectorService extends BaseServiceImpl<DataConnector, Long> {
         return connectorDao;
     }
 
-    public DataSourceInfo testConnection(DataConnector dataConnector) throws SQLException {
+    public MetaDataSource testConnection(DataConnector dataConnector) throws SQLException {
         ConnectionInfo connector = dataConnector.buildDataConnector();
         JdbcDialect dialect = JdbcDialectHolder.getJdbcDialect(connector);
-        return dialect.testConnection();
+        return dialect.testConnection(connector);
     }
 
     public DataConnector queryDataConnector(String code) {

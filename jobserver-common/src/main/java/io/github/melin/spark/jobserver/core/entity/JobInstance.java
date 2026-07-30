@@ -1,15 +1,14 @@
 package io.github.melin.spark.jobserver.core.entity;
 
+import com.gitee.melin.bee.core.model.IEntity;
 import io.github.melin.spark.jobserver.core.enums.InstanceStatus;
 import io.github.melin.spark.jobserver.core.enums.InstanceType;
 import io.github.melin.spark.jobserver.core.enums.JobType;
-import com.gitee.melin.bee.model.IEntity;
+import java.time.Instant;
+import javax.persistence.*;
 import lombok.*;
 import lombok.experimental.Tolerate;
 import org.hibernate.annotations.Type;
-
-import javax.persistence.*;
-import java.time.Instant;
 
 @Getter
 @Setter
@@ -42,15 +41,23 @@ public class JobInstance implements IEntity {
     private String dependentCode;
 
     @Column(name = "job_type", length = 32)
-    @Type(type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
-            parameters = {@org.hibernate.annotations.Parameter(name = "enumClass",
-                    value = "io.github.melin.spark.jobserver.core.enums.JobType")})
+    @Type(
+            type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
+            parameters = {
+                @org.hibernate.annotations.Parameter(
+                        name = "enumClass",
+                        value = "io.github.melin.spark.jobserver.core.enums.JobType")
+            })
     private JobType jobType;
 
     @Column(name = "instance_type", nullable = false, length = 32)
-    @Type(type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
-            parameters = {@org.hibernate.annotations.Parameter(name = "enumClass",
-                    value = "io.github.melin.spark.jobserver.core.enums.InstanceType")})
+    @Type(
+            type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
+            parameters = {
+                @org.hibernate.annotations.Parameter(
+                        name = "enumClass",
+                        value = "io.github.melin.spark.jobserver.core.enums.InstanceType")
+            })
     private InstanceType instanceType;
 
     @lombok.Builder.Default
@@ -58,9 +65,13 @@ public class JobInstance implements IEntity {
     private Integer version = 0;
 
     @Column(name = "status", nullable = false)
-    @Type(type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
-            parameters = {@org.hibernate.annotations.Parameter(name = "enumClass",
-                    value = "io.github.melin.spark.jobserver.core.enums.InstanceStatus")})
+    @Type(
+            type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
+            parameters = {
+                @org.hibernate.annotations.Parameter(
+                        name = "enumClass",
+                        value = "io.github.melin.spark.jobserver.core.enums.InstanceStatus")
+            })
     private InstanceStatus status;
 
     @Column(name = "schedule_time")
@@ -113,6 +124,5 @@ public class JobInstance implements IEntity {
     private String modifier;
 
     @Tolerate
-    public JobInstance() {
-    }
+    public JobInstance() {}
 }

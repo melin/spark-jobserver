@@ -2,13 +2,12 @@ package io.github.melin.spark.jobserver.rest.dto;
 
 import io.github.melin.spark.jobserver.core.enums.InstanceType;
 import io.github.melin.spark.jobserver.core.enums.JobType;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter

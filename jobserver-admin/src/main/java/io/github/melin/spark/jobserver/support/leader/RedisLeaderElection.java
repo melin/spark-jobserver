@@ -1,8 +1,12 @@
 package io.github.melin.spark.jobserver.support.leader;
 
 import com.gitee.melin.bee.util.NetUtils;
-import io.github.melin.spark.jobserver.api.JobServerException;
 import com.google.common.collect.Maps;
+import io.github.melin.spark.jobserver.api.JobServerException;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +17,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * 基于redis 锁选举产生leader;
  */
@@ -26,7 +25,7 @@ public class RedisLeaderElection implements InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisLeaderElection.class);
 
-    private static final int LOCK_TIMEOUT = 1000 * (LeaderTypeEnum.values().length + 10); //ms
+    private static final int LOCK_TIMEOUT = 1000 * (LeaderTypeEnum.values().length + 10); // ms
 
     private static final String SUBMIT_DRIVER_LOCK_KEY = "jobserver-submit-driver-lock";
 
@@ -58,7 +57,7 @@ public class RedisLeaderElection implements InitializingBean {
 
                 String value = redisTemplate.opsForValue().get(leaderKey);
                 if (StringUtils.equals(currentIp, value)) {
-                    //避免过期
+                    // 避免过期
                     redisTemplate.opsForValue().setIfPresent(leaderKey, currentIp, LOCK_TIMEOUT, TimeUnit.MILLISECONDS);
                     boolean result = isLeader.getAndSet(true);
                     if (!result) {

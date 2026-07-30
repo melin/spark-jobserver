@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>spark-jobserver</artifactId>
-        <groupId>io.github.melin.spark.jobserver</groupId>
-        <version>0.1.0</version>
-    </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.melin.spark.jobserver</groupId>
+        <artifactId>spark-jobserver</artifactId>
+        <version>0.2.0</version>
+    </parent>
 
     <artifactId>spark-jobserver-extensions</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>io.github.melin.superior</groupId>
-            <artifactId>spark-sql-parser</artifactId>
+            <artifactId>superior-spark-parser</artifactId>
             <version>${sql-parser.version}</version>
             <scope>${libScope}</scope>
         </dependency>
@@ -76,8 +75,8 @@
             <version>${spark-excel.version}</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>xerces2-xsd11</artifactId>
                     <groupId>com.rackspace.apache</groupId>
+                    <artifactId>xerces2-xsd11</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.scala-lang</groupId>
@@ -112,8 +111,8 @@
                     <artifactId>*</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>slf4j-api</artifactId>
                     <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -160,10 +159,10 @@
                 <version>${shade.plugin.version}</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <phase>package</phase>
                         <configuration>
                             <artifactSet>
                                 <excludes>
@@ -197,16 +196,6 @@
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
                 <version>${scala.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>scala-compile-first</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
                     <scalaVersion>${scala.version}</scalaVersion>
                     <checkMultipleScalaVersions>true</checkMultipleScalaVersions>
@@ -219,6 +208,16 @@
                         <arg>-explaintypes</arg>
                     </args>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>scala-compile-first</id>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -228,10 +227,10 @@
                 <executions>
                     <execution>
                         <id>add-sources</id>
-                        <phase>generate-sources</phase>
                         <goals>
                             <goal>add-source</goal>
                         </goals>
+                        <phase>generate-sources</phase>
                         <configuration>
                             <sources>
                                 <source>src/main/scala</source>
@@ -241,10 +240,10 @@
                     </execution>
                     <execution>
                         <id>add-scala-test-sources</id>
-                        <phase>generate-test-sources</phase>
                         <goals>
                             <goal>add-test-source</goal>
                         </goals>
+                        <phase>generate-test-sources</phase>
                         <configuration>
                             <sources>
                                 <source>src/test/scala</source>
@@ -259,13 +258,6 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
                 <version>1.14.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
                     <complianceLevel>${java.version}</complianceLevel>
                     <source>${java.version}</source>
@@ -281,21 +273,19 @@
                         </source>
                     </sources>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
                 <groupId>org.scalastyle</groupId>
                 <artifactId>scalastyle-maven-plugin</artifactId>
                 <version>1.0.0</version>
-                <executions>
-                    <execution>
-                        <id>validate</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
                     <verbose>false</verbose>
                     <failOnViolation>true</failOnViolation>
@@ -308,6 +298,15 @@
                     <inputEncoding>UTF-8</inputEncoding>
                     <outputEncoding>UTF-8</outputEncoding>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>validate</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

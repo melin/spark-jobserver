@@ -4,16 +4,15 @@ import io.github.melin.spark.jobserver.api.LogLevel;
 import io.github.melin.spark.jobserver.core.util.LogRecord;
 import io.github.melin.spark.jobserver.core.util.TaskStatusFlag;
 import io.github.melin.spark.jobserver.driver.InstanceContext;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.MessageFormatter;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
 
 public class LogUtils {
 
@@ -21,14 +20,15 @@ public class LogUtils {
 
     public static ConcurrentSkipListSet<String> executorLogSet = new ConcurrentSkipListSet<>();
 
-    private static final ConcurrentHashMap<String, LinkedBlockingQueue<LogRecord>> LOG_QUEUE_MAP = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, LinkedBlockingQueue<LogRecord>> LOG_QUEUE_MAP =
+            new ConcurrentHashMap<>();
 
     private static final List<LogRecord> LOG_CACHE = new LinkedList<>();
 
     // pythonJobTemplate.py 文件中 ##PYTHON_TEMPLE## 所在行号
     public static final int USE_CODE_START_LINENO = 116 - 1;
 
-    public static List<LogRecord> getMessage(String instanceCode){
+    public static List<LogRecord> getMessage(String instanceCode) {
         LOG_CACHE.clear();
         while (LOG_CACHE.size() < 10) {
             LogRecord log = getLogQueue(instanceCode).poll();
@@ -48,7 +48,7 @@ public class LogUtils {
         return LOG_QUEUE_MAP.get(instanceCode);
     }
 
-    private static void putMsg(String instanceCode, String message, LogLevel level){
+    private static void putMsg(String instanceCode, String message, LogLevel level) {
         try {
             LinkedBlockingQueue<LogRecord> logger = getLogQueue(instanceCode);
             if (logger != null && StringUtils.isNotBlank(message)) {
@@ -58,7 +58,7 @@ public class LogUtils {
 
                 logger.put(LogRecord.of(level, message));
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error("发送消息 " + message + ", 失败：" + e.getMessage());
         }
     }
@@ -99,7 +99,7 @@ public class LogUtils {
         putMsg(InstanceContext.getInstanceCode(), message, LogLevel.STDOUT);
     }
 
-    public static void clearLog(String instanceCode){
+    public static void clearLog(String instanceCode) {
         LOG_QUEUE_MAP.remove(instanceCode);
     }
 
@@ -107,7 +107,7 @@ public class LogUtils {
         sendTaskStatusFlag(flag, flag.name());
     }
 
-    public static void sendTaskStatusFlag(TaskStatusFlag flag, String message){
+    public static void sendTaskStatusFlag(TaskStatusFlag flag, String message) {
         try {
             String instanceCode = InstanceContext.getInstanceCode();
             LinkedBlockingQueue<LogRecord> logger = getLogQueue(instanceCode);
@@ -117,7 +117,8 @@ public class LogUtils {
             if (StringUtils.isNotBlank(message)) {
                 logger.put(LogRecord.of(LogLevel.ERROR, flag, message));
             }
-        } catch (Exception ignored){ }
+        } catch (Exception ignored) {
+        }
     }
 
     public static String resolvePythonErrMsg(String msg) {
@@ -170,11 +171,12 @@ public class LogUtils {
 
         causeMessage = StringUtils.replaceAll(causeMessage, "\\\\n", "\n");
 
-        if (StringUtils.contains(causeMessage,
+        if (StringUtils.contains(
+                causeMessage,
                 "org.apache.arrow.vector.util.OversizedAllocationException: Unable to expand the buffer")) {
-            causeMessage = "Arrow OversizedAllocationException: Unable to expand the buffer，尝试适当调整大 spark.sql.shuffle.partitions 值，默认值：400";
-        } else if (StringUtils.contains(causeMessage,
-                "Futures timed out after")) {
+            causeMessage =
+                    "Arrow OversizedAllocationException: Unable to expand the buffer，尝试适当调整大 spark.sql.shuffle.partitions 值，默认值：400";
+        } else if (StringUtils.contains(causeMessage, "Futures timed out after")) {
             causeMessage = causeMessage + ", 广播数据量太大超时，设置 spark.sql.autoBroadcastJoinThreshold = -1 关闭广播";
         }
 
@@ -193,7 +195,8 @@ public class LogUtils {
         } else {
             if (executor) {
                 if (lineNo > 0) {
-                    return "Executor(" + executorHost + ")执行失败, 失败所在代码行号：" + (lineNo - USE_CODE_START_LINENO) + ", 失败原因：" + causeMessage;
+                    return "Executor(" + executorHost + ")执行失败, 失败所在代码行号：" + (lineNo - USE_CODE_START_LINENO)
+                            + ", 失败原因：" + causeMessage;
                 } else {
                     return "Executor(" + executorHost + ")执行失败， 失败原因：" + causeMessage;
                 }

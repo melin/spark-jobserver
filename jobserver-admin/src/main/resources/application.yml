@@ -1,0 +1,104 @@
+server:
+  port: 9001
+  max-http-header-size: 32KB
+  servlet:
+    context-path: /
+    session:
+      timeout: 86400
+  error:
+    include-stacktrace: ALWAYS
+    path: /error
+
+logging:
+  config: classpath:log4j2/log4j2-dev.xml
+  level:
+    root: INFO
+    org.springframework.web.client.RestTemplate: INFO
+
+spring:
+  profiles:
+    active: dev
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+  mvc:
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: NON_NULL
+    mapper:
+      accept-case-insensitive-enums: true
+    serialization:
+      write_dates_as_timestamps: false
+
+  security:
+    user:
+      name: jobserver
+      password: jobserver2026
+
+  thymeleaf:
+    cache: true
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    mode: HTML5
+    servlet:
+      content-type: text/html
+
+  web:
+    resources:
+      chain.cache: true
+      chain.enabled: true
+      chain.strategy.content.enabled: true
+      chain.strategy.content.paths: /**/*.js,/**/*.css
+      static-locations: classpath:/static/
+
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 30000
+      minimum-idle: 2
+      maximum-pool-size: 15
+      auto-commit: false
+      idle-timeout: 600000
+      pool-name: DatebookHikariCP
+      maximum-lifetime: 28740000
+      connection-test-query: SELECT 1
+
+  data:
+    redis:
+      lettuce:
+        pool:
+          max-active: 2
+          max-wait: 10000
+          max-idle: 1
+          min-idle: 1
+
+management:
+  metrics:
+    tags:
+      application: spark-jobserver
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics,prometheus"
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      access: unrestricted
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+knife4j:
+  enable: true
+springdoc:
+  packages-to-scan: io.github.melin.spark.jobserver.web.controller
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: alpha

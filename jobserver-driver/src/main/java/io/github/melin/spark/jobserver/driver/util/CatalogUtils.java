@@ -5,21 +5,19 @@ import com.google.common.collect.Maps;
 import io.github.melin.spark.jobserver.core.entity.DataConnector;
 import io.github.melin.spark.jobserver.core.util.AESUtils;
 import io.github.melin.spark.jobserver.driver.catalog.JDBCTableCatalog;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.sql.connector.catalog.CatalogPlugin;
 import org.apache.spark.sql.util.CaseInsensitiveStringMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 public class CatalogUtils {
     private static final Logger LOG = LoggerFactory.getLogger(CatalogUtils.class);
 
     public static final String SESSION_CATALOG_NAME = "spark_catalog";
 
-    public static CatalogPlugin buildJdbcCatalogPlugin(DataConnector connector,
-                                                       String catalogName) {
+    public static CatalogPlugin buildJdbcCatalogPlugin(DataConnector connector, String catalogName) {
         DataSourceType dataSourceType = connector.getDataSourceType();
 
         String user = connector.getUsername();
@@ -34,8 +32,10 @@ public class CatalogUtils {
             throw new IllegalArgumentException(catalogName + " 数据源没有配置 password");
         }
 
-        if (DataSourceType.MYSQL == dataSourceType || DataSourceType.TIDB == dataSourceType
-                || DataSourceType.DORIS == dataSourceType || DataSourceType.STARROCKS == dataSourceType) {
+        if (DataSourceType.MYSQL == dataSourceType
+                || DataSourceType.TIDB == dataSourceType
+                || DataSourceType.DORIS == dataSourceType
+                || DataSourceType.STARROCKS == dataSourceType) {
             driverClass = "com.mysql.cj.jdbc.Driver";
         } else if (DataSourceType.ORACLE == dataSourceType) {
             driverClass = "oracle.jdbc.OracleDriver";

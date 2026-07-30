@@ -1,15 +1,25 @@
 package io.github.melin.spark.jobserver.support;
 
+import static io.github.melin.spark.jobserver.SparkJobServerConf.JOBSERVER_YARN_MIN_CPU_CORES;
+import static io.github.melin.spark.jobserver.SparkJobServerConf.JOBSERVER_YARN_MIN_MEMORY_MB;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.gitee.melin.bee.util.JsonUtils;
 import com.google.common.collect.Maps;
-import io.github.melin.spark.jobserver.core.enums.SchedulerType;
-import io.github.melin.spark.jobserver.deployment.dto.YarnResource;
 import io.github.melin.spark.jobserver.api.JobServerException;
 import io.github.melin.spark.jobserver.core.entity.Cluster;
+import io.github.melin.spark.jobserver.core.enums.SchedulerType;
 import io.github.melin.spark.jobserver.core.exception.ResouceLimitException;
 import io.github.melin.spark.jobserver.core.service.ClusterService;
+import io.github.melin.spark.jobserver.deployment.dto.YarnResource;
 import io.github.melin.spark.jobserver.util.DateUtils;
+import java.io.File;
+import java.io.IOException;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.security.PrivilegedExceptionAction;
+import java.util.*;
+import java.util.concurrent.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -24,17 +34,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.security.PrivilegedExceptionAction;
-import java.util.*;
-import java.util.concurrent.*;
-
-import static io.github.melin.spark.jobserver.SparkJobServerConf.JOBSERVER_YARN_MIN_CPU_CORES;
-import static io.github.melin.spark.jobserver.SparkJobServerConf.JOBSERVER_YARN_MIN_MEMORY_MB;
 
 @Service
 public class ClusterManager implements InitializingBean {
@@ -87,36 +86,42 @@ public class ClusterManager implements InitializingBean {
             LOGGER.info("========================= load {} end==============================", cluster.getCode());
         }
 
-        executorService.scheduleWithFixedDelay(() -> {
-            try {
-                for (String clusterCode : yarnRMAddrMap.keySet()) {
-                    YarnResource yarnResource = getResourceByCluster(clusterCode);
-                    if (yarnResource != null) {
-                        yarnResourceMap.put(clusterCode, yarnResource);
-                    }
-                }
+        executorService.scheduleWithFixedDelay(
+                () -> {
+                    try {
+                        for (String clusterCode : yarnRMAddrMap.keySet()) {
+                            YarnResource yarnResource = getResourceByCluster(clusterCode);
+                            if (yarnResource != null) {
+                                yarnResourceMap.put(clusterCode, yarnResource);
+                            }
+                        }
 
-                List<Cluster> clusterList = clusterService.findByNamedParam("status", true);
-                for (Cluster cluster : clusterList) {
-                    long updateTime = clusterService.getClusterUpdateTime(cluster.getCode());
-                    Long cacheUpdateTime = clusterUpdateTimeMap.get(cluster.getCode());
-                    if (cacheUpdateTime == null || cacheUpdateTime != updateTime) {
-                        LOGGER.info("========================= reload {} ==============================", cluster.getCode());
-                        downloadClusterConfig(cluster);
-                    }
-                }
+                        List<Cluster> clusterList = clusterService.findByNamedParam("status", true);
+                        for (Cluster cluster : clusterList) {
+                            long updateTime = clusterService.getClusterUpdateTime(cluster.getCode());
+                            Long cacheUpdateTime = clusterUpdateTimeMap.get(cluster.getCode());
+                            if (cacheUpdateTime == null || cacheUpdateTime != updateTime) {
+                                LOGGER.info(
+                                        "========================= reload {} ==============================",
+                                        cluster.getCode());
+                                downloadClusterConfig(cluster);
+                            }
+                        }
 
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }, 0, 10, TimeUnit.SECONDS);
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                },
+                0,
+                10,
+                TimeUnit.SECONDS);
     }
 
     public Set<String> getCluerCodes() {
         return hadoopConfList.keySet();
     }
 
-    public Configuration getHadoopConf(String cluserCode){
+    public Configuration getHadoopConf(String cluserCode) {
         if (hadoopConfList.containsKey(cluserCode)) {
             return hadoopConfList.get(cluserCode);
         }
@@ -155,7 +160,7 @@ public class ClusterManager implements InitializingBean {
 
     private String initYarnAddress(String clusterCode, Configuration conf) {
         if (conf == null) {
-        	return null;
+            return null;
         }
 
         Iterator<Map.Entry<String, String>> iter = conf.iterator();
@@ -173,7 +178,7 @@ public class ClusterManager implements InitializingBean {
                         new Socket(addr, port);
                         yarnRMAddrMap.put(clusterCode, value);
                         rmAddress = value;
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         LOGGER.error("unactive resourcemanager address: " + value + ", try next...");
                     }
                 }
@@ -237,13 +242,21 @@ public class ClusterManager implements InitializingBean {
                 String haState = (String) clusterinfo.get("haState");
                 String hadoopVersion = (String) clusterinfo.get("hadoopVersion");
 
-                LOGGER.info("check yarn resourcemanager status, hadoopVersion: {}, startedOn: {}, state: {}, haState: {}, rmAddress: {}",
-                        hadoopVersion, time, state, haState, rmAddress);
+                LOGGER.info(
+                        "check yarn resourcemanager status, hadoopVersion: {}, startedOn: {}, state: {}, haState: {}, rmAddress: {}",
+                        hadoopVersion,
+                        time,
+                        state,
+                        haState,
+                        rmAddress);
 
                 return "STARTED".equals(state) && "ACTIVE".equals(haState);
             } else {
-                LOGGER.warn("check yarn resourcemanager status failed: {}, rmAddress: {}, msg: {}",
-                        response.getStatusCodeValue(), rmAddress, response.getBody());
+                LOGGER.warn(
+                        "check yarn resourcemanager status failed: {}, rmAddress: {}, msg: {}",
+                        response.getStatusCodeValue(),
+                        rmAddress,
+                        response.getBody());
             }
         } catch (Exception e) {
             LOGGER.warn("check yarn resourcemanager failed: {}, rmAddress: {}", e.getMessage(), rmAddress);
@@ -259,8 +272,7 @@ public class ClusterManager implements InitializingBean {
         FileUtils.forceMkdir(new File(LOCAL_CLUSTER_CONFIG_DIR));
         FileUtils.forceMkdir(new File(destDir));
 
-        if (StringUtils.isNotBlank(cluster.getCoreConfig()) &&
-                StringUtils.isNotBlank(cluster.getHdfsConfig())) {
+        if (StringUtils.isNotBlank(cluster.getCoreConfig()) && StringUtils.isNotBlank(cluster.getHdfsConfig())) {
             FileUtils.write(new File(destDir + "/core-site.xml"), cluster.getCoreConfig(), StandardCharsets.UTF_8);
             FileUtils.write(new File(destDir + "/hdfs-site.xml"), cluster.getHdfsConfig(), StandardCharsets.UTF_8);
             FileUtils.write(new File(destDir + "/spark.conf"), cluster.getSparkConfig(), StandardCharsets.UTF_8);
@@ -283,10 +295,16 @@ public class ClusterManager implements InitializingBean {
 
             FileUtils.write(new File(destDir + "/kubenetes.yml"), cluster.getYarnConfig(), StandardCharsets.UTF_8);
             if (StringUtils.isNotBlank(cluster.getDriverPodTemplate())) {
-                FileUtils.write(new File(destDir + "/driver-pod-manager.yml"), cluster.getDriverPodTemplate(), StandardCharsets.UTF_8);
+                FileUtils.write(
+                        new File(destDir + "/driver-pod-manager.yml"),
+                        cluster.getDriverPodTemplate(),
+                        StandardCharsets.UTF_8);
             }
             if (StringUtils.isNotBlank(cluster.getExecutorPodTemplate())) {
-                FileUtils.write(new File(destDir + "/executor-pod-manager.yml"), cluster.getExecutorPodTemplate(), StandardCharsets.UTF_8);
+                FileUtils.write(
+                        new File(destDir + "/executor-pod-manager.yml"),
+                        cluster.getExecutorPodTemplate(),
+                        StandardCharsets.UTF_8);
             }
         }
 
@@ -315,10 +333,12 @@ public class ClusterManager implements InitializingBean {
                 FileUtils.write(new File(krb5File), cluster.getKerberosConfig(), StandardCharsets.UTF_8);
                 FileUtils.writeByteArrayToFile(new File(keytabFile), cluster.getKerberosKeytab());
 
-                KerberosInfo kerberosInfo = KerberosInfo.builder().enabled(true)
+                KerberosInfo kerberosInfo = KerberosInfo.builder()
+                        .enabled(true)
                         .krb5File(krb5File)
                         .keytabFile(keytabFile)
-                        .principal(cluster.getKerberosUser()).build();
+                        .principal(cluster.getKerberosUser())
+                        .build();
                 CLUSTER_KERBEROS_INFO_MAP.put(clusterCode, kerberosInfo);
             }
 
@@ -338,7 +358,7 @@ public class ClusterManager implements InitializingBean {
     }
 
     private UserGroupInformation loginToKerberos(KerberosInfo kerberosInfo, String clusterCode) throws IOException {
-        //https://stackoverflow.com/questions/34616676/should-i-call-ugi-checktgtandreloginfromkeytab-before-every-action-on-hadoop
+        // https://stackoverflow.com/questions/34616676/should-i-call-ugi-checktgtandreloginfromkeytab-before-every-action-on-hadoop
         UserGroupInformation connectUgi = UserGroupInformation.getCurrentUser();
         if (!connectUgi.isFromKeytab()) {
             System.setProperty("java.security.krb5.conf", kerberosInfo.getKrb5File());
@@ -361,7 +381,8 @@ public class ClusterManager implements InitializingBean {
         try {
             String url = "http://" + yarnRMWebAppAddr + "/ws/v1/cluster/metrics";
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            Map<String, Object> data = JsonUtils.toJavaObject(response.getBody(), new TypeReference<Map<String, Object>>() {});
+            Map<String, Object> data =
+                    JsonUtils.toJavaObject(response.getBody(), new TypeReference<Map<String, Object>>() {});
             LinkedHashMap<String, Object> metrics = (LinkedHashMap<String, Object>) data.get("clusterMetrics");
             int availableMemoryMB = (Integer) metrics.get("availableMB");
             int availableVirtualCores = (Integer) metrics.get("availableVirtualCores");
@@ -392,10 +413,10 @@ public class ClusterManager implements InitializingBean {
             int availableMemoryMB = yarnResource.getAvailableMemoryMB();
             int availableVirtualCores = yarnResource.getAvailableVirtualCores();
 
-            String memoryMsg = "当前yarn 集群可用内存: " + availableMemoryMB +
-                    "MB, 最小需要内存: " + limitMemory + ", 可以调整参数(单位MB): " + JOBSERVER_YARN_MIN_MEMORY_MB.getKey();
-            String cpuMsg = "当前yarn 集群可用CPU数量: " + availableVirtualCores +
-                    ", 最小需要CPU: " + limitCores + ", 可以调整参数: " + JOBSERVER_YARN_MIN_CPU_CORES.getKey();
+            String memoryMsg = "当前yarn 集群可用内存: " + availableMemoryMB + "MB, 最小需要内存: " + limitMemory + ", 可以调整参数(单位MB): "
+                    + JOBSERVER_YARN_MIN_MEMORY_MB.getKey();
+            String cpuMsg = "当前yarn 集群可用CPU数量: " + availableVirtualCores + ", 最小需要CPU: " + limitCores + ", 可以调整参数: "
+                    + JOBSERVER_YARN_MIN_CPU_CORES.getKey();
             LOGGER.info(memoryMsg);
             LOGGER.info(cpuMsg);
 

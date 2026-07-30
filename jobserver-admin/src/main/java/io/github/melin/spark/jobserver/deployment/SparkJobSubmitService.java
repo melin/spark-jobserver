@@ -1,11 +1,13 @@
 package io.github.melin.spark.jobserver.deployment;
 
+import static io.github.melin.spark.jobserver.core.enums.ComputeType.YARN_BATCH;
+import static io.github.melin.spark.jobserver.core.enums.DriverInstance.NEW_INSTANCE;
+
+import com.gitee.melin.bee.core.support.Result;
+import com.gitee.melin.bee.util.JsonUtils;
 import com.gitee.melin.bee.util.NetUtils;
+import com.gitee.melin.bee.util.RestTemplateUtils;
 import io.github.melin.spark.jobserver.ConfigProperties;
-import io.github.melin.spark.jobserver.logs.SparkLogService;
-import io.github.melin.spark.jobserver.support.ClusterManager;
-import io.github.melin.spark.jobserver.support.YarnClientService;
-import io.github.melin.spark.jobserver.util.DateUtils;
 import io.github.melin.spark.jobserver.api.JobServerException;
 import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.core.entity.JobInstance;
@@ -19,13 +21,20 @@ import io.github.melin.spark.jobserver.core.exception.SparkJobException;
 import io.github.melin.spark.jobserver.core.exception.SwitchYarnQueueException;
 import io.github.melin.spark.jobserver.core.service.JobInstanceService;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
-import com.gitee.melin.bee.core.support.Result;
-import com.gitee.melin.bee.util.JsonUtils;
-import com.gitee.melin.bee.util.RestTemplateUtils;
 import io.github.melin.spark.jobserver.deployment.dto.DriverInfo;
 import io.github.melin.spark.jobserver.deployment.dto.JobInstanceInfo;
 import io.github.melin.spark.jobserver.deployment.dto.JobSubmitResult;
 import io.github.melin.spark.jobserver.deployment.dto.SubmitYarnResult;
+import io.github.melin.spark.jobserver.logs.SparkLogService;
+import io.github.melin.spark.jobserver.support.ClusterManager;
+import io.github.melin.spark.jobserver.support.YarnClientService;
+import io.github.melin.spark.jobserver.util.DateUtils;
+import java.io.StringReader;
+import java.net.*;
+import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -39,16 +48,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.StringReader;
-import java.net.*;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import static io.github.melin.spark.jobserver.core.enums.DriverInstance.NEW_INSTANCE;
-import static io.github.melin.spark.jobserver.core.enums.ComputeType.YARN_BATCH;
 
 /**
  * huaixin 2022/4/15 15:27
@@ -183,7 +182,7 @@ public class SparkJobSubmitService implements InitializingBean {
 
             LOG.info("share jobserverid: {}, 实例code: {}", driverInfo.getDriverId(), instanceCode);
             return new JobSubmitResult(DriverInstance.SHARE_INSTANCE, driverAddress);
-        } else if (status == DriverInstance.NEW_INSTANCE) { //新的server正在提交
+        } else if (status == DriverInstance.NEW_INSTANCE) { // 新的server正在提交
             Long jobserverId = driverInfo.getDriverId();
             instanceService.updateJobStatusByCode(instanceCode, InstanceStatus.SUBMITTING);
             taskSubmitExecutor.submit(() -> {
@@ -199,12 +198,21 @@ public class SparkJobSubmitService implements InitializingBean {
                             sparkLogService.removeLogThread(instanceCode);
 
                             final String scheduleDate = DateUtils.formatDate(instanceInfo.getScheduleTime());
-                            String path = configProperties.getInstanceLogPath() + "/" + scheduleDate + "/" + instanceCode + ".log";
+                            String path = configProperties.getInstanceLogPath() + "/" + scheduleDate + "/"
+                                    + instanceCode + ".log";
                             MDC.put("logFileName", path);
-                            LOG.error("hostName:{}, job: {}, type:{} submit to yarn error:{}",
-                                    hostName, instanceCode, jobType, ExceptionUtils.getStackTrace(e));
-                            INST_LOG.error("hostName:{}, job: {}, type:{} submit to yarn error:{}",
-                                    hostName, instanceCode, jobType, ExceptionUtils.getStackTrace(e));
+                            LOG.error(
+                                    "hostName:{}, job: {}, type:{} submit to yarn error:{}",
+                                    hostName,
+                                    instanceCode,
+                                    jobType,
+                                    ExceptionUtils.getStackTrace(e));
+                            INST_LOG.error(
+                                    "hostName:{}, job: {}, type:{} submit to yarn error:{}",
+                                    hostName,
+                                    instanceCode,
+                                    jobType,
+                                    ExceptionUtils.getStackTrace(e));
 
                             if (StringUtils.isNotBlank(applicationId)) {
                                 try {
@@ -222,8 +230,12 @@ public class SparkJobSubmitService implements InitializingBean {
                     });
                 } catch (Exception e) {
                     submitFailureHandle(instanceInfo, jobserverId, e);
-                    LOG.error("hostName:{}, job: {}, type:{} submit to yarn error:{}",
-                            hostName, instanceCode, jobType, ExceptionUtils.getStackTrace(e));
+                    LOG.error(
+                            "hostName:{}, job: {}, type:{} submit to yarn error:{}",
+                            hostName,
+                            instanceCode,
+                            jobType,
+                            ExceptionUtils.getStackTrace(e));
                 }
             });
 
@@ -238,7 +250,8 @@ public class SparkJobSubmitService implements InitializingBean {
     /**
      * 发送任务请求给server
      */
-    private void postTaskToServer(JobInstanceInfo instanceInfo, SubmitYarnResult submitYarnResult, DriverInfo driverInfo) throws Exception {
+    private void postTaskToServer(
+            JobInstanceInfo instanceInfo, SubmitYarnResult submitYarnResult, DriverInfo driverInfo) throws Exception {
         String applicationId = submitYarnResult.getApplicationId();
         String jobText = instanceInfo.getJobText();
         String instanceCode = instanceInfo.getInstanceCode();
@@ -282,8 +295,11 @@ public class SparkJobSubmitService implements InitializingBean {
             watch.stop();
 
             instanceDto.setJobText(null);
-            LOG.info("requet execute job times: {}ms, url : {}, params: {}",
-                    watch.getTime(), url, JsonUtils.toJSONString(instanceDto));
+            LOG.info(
+                    "requet execute job times: {}ms, url : {}, params: {}",
+                    watch.getTime(),
+                    url,
+                    JsonUtils.toJSONString(instanceDto));
         } catch (Exception e) {
             instanceService.unLockInstance(instanceCode);
             throw new JobServerException("提交作业到 {} 失败: {}", applicationId, e.getMessage());
@@ -319,7 +335,7 @@ public class SparkJobSubmitService implements InitializingBean {
             String path = instanceLogPath + "/" + DateUtils.getCurrentDate() + "/" + instanceCode + ".log";
             MDC.put("logFileName", path);
 
-            if (e instanceof ResouceLimitException) { //超过最大资源限制，继续等待运行
+            if (e instanceof ResouceLimitException) { // 超过最大资源限制，继续等待运行
                 if (isDevTask) {
                     INST_LOG.warn("{}, job {} stopped ", e.getMessage(), instanceCode);
                     instanceService.updateJobStatusByCode(instanceCode, InstanceStatus.KILLED);

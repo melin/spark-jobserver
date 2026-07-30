@@ -5,6 +5,11 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.gitee.melin.bee.core.enums.mvc.IntegerToEnumConverterFactory;
 import com.gitee.melin.bee.core.enums.mvc.StringToEnumConverterFactory;
+import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.MessageSource;
@@ -19,17 +24,11 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
-import java.io.IOException;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            .withZone(ZoneId.systemDefault());
+    private final DateTimeFormatter formatter =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
 
     @Autowired
     private Environment environment;
@@ -44,8 +43,9 @@ public class WebConfig implements WebMvcConfigurer {
         return builder -> {
             builder.serializerByType(Instant.class, new JsonSerializer<Instant>() {
                 @Override
-                public void serialize(Instant instant, JsonGenerator jsonGenerator,
-                                      SerializerProvider serializerProvider) throws IOException {
+                public void serialize(
+                        Instant instant, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+                        throws IOException {
                     jsonGenerator.writeString(formatter.format(instant));
                 }
             });

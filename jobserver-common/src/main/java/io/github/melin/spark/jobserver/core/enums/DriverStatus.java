@@ -10,7 +10,6 @@ import com.gitee.melin.bee.core.enums.jackson.JacksonEnumStringSerializer;
  */
 @JsonSerialize(using = JacksonEnumStringSerializer.class)
 public enum DriverStatus implements BaseStringEnum {
-
     INIT("初始化", "init"),
 
     IDLE("空闲", "idle"),

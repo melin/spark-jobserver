@@ -1,16 +1,23 @@
 package io.github.melin.spark.jobserver.driver;
 
+import com.gitee.melin.bee.core.support.Result;
+import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.core.enums.DriverStatus;
 import io.github.melin.spark.jobserver.core.enums.JobType;
 import io.github.melin.spark.jobserver.core.util.LogRecord;
-import io.github.melin.spark.jobserver.core.dto.InstanceDto;
+import io.github.melin.spark.jobserver.core.util.TaskStatusFlag;
 import io.github.melin.spark.jobserver.driver.task.SparkAppTask;
 import io.github.melin.spark.jobserver.driver.task.SparkPythonTask;
 import io.github.melin.spark.jobserver.driver.task.SparkSqlTask;
 import io.github.melin.spark.jobserver.driver.task.SparkStreamSqlTask;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
-import com.gitee.melin.bee.core.support.Result;
-import io.github.melin.spark.jobserver.core.util.TaskStatusFlag;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,14 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.List;
 
 /**
  * huaixin 2022/4/11 18:22
@@ -65,8 +64,10 @@ public class SparkDriverRest {
      */
     @RequestMapping("/sparkDriver/isJobRunning")
     public boolean isJobRunning(String instanceCode) {
-        LOG.info("isJobRunning, instance status: {}, code: {}",
-                sparkDriverContext.getStatus(), InstanceContext.getInstanceCode());
+        LOG.info(
+                "isJobRunning, instance status: {}, code: {}",
+                sparkDriverContext.getStatus(),
+                InstanceContext.getInstanceCode());
 
         if (sparkDriverContext.getStatus() == DriverStatus.RUNNING
                 && instanceCode.equalsIgnoreCase(InstanceContext.getInstanceCode())) {
@@ -97,17 +98,23 @@ public class SparkDriverRest {
         InstanceContext.setAccessKey(instanceDto.getAccessKey());
         LOG.info("spark dirver received job");
 
-        LogUtils.info("当前 yarn queue: {}, ApplicationId: {}, shareDriver: {}",
-                instanceDto.getYarnQueue(), SparkDriverEnv.getApplicationId(), String.valueOf(instanceDto.isShareDriver()));
+        LogUtils.info(
+                "当前 yarn queue: {}, ApplicationId: {}, shareDriver: {}",
+                instanceDto.getYarnQueue(),
+                SparkDriverEnv.getApplicationId(),
+                String.valueOf(instanceDto.isShareDriver()));
 
-        LOG.info("Spark task: {} begined, submit from {}",
-                instanceDto.getInstanceCode(), instanceDto.getSparkDriverUrl());
+        LOG.info(
+                "Spark task: {} begined, submit from {}",
+                instanceDto.getInstanceCode(),
+                instanceDto.getSparkDriverUrl());
 
         JobType jobType = instanceDto.getJobType();
         if (JobType.SPARK_SQL == jobType) {
             sparkDriverContext.startDriver();
             return sparkSqlTask.runTask(instanceDto);
-        } if (JobType.SPARK_STREAM_SQL == jobType) {
+        }
+        if (JobType.SPARK_STREAM_SQL == jobType) {
             sparkDriverContext.startDriver();
             return sparkStreamSqlTask.runTask(instanceDto);
         } else if (JobType.SPARK_APP == jobType) {
@@ -128,8 +135,7 @@ public class SparkDriverRest {
         }
 
         String currrentInstanceCode = InstanceContext.getInstanceCode();
-        if (StringUtils.isNotBlank(currrentInstanceCode)
-                && !currrentInstanceCode.equals(instanceCode)) {
+        if (StringUtils.isNotBlank(currrentInstanceCode) && !currrentInstanceCode.equals(instanceCode)) {
             return Result.successMessageResult("current instanceCode: " + currrentInstanceCode);
         }
 
@@ -144,7 +150,7 @@ public class SparkDriverRest {
             SparkDriverEnv.getSparkSession().sparkContext().cancelAllJobs();
             if (sparkPythonTask.getPythonPid() > 0) {
                 String command = "kill -9 " + sparkPythonTask.getPythonPid();
-                Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", command});
+                Runtime.getRuntime().exec(new String[] {"/bin/bash", "-c", command});
             }
 
             JobType jobType = InstanceContext.getJobType();

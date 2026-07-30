@@ -1,19 +1,18 @@
 package io.github.melin.spark.jobserver.monitor.task;
 
-import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
+import static io.github.melin.spark.jobserver.core.enums.InstanceStatus.WAITING;
+
 import io.github.melin.spark.jobserver.core.entity.JobInstance;
 import io.github.melin.spark.jobserver.core.service.JobInstanceService;
 import io.github.melin.spark.jobserver.support.leader.LeaderTypeEnum;
+import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
+import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static io.github.melin.spark.jobserver.core.enums.InstanceStatus.WAITING;
 
 /**
  * 作业提交超时，修复为等待提交状态

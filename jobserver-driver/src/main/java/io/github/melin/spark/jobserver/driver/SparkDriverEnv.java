@@ -1,5 +1,7 @@
 package io.github.melin.spark.jobserver.driver;
 
+import java.security.PrivilegedExceptionAction;
+import java.util.concurrent.CountDownLatch;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hive.common.util.HiveVersionInfo;
@@ -10,9 +12,6 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.security.PrivilegedExceptionAction;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * huaixin 2022/4/6 7:05 PM
@@ -38,7 +37,9 @@ public class SparkDriverEnv {
     }
 
     private static void initSpark(SparkConf sparkConf, boolean hiveEnabled) {
-        SparkSession.Builder builder = SparkSession.builder().config(sparkConf).enableHiveSupport()
+        SparkSession.Builder builder = SparkSession.builder()
+                .config(sparkConf)
+                .enableHiveSupport()
                 .config("spark.sql.catalog.default_iceberg", "org.apache.iceberg.spark.SparkSessionCatalog")
                 .appName("SparkSessionJob");
 

@@ -2,17 +2,16 @@ package io.github.melin.spark.jobserver.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gitee.melin.bee.core.hibernate5.type.BooleanToIntConverter;
+import com.gitee.melin.bee.core.model.IEntity;
 import io.github.melin.spark.jobserver.core.enums.SchedulerType;
 import io.github.melin.spark.jobserver.core.enums.StorageType;
-import com.gitee.melin.bee.model.IEntity;
+import java.time.Instant;
+import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.Type;
-
-import javax.persistence.*;
-import java.time.Instant;
 
 @Getter
 @Setter
@@ -31,15 +30,23 @@ public class Cluster implements IEntity {
     private String name;
 
     @Column(name = "storage_type")
-    @Type(type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
-            parameters = {@org.hibernate.annotations.Parameter(name = "enumClass",
-                    value = "io.github.melin.spark.jobserver.core.enums.StorageType")})
-    private StorageType storageType = StorageType.HDFS; //存储类型:HDFS、OBS、OSS、S3等文件系统
+    @Type(
+            type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
+            parameters = {
+                @org.hibernate.annotations.Parameter(
+                        name = "enumClass",
+                        value = "io.github.melin.spark.jobserver.core.enums.StorageType")
+            })
+    private StorageType storageType = StorageType.HDFS; // 存储类型:HDFS、OBS、OSS、S3等文件系统
 
     @Column(name = "scheduler_type")
-    @Type(type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
-            parameters = {@org.hibernate.annotations.Parameter(name = "enumClass",
-                    value = "io.github.melin.spark.jobserver.core.enums.SchedulerType")})
+    @Type(
+            type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
+            parameters = {
+                @org.hibernate.annotations.Parameter(
+                        name = "enumClass",
+                        value = "io.github.melin.spark.jobserver.core.enums.SchedulerType")
+            })
     private SchedulerType schedulerType; // 调度框架:YARN、K8S
 
     @Convert(converter = BooleanToIntConverter.class)

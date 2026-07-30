@@ -1,12 +1,15 @@
 package io.github.melin.spark.jobserver.web.controller;
 
-import com.gitee.melin.bee.core.jdbc.relational.DataSourceInfo;
+import com.gitee.melin.bee.core.jdbc.relational.MetaDataSource;
 import com.gitee.melin.bee.core.support.Pagination;
 import com.gitee.melin.bee.core.support.Result;
 import com.google.common.collect.Lists;
 import io.github.melin.spark.jobserver.core.entity.DataConnector;
 import io.github.melin.spark.jobserver.core.service.DataConnectorService;
 import io.github.melin.spark.jobserver.core.util.AESUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import java.time.Instant;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -16,13 +19,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import java.time.Instant;
-import java.util.List;
 
 @Controller
 public class ConnectorController {
@@ -32,15 +32,15 @@ public class ConnectorController {
     @Autowired
     private DataConnectorService connectorService;
 
-    @RequestMapping("/connector")
+    @GetMapping("/connector")
     public String home(ModelMap model) {
         return "connector";
     }
 
-    @RequestMapping("/connector/queryConnectors")
+    @GetMapping("/connector/queryConnectors")
     @ResponseBody
-    public Pagination<DataConnector> queryConnectors(String connectorType, String name,
-                                                     int page, int limit, HttpServletRequest request) {
+    public Pagination<DataConnector> queryConnectors(
+            String connectorType, String name, int page, int limit, HttpServletRequest request) {
         String sort = request.getParameter("sort");
         String orderStr = request.getParameter("order");
 
@@ -62,14 +62,14 @@ public class ConnectorController {
 
         if (StringUtils.isNotBlank(name)) {
             params.add("code");
-            values.add(Restrictions.or(Restrictions.like("code", name, MatchMode.ANYWHERE),
+            values.add(Restrictions.or(
+                    Restrictions.like("code", name, MatchMode.ANYWHERE),
                     Restrictions.like("name", name, MatchMode.ANYWHERE)));
         }
-        return connectorService.findPageByNamedParamAndOrder(params, values,
-                Lists.newArrayList(order), page, limit);
+        return connectorService.findPageByNamedParamAndOrder(params, values, Lists.newArrayList(order), page, limit);
     }
 
-    @RequestMapping("/connector/queryConnector")
+    @GetMapping("/connector/queryConnector")
     @ResponseBody
     public Result<DataConnector> queryConnector(Long connectorId) {
         try {
@@ -81,9 +81,9 @@ public class ConnectorController {
         }
     }
 
-    @PostMapping("/connector/testConnection")
+    @GetMapping("/connector/testConnection")
     @ResponseBody
-    public Result<DataSourceInfo> testConnection(DataConnector dataConnector) {
+    public Result<MetaDataSource> testConnection(DataConnector dataConnector) {
         /*String hostName = connector.get();
         int port = connector.getPort();
         SocketAddress socketAddress = new InetSocketAddress(hostName, port);
@@ -98,15 +98,15 @@ public class ConnectorController {
         }*/
 
         try {
-            DataSourceInfo sourceInfo = connectorService.testConnection(dataConnector);
-            return Result.successDataResult(sourceInfo);
+            MetaDataSource dataSource = connectorService.testConnection(dataConnector);
+            return Result.successDataResult(dataSource);
         } catch (Exception e) {
             LOG.info(e.getMessage(), e);
             return Result.failureResult("测试连接失败: " + e.getMessage());
         }
     }
 
-    @RequestMapping("/connector/saveConnector")
+    @PostMapping("/connector/saveConnector")
     @ResponseBody
     public Result<Void> saveConnector(DataConnector connector) {
         try {
@@ -133,7 +133,7 @@ public class ConnectorController {
         }
     }
 
-    @RequestMapping("/connector/deleteConnector")
+    @DeleteMapping("/connector/deleteConnector")
     @ResponseBody
     public Result<Void> deleteConnector(Long connectorId) {
         try {

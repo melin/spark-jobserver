@@ -4,14 +4,13 @@ import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.github.vfss3.S3FileSystemConfigBuilder;
+import java.io.File;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.vfs2.FileSystemOptions;
 import org.apache.commons.vfs2.provider.ftp.FtpFileSystemConfigBuilder;
 import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-
-import java.io.File;
 
 public class FileSystemUtils {
 

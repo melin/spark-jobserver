@@ -115,7 +115,8 @@ public class JodaDateValidator {
                 }
             }
 
-            // handle special characters we want to simply pass through, but only if not in quoted and the buffer is empty
+            // handle special characters we want to simply pass through, but only if not in quoted and the buffer is
+            // empty
             if (!isInQuotedText && buffer.length() == 0 && ("*-/,.;: ".indexOf(currentChar) != -1)) {
                 builder.append(currentChar);
                 continue;
@@ -140,9 +141,12 @@ public class JodaDateValidator {
                     builder.append(toJodaMappings.get(potentialList[0]));
                     buffer.setLength(0);
                 } else {
-                    // Some patterns (like MON, MONTH) can cause ambiguity, such as "MON:".  "MON" will have two potential
-                    // matches, but "MON:" will match nothing, so we want to look ahead when we match "MON" and check if adding
-                    // the next char leads to 0 potentials.  If it does, we go ahead and treat the buffer as matched (if a
+                    // Some patterns (like MON, MONTH) can cause ambiguity, such as "MON:".  "MON" will have two
+                    // potential
+                    // matches, but "MON:" will match nothing, so we want to look ahead when we match "MON" and check if
+                    // adding
+                    // the next char leads to 0 potentials.  If it does, we go ahead and treat the buffer as matched (if
+                    // a
                     // potential match exists that matches the buffer)
                     if (format.length() - 1 > i) {
                         String lookAheadPattern = (buffer.toString() + format.charAt(i + 1)).toLowerCase();
@@ -157,7 +161,8 @@ public class JodaDateValidator {
                         }
 
                         if (!lookAheadMatched) {
-                            // check if any of the potential matches are the same length as our buffer, we do not want to match "MO:"
+                            // check if any of the potential matches are the same length as our buffer, we do not want
+                            // to match "MO:"
                             boolean matched = false;
                             for (String potential : potentialList) {
                                 if (potential.length() == buffer.length()) {
@@ -167,7 +172,8 @@ public class JodaDateValidator {
                             }
 
                             if (matched) {
-                                builder.append(toJodaMappings.get(buffer.toString().toLowerCase()));
+                                builder.append(
+                                        toJodaMappings.get(buffer.toString().toLowerCase()));
                                 buffer.setLength(0);
                                 continue;
                             }
@@ -181,7 +187,8 @@ public class JodaDateValidator {
         }
 
         if (buffer.length() > 0) {
-            // Some patterns (like MON, MONTH) can cause us to reach this point with a valid buffer value as MON has 2 valid
+            // Some patterns (like MON, MONTH) can cause us to reach this point with a valid buffer value as MON has 2
+            // valid
             // potential matches, so double check here
             String[] exactMatches = getExactMatches(buffer.toString());
             if (exactMatches.length == 1 && exactMatches[0].length() == buffer.length()) {

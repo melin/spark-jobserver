@@ -127,17 +127,16 @@ public class DriverMetric {
 
     @Override
     public String toString() {
-        return "DriverMetric{" +
-                "jvmHeapMemory=" + jvmHeapMemory +
-                ", jvmOffHeapMemory=" + jvmOffHeapMemory +
-                ", directPoolMemory=" + directPoolMemory +
-                ", mappedPoolMemory=" + mappedPoolMemory +
-                ", processTreeJVMVMemory=" + processTreeJVMVMemory +
-                ", processTreeJVMRSSMemory=" + processTreeJVMRSSMemory +
-                ", processTreePythonVMemory=" + processTreePythonVMemory +
-                ", processTreePythonRSSMemory=" + processTreePythonRSSMemory +
-                ", processTreeOtherVMemory=" + processTreeOtherVMemory +
-                ", processTreeOtherRSSMemory=" + processTreeOtherRSSMemory +
-                '}';
+        return "DriverMetric{" + "jvmHeapMemory="
+                + jvmHeapMemory + ", jvmOffHeapMemory="
+                + jvmOffHeapMemory + ", directPoolMemory="
+                + directPoolMemory + ", mappedPoolMemory="
+                + mappedPoolMemory + ", processTreeJVMVMemory="
+                + processTreeJVMVMemory + ", processTreeJVMRSSMemory="
+                + processTreeJVMRSSMemory + ", processTreePythonVMemory="
+                + processTreePythonVMemory + ", processTreePythonRSSMemory="
+                + processTreePythonRSSMemory + ", processTreeOtherVMemory="
+                + processTreeOtherVMemory + ", processTreeOtherRSSMemory="
+                + processTreeOtherRSSMemory + '}';
     }
 }

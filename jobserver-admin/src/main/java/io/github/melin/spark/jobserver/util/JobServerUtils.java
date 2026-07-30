@@ -1,14 +1,8 @@
 package io.github.melin.spark.jobserver.util;
 
+import com.google.common.collect.Lists;
 import io.github.melin.spark.jobserver.api.JobServerException;
 import io.github.melin.spark.jobserver.core.entity.JobInstance;
-import com.google.common.collect.Lists;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.input.ReversedLinesFileReader;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -18,6 +12,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.input.ReversedLinesFileReader;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * huaixin 2022/4/2 5:38 PM
@@ -52,8 +51,7 @@ public class JobServerUtils {
                 throw new IndexOutOfBoundsException("Index " + index + " must not be negative");
             }
             if (index >= listSize) {
-                throw new IndexOutOfBoundsException("Index " + index + " must be less than size " +
-                        listSize);
+                throw new IndexOutOfBoundsException("Index " + index + " must be less than size " + listSize);
             }
             final int start = index * size;
             final int end = Math.min(start + size, list.size());

@@ -1,6 +1,12 @@
 package io.github.melin.spark.jobserver.driver.support;
 
 import io.github.melin.spark.jobserver.api.LogUtils;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -12,13 +18,6 @@ import org.apache.parquet.hadoop.util.HiddenFileFilter;
 import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 public class MergeParquetSmallFile {
 
@@ -41,14 +40,17 @@ public class MergeParquetSmallFile {
             return;
         }
 
-        List<FileStatus> files = Arrays.stream(fileStatusList).filter(FileStatus::isFile).collect(Collectors.toList());
+        List<FileStatus> files =
+                Arrays.stream(fileStatusList).filter(FileStatus::isFile).collect(Collectors.toList());
         if (files.size() <= 1) {
             return;
         }
 
         long recordCount = statParquetRowCount(conf, files);
         long fileSize = files.stream().mapToLong(FileStatus::getLen).sum();
-        String[] mergePaths = files.stream().map(fileStatus -> fileStatus.getPath().toString()).toArray(String[]::new);
+        String[] mergePaths = files.stream()
+                .map(fileStatus -> fileStatus.getPath().toString())
+                .toArray(String[]::new);
         int mergeCount = genOutputFileCount(recordCount, fileSize);
 
         String mergeTempDir = location + "/.mergeTemp";
@@ -82,7 +84,8 @@ public class MergeParquetSmallFile {
                 HadoopInputFile inputFile = HadoopInputFile.fromStatus(fileStatus, conf);
                 ParquetFileReader parquetFileReader = ParquetFileReader.open(inputFile);
 
-                List<BlockMetaData> blockMetaDataList = parquetFileReader.getFooter().getBlocks();
+                List<BlockMetaData> blockMetaDataList =
+                        parquetFileReader.getFooter().getBlocks();
                 for (BlockMetaData metaData : blockMetaDataList) {
                     fileRowCount.addAndGet(metaData.getRowCount());
                 }

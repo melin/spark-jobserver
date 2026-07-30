@@ -1,8 +1,11 @@
 package io.github.melin.spark.jobserver.driver.aspectj;
 
+import static io.github.melin.spark.jobserver.driver.util.CatalogUtils.SESSION_CATALOG_NAME;
+
 import io.github.melin.spark.jobserver.core.entity.DataConnector;
 import io.github.melin.spark.jobserver.core.service.DataConnectorService;
 import io.github.melin.spark.jobserver.driver.util.CatalogUtils;
+import java.util.HashMap;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.connector.catalog.CatalogNotFoundException;
 import org.apache.spark.sql.connector.catalog.CatalogPlugin;
@@ -15,10 +18,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-
-import static io.github.melin.spark.jobserver.driver.util.CatalogUtils.SESSION_CATALOG_NAME;
 
 @Aspect
 @Component
@@ -35,7 +34,8 @@ public class SparkCatalogAspectj implements ApplicationContextAware {
         connectorService = applicationContext.getBean(DataConnectorService.class);
     }
 
-    @Around("execution(public * org.apache.spark.sql.connector.catalog.CatalogManager.catalog(..)) && args(catalogName)")
+    @Around(
+            "execution(public * org.apache.spark.sql.connector.catalog.CatalogManager.catalog(..)) && args(catalogName)")
     public Object aroundCatalog(ProceedingJoinPoint pjp, String catalogName) throws Throwable {
         synchronized (SparkCatalogAspectj.class) {
             if (catalogName.equalsIgnoreCase(SESSION_CATALOG_NAME)) {

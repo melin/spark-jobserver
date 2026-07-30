@@ -17,8 +17,7 @@ public class JobParam {
 
     public static final JobParam INSTANCE = new JobParam();
 
-    private JobParam() {
-    }
+    private JobParam() {}
 
     public JobParam(String key, String value, boolean valid) {
         this.key = key;

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>io.github.melin.spark.jobserver</groupId>
         <artifactId>spark-jobserver</artifactId>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
     </parent>
 
     <artifactId>spark-jobserver-driver</artifactId>
@@ -19,13 +18,24 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-reflect</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>io.github.melin.superior</groupId>
-            <artifactId>spark-sql-parser</artifactId>
+            <artifactId>superior-spark-parser</artifactId>
             <version>${sql-parser.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.melin.superior</groupId>
-            <artifactId>appjar-parser</artifactId>
+            <artifactId>superior-appjar-parser</artifactId>
             <version>${sql-parser.version}</version>
         </dependency>
 
@@ -67,13 +77,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.hudi</groupId>
-            <artifactId>hudi-spark3.3-bundle_2.12</artifactId>
-            <version>${hudi.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
@@ -92,12 +95,12 @@
             <scope>${libScope}</scope>
             <exclusions>
                 <exclusion>
-                    <artifactId>slf4j-log4j12</artifactId>
                     <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>*</artifactId>
                     <groupId>com.fasterxml.jackson.module</groupId>
+                    <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -109,8 +112,8 @@
             <scope>${libScope}</scope>
             <exclusions>
                 <exclusion>
-                    <artifactId>slf4j-log4j12</artifactId>
                     <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -129,7 +132,7 @@
 
         <dependency>
             <groupId>org.apache.iceberg</groupId>
-            <artifactId>iceberg-spark-runtime-3.3_2.12</artifactId>
+            <artifactId>iceberg-spark-runtime-3.5_2.12</artifactId>
             <version>${iceberg.version}</version>
             <scope>${libScope}</scope>
         </dependency>
@@ -148,6 +151,152 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <finalName>spark-jobserver-driver-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
+                    <maxmem>1024m</maxmem>
+                    <fork>true</fork>
+                    <compilerArgs>
+                        <arg>-Xlint:all,-serial,-path</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.14.0</version>
+                <configuration>
+                    <showWeaveInfo>true</showWeaveInfo>
+                    <complianceLevel>${java.version}</complianceLevel>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <verbose>true</verbose>
+                    <Xlint>ignore</Xlint>
+                    <encoding>UTF-8</encoding>
+                    <sources>
+                        <source>
+                            <basedir>${project.basedir}/src/main/java</basedir>
+                            <includes>
+                                <include>io/github/melin/spark/jobserver/driver/aspectj/*Aspectj.java</include>
+                            </includes>
+                        </source>
+                    </sources>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjtools</artifactId>
+                        <version>1.9.7</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>${scala.plugin.version}</version>
+                <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                    <checkMultipleScalaVersions>true</checkMultipleScalaVersions>
+                    <failOnMultipleScalaVersions>true</failOnMultipleScalaVersions>
+                    <recompileMode>incremental</recompileMode>
+                    <args>
+                        <arg>-unchecked</arg>
+                        <arg>-deprecation</arg>
+                        <arg>-feature</arg>
+                        <arg>-explaintypes</arg>
+                    </args>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>scala-compile-first</id>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <id>add-sources</id>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sources>
+                                <source>src/main/scala</source>
+                                <source>src/main/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-scala-test-sources</id>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <phase>generate-test-sources</phase>
+                        <configuration>
+                            <sources>
+                                <source>src/test/scala</source>
+                                <source>src/test/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>4.9.10</version>
+                <configuration>
+                    <dotGitDirectory>${basedir}/.git</dotGitDirectory>
+                    <dateFormat>yyyy-MM-dd HH:mm:ss</dateFormat>
+                    <offline>true</offline>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>get-the-git-infos</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                    </execution>
+                    <execution>
+                        <id>validate-the-git-infos</id>
+                        <goals>
+                            <goal>validateRevision</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>release</id>
@@ -159,10 +308,10 @@
                         <version>${shade.plugin.version}</version>
                         <executions>
                             <execution>
-                                <phase>package</phase>
                                 <goals>
                                     <goal>shade</goal>
                                 </goals>
+                                <phase>package</phase>
                                 <configuration>
                                     <artifactSet>
                                         <excludes>
@@ -212,150 +361,4 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <finalName>spark-jobserver-driver-${project.version}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <encoding>UTF-8</encoding>
-                    <maxmem>1024m</maxmem>
-                    <fork>true</fork>
-                    <compilerArgs>
-                        <arg>-Xlint:all,-serial,-path</arg>
-                    </compilerArgs>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.14.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <showWeaveInfo>true</showWeaveInfo>
-                    <complianceLevel>${java.version}</complianceLevel>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <verbose>true</verbose>
-                    <Xlint>ignore</Xlint>
-                    <encoding>UTF-8</encoding>
-                    <sources>
-                        <source>
-                            <basedir>${project.basedir}/src/main/java</basedir>
-                            <includes>
-                                <include>io/github/melin/spark/jobserver/driver/aspectj/*Aspectj.java</include>
-                            </includes>
-                        </source>
-                    </sources>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjtools</artifactId>
-                        <version>1.9.7</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <version>${scala.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>scala-compile-first</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <scalaVersion>${scala.version}</scalaVersion>
-                    <checkMultipleScalaVersions>true</checkMultipleScalaVersions>
-                    <failOnMultipleScalaVersions>true</failOnMultipleScalaVersions>
-                    <recompileMode>incremental</recompileMode>
-                    <args>
-                        <arg>-unchecked</arg>
-                        <arg>-deprecation</arg>
-                        <arg>-feature</arg>
-                        <arg>-explaintypes</arg>
-                    </args>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <id>add-sources</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/main/scala</source>
-                                <source>src/main/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>add-scala-test-sources</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/test/scala</source>
-                                <source>src/test/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
-                <version>4.9.10</version>
-                <executions>
-                    <execution>
-                        <id>get-the-git-infos</id>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                        <phase>initialize</phase>
-                    </execution>
-                    <execution>
-                        <id>validate-the-git-infos</id>
-                        <goals>
-                            <goal>validateRevision</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <dotGitDirectory>${basedir}/.git</dotGitDirectory>
-                    <dateFormat>yyyy-MM-dd HH:mm:ss</dateFormat>
-                    <offline>true</offline>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

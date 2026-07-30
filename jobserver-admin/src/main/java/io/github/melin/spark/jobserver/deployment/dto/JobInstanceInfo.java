@@ -2,11 +2,10 @@ package io.github.melin.spark.jobserver.deployment.dto;
 
 import io.github.melin.spark.jobserver.core.enums.InstanceType;
 import io.github.melin.spark.jobserver.core.enums.JobType;
-import lombok.*;
-import lombok.experimental.Tolerate;
-
 import java.time.Instant;
 import java.util.List;
+import lombok.*;
+import lombok.experimental.Tolerate;
 
 /**
  * huaixin 2022/4/3 2:46 PM
@@ -45,6 +44,5 @@ public class JobInstanceInfo {
     private String resultCallbackUri;
 
     @Tolerate
-    public JobInstanceInfo() {
-    }
+    public JobInstanceInfo() {}
 }

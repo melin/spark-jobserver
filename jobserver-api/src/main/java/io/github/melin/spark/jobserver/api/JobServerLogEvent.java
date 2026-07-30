@@ -25,9 +25,6 @@ public class JobServerLogEvent implements SparkListenerEvent {
 
     @Override
     public String toString() {
-        return "JobServerLogEvent{" +
-                "logLevel=" + logLevel +
-                ", message='" + message + '\'' +
-                '}';
+        return "JobServerLogEvent{" + "logLevel=" + logLevel + ", message='" + message + '\'' + '}';
     }
 }

@@ -3,6 +3,7 @@ package io.github.melin.spark.jobserver.driver.listener;
 import io.github.melin.spark.jobserver.api.JobServerLogEvent;
 import io.github.melin.spark.jobserver.api.LogLevel;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.spark.scheduler.*;
@@ -10,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import scala.collection.JavaConverters;
-
-import java.util.List;
 
 /**
  * huaixin 2022/4/7 11:04 AM

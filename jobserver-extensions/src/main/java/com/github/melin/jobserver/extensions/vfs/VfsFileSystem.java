@@ -1,17 +1,16 @@
 package com.github.melin.jobserver.extensions.vfs;
 
+import static com.github.melin.jobserver.extensions.vfs.FileSystemUtils.buildFileSystemOptions;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URI;
 import org.apache.commons.vfs2.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.util.Progressable;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URI;
-
-import static com.github.melin.jobserver.extensions.vfs.FileSystemUtils.buildFileSystemOptions;
 
 public class VfsFileSystem extends FileSystem {
 
@@ -53,7 +52,9 @@ public class VfsFileSystem extends FileSystem {
     }
 
     @Override
-    public FSDataOutputStream create(Path path, FsPermission fsPermission, boolean b, int i, short i1, long l, Progressable progressable) throws IOException {
+    public FSDataOutputStream create(
+            Path path, FsPermission fsPermission, boolean b, int i, short i1, long l, Progressable progressable)
+            throws IOException {
         FileSystemOptions options = buildFileSystemOptions(getConf(), path);
         String file = FileSystemUtils.buildUri(getConf(), path);
         FileObject fileObject = fsManager.resolveFile(file, options);
@@ -91,8 +92,8 @@ public class VfsFileSystem extends FileSystem {
      * method from within another method. Otherwise every API invocation incurs
      * the overhead of opening/closing a TCP connection.
      */
-    private boolean delete(FileSystemManager fsManager, FileSystemOptions options,
-                           Path path, boolean recursive) throws IOException {
+    private boolean delete(FileSystemManager fsManager, FileSystemOptions options, Path path, boolean recursive)
+            throws IOException {
 
         String file = FileSystemUtils.buildUri(getConf(), path);
         FileObject fileObject = fsManager.resolveFile(file, options);
@@ -118,13 +119,14 @@ public class VfsFileSystem extends FileSystem {
         String file = FileSystemUtils.buildUri(getConf(), path);
         FileObject fileObject = fsManager.resolveFile(file, options);
         if (FileType.FILE == fileObject.getType()) {
-            return new FileStatus[]{getFileStatus(fileObject, path)};
+            return new FileStatus[] {getFileStatus(fileObject, path)};
         }
 
         FileObject[] fos = fileObject.getChildren();
         FileStatus[] fileStats = new FileStatus[fos.length];
         for (int i = 0; i < fos.length; i++) {
-            fileStats[i] = getFileStatus(fos[i], new Path("vfs://" + fos[i].getURI().toString()));
+            fileStats[i] =
+                    getFileStatus(fos[i], new Path("vfs://" + fos[i].getURI().toString()));
         }
         return fileStats;
     }
@@ -171,7 +173,7 @@ public class VfsFileSystem extends FileSystem {
         modTime = fileObject.getContent().getLastModifiedTime() * 1000L; // convert to milliseconds
         long accessTime = 0L;
 
-        return new FileStatus(length, isDir, blockReplication, DEFAULT_BLOCK_SIZE, modTime,
-                accessTime, null, null, null, file);
+        return new FileStatus(
+                length, isDir, blockReplication, DEFAULT_BLOCK_SIZE, modTime, accessTime, null, null, null, file);
     }
 }

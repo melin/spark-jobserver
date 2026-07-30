@@ -1,12 +1,11 @@
 package io.github.melin.spark.jobserver.service;
 
+import static io.github.melin.spark.jobserver.util.Constant.ROOT_SCHEDULE_NODE;
+
+import com.gitee.melin.bee.core.support.Result;
 import com.gitee.melin.bee.util.JsonUtils;
+import com.gitee.melin.bee.util.RestTemplateUtils;
 import io.github.melin.spark.jobserver.ConfigProperties;
-import io.github.melin.spark.jobserver.util.DateUtils;
-import io.github.melin.spark.jobserver.util.JobServerUtils;
-import io.github.melin.spark.jobserver.util.RandomUniqueIdGenerator;
-import io.github.melin.spark.jobserver.rest.dto.JobSubmitRequet;
-import io.github.melin.spark.jobserver.rest.dto.InstanceInfo;
 import io.github.melin.spark.jobserver.api.JobServerException;
 import io.github.melin.spark.jobserver.core.entity.JobInstance;
 import io.github.melin.spark.jobserver.core.entity.JobInstanceContent;
@@ -14,8 +13,16 @@ import io.github.melin.spark.jobserver.core.enums.InstanceStatus;
 import io.github.melin.spark.jobserver.core.service.JobInstanceContentService;
 import io.github.melin.spark.jobserver.core.service.JobInstanceService;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
-import com.gitee.melin.bee.core.support.Result;
-import com.gitee.melin.bee.util.RestTemplateUtils;
+import io.github.melin.spark.jobserver.rest.dto.InstanceInfo;
+import io.github.melin.spark.jobserver.rest.dto.JobSubmitRequet;
+import io.github.melin.spark.jobserver.util.DateUtils;
+import io.github.melin.spark.jobserver.util.JobServerUtils;
+import io.github.melin.spark.jobserver.util.RandomUniqueIdGenerator;
+import java.io.File;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -25,14 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.File;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import static io.github.melin.spark.jobserver.util.Constant.ROOT_SCHEDULE_NODE;
 
 /**
  * huaixin 2022/3/28 4:24 PM
@@ -73,8 +72,9 @@ public class JobServerServiceImpl implements InitializingBean {
         String jobConfig = request.getJobConfig();
         JobServerUtils.validateJobConfig(jobConfig);
 
-        String instanceCode = StringUtils.isNotBlank(request.getInstanceCode()) ? request.getInstanceCode() :
-                RandomUniqueIdGenerator.getNewString(32);
+        String instanceCode = StringUtils.isNotBlank(request.getInstanceCode())
+                ? request.getInstanceCode()
+                : RandomUniqueIdGenerator.getNewString(32);
 
         JobInstance.Builder builder = JobInstance.builder()
                 .setCode(instanceCode)
@@ -191,13 +191,18 @@ public class JobServerServiceImpl implements InitializingBean {
             if (StringUtils.isNotBlank(driverUrl)) {
                 driverUrl = driverUrl + "/sparkDriver/killJob";
                 try {
-                    Result<String> result = RestTemplateUtils.postEntry(restTemplate, driverUrl, "instanceCode", instanceCode);
+                    Result<String> result =
+                            RestTemplateUtils.postEntry(restTemplate, driverUrl, "instanceCode", instanceCode);
 
                     if (!result.isSuccess()) {
                         LOG.error("kill driver failed: {} , url: {}, error: \n{}", appId, driverUrl, result.getData());
                     }
                 } catch (Exception e) {
-                    LOG.error("kill driver failed: {} , url: {}, error: \n{}", appId, driverUrl, ExceptionUtils.getStackTrace(e));
+                    LOG.error(
+                            "kill driver failed: {} , url: {}, error: \n{}",
+                            appId,
+                            driverUrl,
+                            ExceptionUtils.getStackTrace(e));
                 }
             }
         }

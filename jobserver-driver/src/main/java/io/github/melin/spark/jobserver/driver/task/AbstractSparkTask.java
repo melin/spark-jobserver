@@ -1,7 +1,12 @@
 package io.github.melin.spark.jobserver.driver.task;
 
+import static io.github.melin.spark.jobserver.core.util.TaskStatusFlag.*;
+
+import com.gitee.melin.bee.core.support.Result;
 import com.gitee.melin.bee.util.NetUtils;
+import com.gitee.melin.bee.util.RestTemplateUtils;
 import io.github.melin.spark.jobserver.api.JobServerException;
+import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.core.entity.SparkDriver;
 import io.github.melin.spark.jobserver.core.enums.InstanceStatus;
 import io.github.melin.spark.jobserver.core.exception.SparkJobException;
@@ -13,12 +18,12 @@ import io.github.melin.spark.jobserver.driver.InstanceContext;
 import io.github.melin.spark.jobserver.driver.ServerPortService;
 import io.github.melin.spark.jobserver.driver.SparkDriverContext;
 import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
-import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
 import io.github.melin.spark.jobserver.driver.util.MetricsUtils;
-import com.gitee.melin.bee.core.support.Result;
-import com.gitee.melin.bee.util.RestTemplateUtils;
 import io.github.melin.superior.common.SQLParserException;
+import java.io.StringReader;
+import java.sql.SQLException;
+import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.spark.sql.AnalysisException;
@@ -28,12 +33,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.StringReader;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import static io.github.melin.spark.jobserver.core.util.TaskStatusFlag.*;
 
 /**
  * huaixin 2022/4/4 3:21 PM
@@ -147,10 +146,14 @@ public abstract class AbstractSparkTask {
         }
 
         String errMsg;
-        if (root instanceof SparkJobException || root instanceof SecurityException
-                || root instanceof JobServerException || root instanceof SQLException
-                || root instanceof SQLParserException || root instanceof UnsupportedOperationException
-                || root instanceof AnalysisException || root instanceof IllegalStateException
+        if (root instanceof SparkJobException
+                || root instanceof SecurityException
+                || root instanceof JobServerException
+                || root instanceof SQLException
+                || root instanceof SQLParserException
+                || root instanceof UnsupportedOperationException
+                || root instanceof AnalysisException
+                || root instanceof IllegalStateException
                 || root instanceof IllegalArgumentException) {
             errMsg = root.getMessage();
         } else if (root instanceof NoSuchMethodError || root instanceof NoSuchFieldError) {
@@ -159,9 +162,14 @@ public abstract class AbstractSparkTask {
             String className = StringUtils.substring(msg, 0, index);
             errMsg = root.getMessage();
             try {
-                String jarPath = Class.forName(className).getProtectionDomain().getCodeSource().getLocation().getPath();
+                String jarPath = Class.forName(className)
+                        .getProtectionDomain()
+                        .getCodeSource()
+                        .getLocation()
+                        .getPath();
                 errMsg = errMsg + "\nclass path: " + jarPath;
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         } else {
             errMsg = ExceptionUtils.getStackTrace(root);
         }
@@ -176,12 +184,17 @@ public abstract class AbstractSparkTask {
     }
 
     private void printNoSuchError(Throwable e) {
-        if (e instanceof NoSuchFieldError || e instanceof NoSuchMethodError
-                || e instanceof NoSuchFieldException || e instanceof NoSuchMethodException) {
+        if (e instanceof NoSuchFieldError
+                || e instanceof NoSuchMethodError
+                || e instanceof NoSuchFieldException
+                || e instanceof NoSuchMethodException) {
             String className = StringUtils.substringBeforeLast(e.getMessage(), ".");
             try {
-                String classPath = Class.forName(className).getProtectionDomain()
-                        .getCodeSource().getLocation().getPath();
+                String classPath = Class.forName(className)
+                        .getProtectionDomain()
+                        .getCodeSource()
+                        .getLocation()
+                        .getPath();
                 LogUtils.error(className + " location at " + classPath);
             } catch (Throwable ex) {
                 LogUtils.error(ex.getMessage());

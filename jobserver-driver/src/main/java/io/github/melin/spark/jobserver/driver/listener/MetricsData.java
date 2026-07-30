@@ -1,17 +1,16 @@
 package io.github.melin.spark.jobserver.driver.listener;
 
 import com.google.common.collect.Maps;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.spark.scheduler.StageInfo;
-import org.apache.spark.storage.RDDInfo;
-import scala.collection.JavaConverters;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentMap;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.spark.scheduler.StageInfo;
+import org.apache.spark.storage.RDDInfo;
+import scala.collection.JavaConverters;
 
 /**
  * huaixin 2022/4/7 11:54 AM
@@ -56,15 +55,22 @@ public class MetricsData {
             return "";
         }
         Pair<Integer, Integer> pair = STAGE_TASK_PROGRESS_MAP.get(stageId);
-        sb.append(stageId).append("(").append(pair.getValue()).append("/").append(pair.getKey()).append(")");
+        sb.append(stageId)
+                .append("(")
+                .append(pair.getValue())
+                .append("/")
+                .append(pair.getKey())
+                .append(")");
 
         String stageType = "";
         if (STAGE_INFO_MAP.containsKey(stageId)) {
             StageInfo stageInfo = STAGE_INFO_MAP.get(stageId);
             for (RDDInfo rddInfo : JavaConverters.seqAsJavaList(stageInfo.rddInfos())) {
-                if (rddInfo.name().contains("ZippedPartitionsRDD") && rddInfo.parentIds().size() >= 2) {
+                if (rddInfo.name().contains("ZippedPartitionsRDD")
+                        && rddInfo.parentIds().size() >= 2) {
                     stageType = "Join";
-                } else if (rddInfo.name().contains("UnionRDD") && rddInfo.parentIds().size() >= 2) {
+                } else if (rddInfo.name().contains("UnionRDD")
+                        && rddInfo.parentIds().size() >= 2) {
                     stageType = "Union";
                 }
             }

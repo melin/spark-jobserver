@@ -8,7 +8,7 @@ public enum TaskStatusFlag {
 
     TASK_STOP_FLAG,
 
-    STAGE_ERROR_FLAG,  //Stage 一直卡住不运行
+    STAGE_ERROR_FLAG, // Stage 一直卡住不运行
 
     TASK_ERROR_FLAG;
 }

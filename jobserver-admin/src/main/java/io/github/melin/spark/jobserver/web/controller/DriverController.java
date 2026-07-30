@@ -1,19 +1,26 @@
 package io.github.melin.spark.jobserver.web.controller;
 
+import com.gitee.melin.bee.core.support.Pagination;
+import com.gitee.melin.bee.core.support.Result;
+import com.google.common.collect.Lists;
 import io.github.melin.spark.jobserver.ConfigProperties;
 import io.github.melin.spark.jobserver.SparkJobServerConf;
-import io.github.melin.spark.jobserver.logs.SparkLogService;
-import io.github.melin.spark.jobserver.support.ClusterConfig;
-import io.github.melin.spark.jobserver.support.YarnClientService;
 import io.github.melin.spark.jobserver.core.entity.Cluster;
 import io.github.melin.spark.jobserver.core.entity.SparkDriver;
 import io.github.melin.spark.jobserver.core.enums.DriverStatus;
 import io.github.melin.spark.jobserver.core.service.ClusterService;
 import io.github.melin.spark.jobserver.core.service.JobInstanceService;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
-import com.gitee.melin.bee.core.support.Pagination;
-import com.gitee.melin.bee.core.support.Result;
-import com.google.common.collect.Lists;
+import io.github.melin.spark.jobserver.logs.SparkLogService;
+import io.github.melin.spark.jobserver.support.ClusterConfig;
+import io.github.melin.spark.jobserver.support.YarnClientService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -27,18 +34,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.LinkedList;
-import java.util.List;
 
 @Controller
 public class DriverController implements InitializingBean {
@@ -81,7 +81,7 @@ public class DriverController implements InitializingBean {
         FileUtils.forceMkdir(new File(TMP_DIR));
     }
 
-    @RequestMapping("/driver")
+    @GetMapping("/driver")
     public String home(ModelMap model) {
         List<Cluster> clusters = clusterService.queryValidClusters();
 
@@ -90,7 +90,7 @@ public class DriverController implements InitializingBean {
         return "driver";
     }
 
-    @RequestMapping("/driver/queryDrivers")
+    @GetMapping("/driver/queryDrivers")
     @ResponseBody
     public Pagination<SparkDriver> queryDrivers(String applicationId, int page, int limit, HttpServletRequest request) {
         String sort = request.getParameter("sort");
@@ -111,8 +111,8 @@ public class DriverController implements InitializingBean {
             params.add("applicationId");
             values.add(applicationId);
         }
-        Pagination<SparkDriver> pagination = driverService.findPageByNamedParamAndOrder(params, values,
-                Lists.newArrayList(order), page, limit);
+        Pagination<SparkDriver> pagination =
+                driverService.findPageByNamedParamAndOrder(params, values, Lists.newArrayList(order), page, limit);
 
         pagination.getResult().forEach(driver -> {
             String url = clusterConfig.getValue(driver.getClusterCode(), SparkJobServerConf.JOBSERVER_YARN_PROXY_URI);
@@ -125,7 +125,7 @@ public class DriverController implements InitializingBean {
     /**
      * driver 启动以后，driver 通知启动日志线程,
      */
-    @RequestMapping("/driver/startJobLogThread")
+    @PostMapping("/driver/startJobLogThread")
     @ResponseBody
     public Result<String> startJobLogThread(String instanceCode) {
         LOG.info("startJobLogThread: {}", instanceCode);
@@ -137,7 +137,7 @@ public class DriverController implements InitializingBean {
         }
     }
 
-    @PostMapping("/driver/killDriver")
+    @DeleteMapping("/driver/killDriver")
     @ResponseBody
     public Result<String> killDriver(Long driverId) {
         SparkDriver driver = driverService.getEntity(driverId);
@@ -164,13 +164,13 @@ public class DriverController implements InitializingBean {
         return Result.successResult();
     }
 
-    @RequestMapping("/driver/downloadYarnLog")
+    @GetMapping("/driver/downloadYarnLog")
     public void downloadYarnLog(String applicationId, HttpServletResponse response) throws Exception {
         SparkDriver driver = driverService.queryDriverByAppId(applicationId);
         if (driver != null) {
             String urlStr = driver.getSparkDriverUrl() + "/sparkDriver/downloadYarnLog";
             LOG.info("下载yarn log: {}", urlStr);
-            String downFilename = applicationId + ".log"; //要下载的文件名称
+            String downFilename = applicationId + ".log"; // 要下载的文件名称
             response.setContentType("application/x-download");
             response.setHeader("Location", downFilename);
             response.setHeader("Content-Disposition", "attachment; filename=" + downFilename);
@@ -228,7 +228,8 @@ public class DriverController implements InitializingBean {
                     } else {
                         error = e.getCause().getMessage();
                     }
-                    if (StringUtils.containsIgnoreCase(e.getCause().getCause().toString(), "ApplicationNotFoundException")) {
+                    if (StringUtils.containsIgnoreCase(
+                            e.getCause().getCause().toString(), "ApplicationNotFoundException")) {
                         error = "applicationId：" + applicationId + " 不存在!";
                     }
                 }

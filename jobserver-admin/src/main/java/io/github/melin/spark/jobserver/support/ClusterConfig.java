@@ -4,6 +4,12 @@ import com.gitee.melin.bee.core.conf.ConfigEntry;
 import io.github.melin.spark.jobserver.SparkJobServerConf;
 import io.github.melin.spark.jobserver.core.entity.Cluster;
 import io.github.melin.spark.jobserver.core.service.ClusterService;
+import java.io.StringReader;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -11,13 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.StringReader;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class ClusterConfig implements InitializingBean {
@@ -40,9 +39,13 @@ public class ClusterConfig implements InitializingBean {
         loadConfig();
 
         executorService = new ScheduledThreadPoolExecutor(1);
-        executorService.scheduleAtFixedRate(() -> {
-            loadConfig();
-        }, 5, 5, TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(
+                () -> {
+                    loadConfig();
+                },
+                5,
+                5,
+                TimeUnit.SECONDS);
     }
 
     private void loadConfig() {

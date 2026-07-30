@@ -44,5 +44,4 @@ public class ConfigProperties {
      * 实例最大保留天数，小于1, 不清理
      */
     private int maxInstanceDays = 30;
-
 }

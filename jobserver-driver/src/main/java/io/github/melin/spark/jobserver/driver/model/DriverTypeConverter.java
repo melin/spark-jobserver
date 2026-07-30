@@ -1,8 +1,8 @@
 package io.github.melin.spark.jobserver.driver.model;
 
-import io.github.melin.spark.jobserver.core.enums.DriverType;
 import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.ParameterException;
+import io.github.melin.spark.jobserver.core.enums.DriverType;
 
 /**
  * huaixin 2022/4/14 19:13

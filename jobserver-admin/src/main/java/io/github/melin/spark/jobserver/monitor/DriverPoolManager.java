@@ -1,28 +1,27 @@
 package io.github.melin.spark.jobserver.monitor;
 
-import io.github.melin.spark.jobserver.deployment.YarnSparkDriverDeployer;
-import io.github.melin.spark.jobserver.support.ClusterConfig;
-import io.github.melin.spark.jobserver.support.ClusterManager;
-import io.github.melin.spark.jobserver.support.YarnClientService;
-import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
+import static io.github.melin.spark.jobserver.SparkJobServerConf.*;
+
+import com.gitee.melin.bee.util.ThreadUtils;
 import io.github.melin.spark.jobserver.core.entity.Cluster;
 import io.github.melin.spark.jobserver.core.entity.SparkDriver;
 import io.github.melin.spark.jobserver.core.service.ClusterService;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
-import com.gitee.melin.bee.util.ThreadUtils;
+import io.github.melin.spark.jobserver.deployment.YarnSparkDriverDeployer;
+import io.github.melin.spark.jobserver.support.ClusterConfig;
+import io.github.melin.spark.jobserver.support.ClusterManager;
+import io.github.melin.spark.jobserver.support.YarnClientService;
 import io.github.melin.spark.jobserver.support.leader.LeaderTypeEnum;
+import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
+import java.time.Instant;
+import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import static io.github.melin.spark.jobserver.SparkJobServerConf.*;
 
 /**
  * jobserver pool 大小控制
@@ -61,25 +60,29 @@ public class DriverPoolManager implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         redisLeaderElection.buildLeader(LeaderTypeEnum.DRIVER_POOL_MANAGER);
 
-        scheduledExecutorService.scheduleAtFixedRate(() -> {
-            try {
-                if (redisLeaderElection.checkLeader(LeaderTypeEnum.DRIVER_POOL_MANAGER)) {
-                    List<Cluster> clusters = clusterService.findByNamedParam("status", true);
-                    if (clusters.size() == 0) {
-                        LOG.warn("No cluster available");
-                        TimeUnit.SECONDS.sleep(60);
-                    }
-                    for (Cluster cluster : clusters) {
-                        LOG.debug("monitor driver pool: {}", cluster.getCode());
+        scheduledExecutorService.scheduleAtFixedRate(
+                () -> {
+                    try {
+                        if (redisLeaderElection.checkLeader(LeaderTypeEnum.DRIVER_POOL_MANAGER)) {
+                            List<Cluster> clusters = clusterService.findByNamedParam("status", true);
+                            if (clusters.size() == 0) {
+                                LOG.warn("No cluster available");
+                                TimeUnit.SECONDS.sleep(60);
+                            }
+                            for (Cluster cluster : clusters) {
+                                LOG.debug("monitor driver pool: {}", cluster.getCode());
 
-                        stopMaxIdleJobserver(cluster);
-                        startMinJobServer(cluster);
+                                stopMaxIdleJobserver(cluster);
+                                startMinJobServer(cluster);
+                            }
+                        }
+                    } catch (Throwable e) {
+                        LOG.error("start jobserver failed: " + e.getMessage(), e);
                     }
-                }
-            } catch (Throwable e) {
-                LOG.error("start jobserver failed: " + e.getMessage(), e);
-            }
-        }, 10, 10, TimeUnit.SECONDS);
+                },
+                10,
+                10,
+                TimeUnit.SECONDS);
     }
 
     /**

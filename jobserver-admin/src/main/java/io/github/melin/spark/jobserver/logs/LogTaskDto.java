@@ -2,10 +2,9 @@ package io.github.melin.spark.jobserver.logs;
 
 import io.github.melin.spark.jobserver.core.enums.InstanceType;
 import io.github.melin.spark.jobserver.core.enums.JobType;
+import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
-
-import java.time.Instant;
 
 /**
  * huaixin 2022/4/14 10:09
@@ -27,7 +26,7 @@ public class LogTaskDto {
 
     private String owner;
 
-    private boolean shareDriver; //driver 是否共享
+    private boolean shareDriver; // driver 是否共享
 
     private String sparkDriverUrl;
 

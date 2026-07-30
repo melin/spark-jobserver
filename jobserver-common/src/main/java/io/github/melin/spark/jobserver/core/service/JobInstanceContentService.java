@@ -1,9 +1,9 @@
 package io.github.melin.spark.jobserver.core.service;
 
-import io.github.melin.spark.jobserver.core.dao.JobInstanceContentDao;
-import io.github.melin.spark.jobserver.core.entity.JobInstanceContent;
 import com.gitee.melin.bee.core.hibernate5.HibernateBaseDao;
 import com.gitee.melin.bee.core.service.BaseServiceImpl;
+import io.github.melin.spark.jobserver.core.dao.JobInstanceContentDao;
+import io.github.melin.spark.jobserver.core.entity.JobInstanceContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +53,5 @@ public class JobInstanceContentService extends BaseServiceImpl<JobInstanceConten
             String hql = "update JobInstanceContent set errorMsg = :errorMsg where code = :code";
             this.deleteOrUpdateByHQL(hql, "errorMsg", errorMsg, "code", instanceCode);
         }
-
     }
 }

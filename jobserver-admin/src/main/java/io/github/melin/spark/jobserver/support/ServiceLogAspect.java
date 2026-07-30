@@ -1,8 +1,9 @@
 package io.github.melin.spark.jobserver.support;
 
-import io.github.melin.spark.jobserver.util.DateUtils;
 import com.gitee.melin.bee.util.JsonUtils;
 import com.google.common.collect.Maps;
+import io.github.melin.spark.jobserver.util.DateUtils;
+import java.util.Map;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -13,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
-import java.util.Map;
-
 @Aspect
 @Component
 public class ServiceLogAspect {
@@ -22,7 +21,7 @@ public class ServiceLogAspect {
     private static final Logger LOG = LoggerFactory.getLogger("accessLog");
 
     @Pointcut("execution(public * io.github.melin.spark.jobserver.service.JobServerServiceImpl.*(..))")
-    public void serviceAccessLog(){}
+    public void serviceAccessLog() {}
 
     @Around("serviceAccessLog()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {

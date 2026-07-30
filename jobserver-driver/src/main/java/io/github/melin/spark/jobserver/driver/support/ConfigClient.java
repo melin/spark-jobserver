@@ -1,5 +1,8 @@
 package io.github.melin.spark.jobserver.driver.support;
 
+import java.io.StringReader;
+import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.PropertiesConfigurationLayout;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
@@ -8,10 +11,6 @@ import org.apache.spark.SparkConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-
-import java.io.StringReader;
-import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * jobserver.driver 前缀配置
@@ -38,7 +37,7 @@ public class ConfigClient extends PropertiesConfiguration {
                 Iterator<String> iter = configClient.getKeys();
                 while (iter.hasNext()) {
                     String key = iter.next();
-                    //如果集群中配置spark参数，就不使用dc config 中配置参数。
+                    // 如果集群中配置spark参数，就不使用dc config 中配置参数。
                     if (StringUtils.startsWithIgnoreCase(key, "spark.")) {
                         String value = configClient.getString(key);
                         if (!sparkConf.contains(key)) {

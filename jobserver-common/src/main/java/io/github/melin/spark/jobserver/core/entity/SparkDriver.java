@@ -1,21 +1,20 @@
 package io.github.melin.spark.jobserver.core.entity;
 
+import static io.github.melin.spark.jobserver.core.enums.ComputeType.YARN_BATCH;
+import static io.github.melin.spark.jobserver.core.enums.DriverType.DRIVER_SERVER;
+
+import com.gitee.melin.bee.core.model.IEntity;
+import com.gitee.melin.bee.util.NetUtils;
 import io.github.melin.spark.jobserver.core.enums.ComputeType;
 import io.github.melin.spark.jobserver.core.enums.DriverStatus;
 import io.github.melin.spark.jobserver.core.enums.DriverType;
-import com.gitee.melin.bee.model.IEntity;
-import com.gitee.melin.bee.util.NetUtils;
+import java.time.Instant;
+import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.Type;
-
-import javax.persistence.*;
-import java.time.Instant;
-
-import static io.github.melin.spark.jobserver.core.enums.ComputeType.YARN_BATCH;
-import static io.github.melin.spark.jobserver.core.enums.DriverType.DRIVER_SERVER;
 
 @Getter
 @Setter
@@ -45,20 +44,32 @@ public class SparkDriver implements IEntity {
     private Integer serverPort;
 
     @Column(name = "driver_type")
-    @Type(type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
-            parameters = {@org.hibernate.annotations.Parameter(name = "enumClass",
-                    value = "io.github.melin.spark.jobserver.core.enums.DriverType")})
+    @Type(
+            type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
+            parameters = {
+                @org.hibernate.annotations.Parameter(
+                        name = "enumClass",
+                        value = "io.github.melin.spark.jobserver.core.enums.DriverType")
+            })
     private DriverType driverType;
 
     @Column(name = "compute_type")
-    @Type(type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
-            parameters = {@org.hibernate.annotations.Parameter(name = "enumClass",
-                    value = "io.github.melin.spark.jobserver.core.enums.ComputeType")})
+    @Type(
+            type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
+            parameters = {
+                @org.hibernate.annotations.Parameter(
+                        name = "enumClass",
+                        value = "io.github.melin.spark.jobserver.core.enums.ComputeType")
+            })
     private ComputeType computeType;
 
-    @Type(type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
-            parameters = {@org.hibernate.annotations.Parameter(name = "enumClass",
-                    value = "io.github.melin.spark.jobserver.core.enums.DriverStatus")})
+    @Type(
+            type = "com.gitee.melin.bee.core.enums.StringValuedEnumType",
+            parameters = {
+                @org.hibernate.annotations.Parameter(
+                        name = "enumClass",
+                        value = "io.github.melin.spark.jobserver.core.enums.DriverStatus")
+            })
     @Column(name = "status", nullable = false, length = 45)
     private DriverStatus status;
 

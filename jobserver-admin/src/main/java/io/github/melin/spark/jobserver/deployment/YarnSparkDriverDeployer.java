@@ -1,16 +1,22 @@
 package io.github.melin.spark.jobserver.deployment;
 
+import static io.github.melin.spark.jobserver.SparkJobServerConf.*;
+import static io.github.melin.spark.jobserver.core.enums.DriverInstance.NEW_INSTANCE;
+import static io.github.melin.spark.jobserver.core.enums.DriverInstance.SHARE_INSTANCE;
+
+import io.github.melin.spark.jobserver.core.entity.Cluster;
+import io.github.melin.spark.jobserver.core.entity.SparkDriver;
+import io.github.melin.spark.jobserver.core.enums.ComputeType;
 import io.github.melin.spark.jobserver.core.exception.SparkJobException;
+import io.github.melin.spark.jobserver.core.exception.SubmitTimeoutException;
 import io.github.melin.spark.jobserver.deployment.dto.DriverInfo;
 import io.github.melin.spark.jobserver.deployment.dto.JobInstanceInfo;
 import io.github.melin.spark.jobserver.support.ClusterConfig;
 import io.github.melin.spark.jobserver.support.ClusterManager;
 import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
 import io.github.melin.spark.jobserver.web.controller.DriverController;
-import io.github.melin.spark.jobserver.core.entity.Cluster;
-import io.github.melin.spark.jobserver.core.entity.SparkDriver;
-import io.github.melin.spark.jobserver.core.enums.ComputeType;
-import io.github.melin.spark.jobserver.core.exception.SubmitTimeoutException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
@@ -21,13 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static io.github.melin.spark.jobserver.SparkJobServerConf.*;
-import static io.github.melin.spark.jobserver.core.enums.DriverInstance.NEW_INSTANCE;
-import static io.github.melin.spark.jobserver.core.enums.DriverInstance.SHARE_INSTANCE;
 
 /**
  * huaixin 2022/4/14 21:09
@@ -73,11 +72,12 @@ public class YarnSparkDriverDeployer extends AbstractDriverDeployer {
         while (!redisLeaderElection.trylock()) {
             try {
                 TimeUnit.MILLISECONDS.sleep(100);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         try {
-            //未分配到server的请求重新申请server
+            // 未分配到server的请求重新申请server
             checkLocalAvailableMemory();
             checkMaxDriverCount(clusterCode);
             clusterManager.checkYarnResourceLimit(job.getClusterCode());
@@ -98,7 +98,7 @@ public class YarnSparkDriverDeployer extends AbstractDriverDeployer {
         SparkAppHandle sparkAppHandle = null;
         String clusterCode = cluster.getCode();
         try {
-            //未分配到server的请求重新申请server
+            // 未分配到server的请求重新申请server
             checkLocalAvailableMemory();
             checkMaxDriverCount(clusterCode);
             clusterManager.checkYarnResourceLimit(clusterCode);
@@ -120,8 +120,8 @@ public class YarnSparkDriverDeployer extends AbstractDriverDeployer {
                     if (StringUtils.isNotBlank(applicationId)) {
                         yarnClientService.killYarnApp(cluster.getCode(), applicationId);
                     }
-                    throw new SubmitTimeoutException("Submit to yarn timeout({}s), applicationId: {}",
-                            driverSubmitTimeOut, applicationId);
+                    throw new SubmitTimeoutException(
+                            "Submit to yarn timeout({}s), applicationId: {}", driverSubmitTimeOut, applicationId);
                 }
                 if (sparkAppHandle.getState() == SparkAppHandle.State.KILLED) {
                     throw new SparkJobException("Submit to yarn failed , yarn status: {}", state.name());
@@ -130,17 +130,22 @@ public class YarnSparkDriverDeployer extends AbstractDriverDeployer {
                 if (StringUtils.isBlank(applicationId)) {
                     if (sparkAppHandle.getState() == SparkAppHandle.State.FAILED) {
                         if (sparkAppHandle.getError().isPresent()) {
-                            String error = ExceptionUtils.getStackTrace(sparkAppHandle.getError().get());
-                            throw new SparkJobException("启动 jobserver 失败, Spark App Status：{}, 失败原因: {}",
-                                    sparkAppHandle.getState().name(), error);
+                            String error = ExceptionUtils.getStackTrace(
+                                    sparkAppHandle.getError().get());
+                            throw new SparkJobException(
+                                    "启动 jobserver 失败, Spark App Status：{}, 失败原因: {}",
+                                    sparkAppHandle.getState().name(),
+                                    error);
                         } else {
-                            throw new SparkJobException("启动 jobserver 失败, Spark App Status：{}",
+                            throw new SparkJobException(
+                                    "启动 jobserver 失败, Spark App Status：{}",
                                     sparkAppHandle.getState().name());
                         }
                     }
                 } else {
-                    //启动jobserver 失败
-                    ApplicationReport applicationReport = yarnClientService.getYarnApplicationReport(cluster.getCode(), applicationId);
+                    // 启动jobserver 失败
+                    ApplicationReport applicationReport =
+                            yarnClientService.getYarnApplicationReport(cluster.getCode(), applicationId);
                     if (applicationReport.getYarnApplicationState() == YarnApplicationState.FAILED) {
                         if (sparkAppHandle.getError().isPresent()) {
                             Throwable error = sparkAppHandle.getError().get();
@@ -168,7 +173,8 @@ public class YarnSparkDriverDeployer extends AbstractDriverDeployer {
 
             try {
                 TimeUnit.SECONDS.sleep(10);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         } finally {
             if (sparkAppHandle != null) {
                 sparkAppHandle.kill();

@@ -1,5 +1,8 @@
 package io.github.melin.spark.jobserver.web.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
@@ -9,12 +12,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.nio.charset.Charset;
 
 /**
  * 健康检测
@@ -33,7 +32,7 @@ public class HealthController {
 
     private volatile long lastCheckDbTime = 0;
 
-    @RequestMapping(value = "/ok", produces = "text/plain;charset=UTF-8")
+    @GetMapping(value = "/ok", produces = "text/plain;charset=UTF-8")
     @ResponseBody
     public String ok(HttpServletResponse response) {
         long currentTime = System.currentTimeMillis();
@@ -52,7 +51,7 @@ public class HealthController {
         return "ok";
     }
 
-    @RequestMapping(value = "/profile", produces = "text/plain;charset=UTF-8")
+    @GetMapping(value = "/profile", produces = "text/plain;charset=UTF-8")
     @ResponseBody
     public String profile() {
 
@@ -65,11 +64,10 @@ public class HealthController {
         }
     }
 
-    @RequestMapping(value = "/gitInfo", produces = "text/plain;charset=UTF-8")
+    @GetMapping(value = "/gitInfo", produces = "text/plain;charset=UTF-8")
     @ResponseBody
     public String gitInfo() throws IOException {
         ClassPathResource hadoopResource = new ClassPathResource("git.properties");
         return IOUtils.toString(hadoopResource.getInputStream(), Charset.defaultCharset());
     }
-
 }

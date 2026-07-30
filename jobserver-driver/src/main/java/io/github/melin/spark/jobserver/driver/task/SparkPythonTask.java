@@ -6,6 +6,13 @@ import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
 import io.github.melin.spark.jobserver.driver.support.Py4jEndPoint;
 import io.github.melin.spark.jobserver.driver.util.DriverUtils;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.net.InetAddress;
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,14 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import py4j.GatewayServer;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.net.InetAddress;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
 
 @Service
 public class SparkPythonTask extends AbstractSparkTask {
@@ -80,8 +79,9 @@ public class SparkPythonTask extends AbstractSparkTask {
         String cmd = pythonPath + " " + pythonFile + " " + port + " " + instanceCode + " " + secret;
         String user = System.getProperty("user.name");
         LogUtils.info(user + " execute python: " + cmd);
-        Process process = Runtime.getRuntime().exec(cmd, new String[]{"PYSPARK_PYTHON=" + pythonPath,
-                "PYTHONPATH=" + pysparkPath, "LANG=zh_CN.UTF-8"});
+        Process process = Runtime.getRuntime()
+                .exec(cmd, new String[] {"PYSPARK_PYTHON=" + pythonPath, "PYTHONPATH=" + pysparkPath, "LANG=zh_CN.UTF-8"
+                });
 
         pythonPid = getPid(process);
         LogUtils.info("start python process: " + pythonPid);
@@ -112,7 +112,8 @@ public class SparkPythonTask extends AbstractSparkTask {
 
     private String createTempPythonFile(String jobName, String script) throws Exception {
         ClassPathResource classPathResource = new ClassPathResource("pythonJobTemplate.py");
-        InputStreamReader inputStream = new InputStreamReader(classPathResource.getInputStream(), StandardCharsets.UTF_8);
+        InputStreamReader inputStream =
+                new InputStreamReader(classPathResource.getInputStream(), StandardCharsets.UTF_8);
         byte[] bytes = IOUtils.toByteArray(inputStream, StandardCharsets.UTF_8);
 
         String tempScript = new String(bytes);

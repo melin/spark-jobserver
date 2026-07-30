@@ -39,17 +39,26 @@ public class ExecutorMetric {
 
     private long processTreeOtherRSSMemory;
 
-    public ExecutorMetric() {
-    }
+    public ExecutorMetric() {}
 
-    public ExecutorMetric(String execId, long jvmHeapMemory, long jvmOffHeapMemory,
-                          long onHeapExecutionMemory, long offHeapExecutionMemory,
-                          long onHeapStorageMemory, long offHeapStorageMemory,
-                          long onHeapUnifiedMemory, long offHeapUnifiedMemory,
-                          long directPoolMemory, long mappedPoolMemory,
-                          long processTreeJVMVMemory, long processTreeJVMRSSMemory,
-                          long processTreePythonVMemory, long processTreePythonRSSMemory,
-                          long processTreeOtherVMemory, long processTreeOtherRSSMemory) {
+    public ExecutorMetric(
+            String execId,
+            long jvmHeapMemory,
+            long jvmOffHeapMemory,
+            long onHeapExecutionMemory,
+            long offHeapExecutionMemory,
+            long onHeapStorageMemory,
+            long offHeapStorageMemory,
+            long onHeapUnifiedMemory,
+            long offHeapUnifiedMemory,
+            long directPoolMemory,
+            long mappedPoolMemory,
+            long processTreeJVMVMemory,
+            long processTreeJVMRSSMemory,
+            long processTreePythonVMemory,
+            long processTreePythonRSSMemory,
+            long processTreeOtherVMemory,
+            long processTreeOtherRSSMemory) {
         this.execId = execId;
         this.jvmHeapMemory = jvmHeapMemory;
         this.jvmOffHeapMemory = jvmOffHeapMemory;
@@ -239,24 +248,23 @@ public class ExecutorMetric {
 
     @Override
     public String toString() {
-        return "ExecutorMetric{" +
-                "execId='" + execId + '\'' +
-                ", jvmHeapMemory=" + jvmHeapMemory +
-                ", jvmOffHeapMemory=" + jvmOffHeapMemory +
-                ", onHeapExecutionMemory=" + onHeapExecutionMemory +
-                ", offHeapExecutionMemory=" + offHeapExecutionMemory +
-                ", onHeapStorageMemory=" + onHeapStorageMemory +
-                ", offHeapStorageMemory=" + offHeapStorageMemory +
-                ", onHeapUnifiedMemory=" + onHeapUnifiedMemory +
-                ", offHeapUnifiedMemory=" + offHeapUnifiedMemory +
-                ", directPoolMemory=" + directPoolMemory +
-                ", mappedPoolMemory=" + mappedPoolMemory +
-                ", processTreeJVMVMemory=" + processTreeJVMVMemory +
-                ", processTreeJVMRSSMemory=" + processTreeJVMRSSMemory +
-                ", processTreePythonVMemory=" + processTreePythonVMemory +
-                ", processTreePythonRSSMemory=" + processTreePythonRSSMemory +
-                ", processTreeOtherVMemory=" + processTreeOtherVMemory +
-                ", processTreeOtherRSSMemory=" + processTreeOtherRSSMemory +
-                '}';
+        return "ExecutorMetric{" + "execId='"
+                + execId + '\'' + ", jvmHeapMemory="
+                + jvmHeapMemory + ", jvmOffHeapMemory="
+                + jvmOffHeapMemory + ", onHeapExecutionMemory="
+                + onHeapExecutionMemory + ", offHeapExecutionMemory="
+                + offHeapExecutionMemory + ", onHeapStorageMemory="
+                + onHeapStorageMemory + ", offHeapStorageMemory="
+                + offHeapStorageMemory + ", onHeapUnifiedMemory="
+                + onHeapUnifiedMemory + ", offHeapUnifiedMemory="
+                + offHeapUnifiedMemory + ", directPoolMemory="
+                + directPoolMemory + ", mappedPoolMemory="
+                + mappedPoolMemory + ", processTreeJVMVMemory="
+                + processTreeJVMVMemory + ", processTreeJVMRSSMemory="
+                + processTreeJVMRSSMemory + ", processTreePythonVMemory="
+                + processTreePythonVMemory + ", processTreePythonRSSMemory="
+                + processTreePythonRSSMemory + ", processTreeOtherVMemory="
+                + processTreeOtherVMemory + ", processTreeOtherRSSMemory="
+                + processTreeOtherRSSMemory + '}';
     }
 }

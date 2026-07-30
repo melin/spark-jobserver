@@ -31,7 +31,7 @@ public class JobServerException extends RuntimeException {
 
     public JobServerException(Throwable cause) {
         fillInStackTrace();
-        detailMessage = (cause==null ? null : cause.toString());
+        detailMessage = (cause == null ? null : cause.toString());
         this.cause = cause;
     }
 

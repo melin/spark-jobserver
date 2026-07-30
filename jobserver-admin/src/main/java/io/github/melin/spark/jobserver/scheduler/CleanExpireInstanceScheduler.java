@@ -1,15 +1,23 @@
 package io.github.melin.spark.jobserver.scheduler;
 
+import com.google.common.collect.Sets;
 import io.github.melin.spark.jobserver.ConfigProperties;
-import io.github.melin.spark.jobserver.support.leader.LeaderTypeEnum;
-import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
-import io.github.melin.spark.jobserver.util.DateUtils;
-import io.github.melin.spark.jobserver.util.JobServerUtils;
 import io.github.melin.spark.jobserver.core.entity.JobInstance;
 import io.github.melin.spark.jobserver.core.entity.JobInstanceContent;
 import io.github.melin.spark.jobserver.core.service.JobInstanceContentService;
 import io.github.melin.spark.jobserver.core.service.JobInstanceService;
-import com.google.common.collect.Sets;
+import io.github.melin.spark.jobserver.support.leader.LeaderTypeEnum;
+import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
+import io.github.melin.spark.jobserver.util.DateUtils;
+import io.github.melin.spark.jobserver.util.JobServerUtils;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -19,15 +27,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 /**
  * 清理过期实例
@@ -54,7 +53,7 @@ public class CleanExpireInstanceScheduler implements InitializingBean {
         redisLeaderElection.buildLeader(LeaderTypeEnum.CLEAN_EXPIRE_INSTANCE);
     }
 
-    @Scheduled(cron = "0 1 0 ? * *") //每天凌晨00:01分
+    @Scheduled(cron = "0 1 0 ? * *") // 每天凌晨00:01分
     public void cleanInstance() {
         try {
             if (!redisLeaderElection.checkLeader(LeaderTypeEnum.CLEAN_EXPIRE_INSTANCE)) {
@@ -69,7 +68,8 @@ public class CleanExpireInstanceScheduler implements InitializingBean {
                 if (instance != null) {
                     instanceService.deleteEntity(instance);
 
-                    JobInstanceContent instanceContent = instanceContentService.queryJobInstanceContentByCode(instance.getCode());
+                    JobInstanceContent instanceContent =
+                            instanceContentService.queryJobInstanceContentByCode(instance.getCode());
                     if (instanceContent != null) {
                         instanceContentService.deleteEntity(instanceContent);
                     }

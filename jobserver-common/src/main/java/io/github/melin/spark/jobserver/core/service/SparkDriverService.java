@@ -1,11 +1,15 @@
 package io.github.melin.spark.jobserver.core.service;
 
-import io.github.melin.spark.jobserver.core.dao.SparkDriverDao;
-import io.github.melin.spark.jobserver.core.entity.SparkDriver;
-import io.github.melin.spark.jobserver.core.enums.DriverStatus;
+import static io.github.melin.spark.jobserver.core.enums.DriverType.DRIVER_SERVER;
+
 import com.gitee.melin.bee.core.hibernate5.HibernateBaseDao;
 import com.gitee.melin.bee.core.service.BaseServiceImpl;
 import com.gitee.melin.bee.util.NetUtils;
+import io.github.melin.spark.jobserver.core.dao.SparkDriverDao;
+import io.github.melin.spark.jobserver.core.entity.SparkDriver;
+import io.github.melin.spark.jobserver.core.enums.DriverStatus;
+import java.time.Instant;
+import java.util.List;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -14,11 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
-import java.util.List;
-
-import static io.github.melin.spark.jobserver.core.enums.DriverType.DRIVER_SERVER;
 
 @Service
 @Transactional
@@ -71,12 +70,13 @@ public class SparkDriverService extends BaseServiceImpl<SparkDriver, Long> {
     @Transactional
     public void updateServerFinished(String appId) {
         try {
-            String hql = "update SparkDriver set status=:afterStatus, gmtModified=:gmtModified " +
-                    "where status=:beforeStatus and applicationId=:appId";
+            String hql = "update SparkDriver set status=:afterStatus, gmtModified=:gmtModified "
+                    + "where status=:beforeStatus and applicationId=:appId";
 
-            int batch = this.deleteOrUpdateByHQL(hql,
-                    new String[]{"afterStatus", "gmtModified", "beforeStatus", "appId"},
-                    new Object[]{DriverStatus.FINISHED, Instant.now(), DriverStatus.RUNNING, appId});
+            int batch = this.deleteOrUpdateByHQL(
+                    hql,
+                    new String[] {"afterStatus", "gmtModified", "beforeStatus", "appId"},
+                    new Object[] {DriverStatus.FINISHED, Instant.now(), DriverStatus.RUNNING, appId});
             if (batch == 1) {
                 LOG.info("update driver: {} status finished", appId);
             }
@@ -87,8 +87,9 @@ public class SparkDriverService extends BaseServiceImpl<SparkDriver, Long> {
 
     @Transactional(readOnly = true)
     public List<SparkDriver> queryAllIdleDrivers(String clusterCode) {
-        return findByNamedParamAndOrder(new String[] {"driverType", "status", "clusterCode"},
-                new Object[]{"driverServer", DriverStatus.IDLE, clusterCode},
+        return findByNamedParamAndOrder(
+                new String[] {"driverType", "status", "clusterCode"},
+                new Object[] {"driverServer", DriverStatus.IDLE, clusterCode},
                 Order.asc("gmtModified"));
     }
 
@@ -139,8 +140,8 @@ public class SparkDriverService extends BaseServiceImpl<SparkDriver, Long> {
     public boolean lockCurrentLogServer(String appId) {
         try {
             String hql = "update SparkDriver set logServer=:logServer where logServer is null and applicationId=:appId";
-            int count = this.deleteOrUpdateByHQL(hql, new String[]{"logServer", "appId"},
-                    new Object[]{hostName, appId});
+            int count =
+                    this.deleteOrUpdateByHQL(hql, new String[] {"logServer", "appId"}, new Object[] {hostName, appId});
             if (count > 0) {
                 LOG.info("获取 log server applicationId: {}", appId);
                 return true;
@@ -161,12 +162,16 @@ public class SparkDriverService extends BaseServiceImpl<SparkDriver, Long> {
 
     @Transactional
     public int updateServerLocked(String applicationId, int version) {
-        String hql = "update SparkDriver set status=:afterStatus, gmtModified=:gmtModified, version=:afterVersion " +
-                "where status=:beforeStatus and applicationId=:applicationId and version =:beforeVersion";
+        String hql = "update SparkDriver set status=:afterStatus, gmtModified=:gmtModified, version=:afterVersion "
+                + "where status=:beforeStatus and applicationId=:applicationId and version =:beforeVersion";
 
-        int batch = this.deleteOrUpdateByHQL(hql, new String[]{"afterStatus", "gmtModified", "afterVersion",
-                        "beforeStatus", "applicationId", "beforeVersion"},
-                new Object[]{DriverStatus.LOCKED, Instant.now(), version + 1, DriverStatus.IDLE, applicationId, version});
+        int batch = this.deleteOrUpdateByHQL(
+                hql,
+                new String[] {
+                    "afterStatus", "gmtModified", "afterVersion", "beforeStatus", "applicationId", "beforeVersion"
+                },
+                new Object[] {DriverStatus.LOCKED, Instant.now(), version + 1, DriverStatus.IDLE, applicationId, version
+                });
         if (batch == 1) {
             LOG.info("update driver: {} status locked", applicationId);
         }
@@ -182,11 +187,11 @@ public class SparkDriverService extends BaseServiceImpl<SparkDriver, Long> {
 
         if (minJobserverId > 0) {
             Criterion idCrt = Restrictions.gt("id", minJobserverId);
-            return findByCriterions(Order.asc("gmtCreated"), statusCrt, shareDriverCrt,
-                    instanceCountCrt, driverTypeCrt, idCrt);
+            return findByCriterions(
+                    Order.asc("gmtCreated"), statusCrt, shareDriverCrt, instanceCountCrt, driverTypeCrt, idCrt);
         } else {
-            return findByCriterions(Order.asc("gmtCreated"), statusCrt, shareDriverCrt,
-                    instanceCountCrt, driverTypeCrt);
+            return findByCriterions(
+                    Order.asc("gmtCreated"), statusCrt, shareDriverCrt, instanceCountCrt, driverTypeCrt);
         }
     }
 }

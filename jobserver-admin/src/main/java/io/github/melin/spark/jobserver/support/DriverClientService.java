@@ -3,6 +3,7 @@ package io.github.melin.spark.jobserver.support;
 import io.github.melin.spark.jobserver.core.entity.SparkDriver;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
 import io.github.melin.spark.jobserver.core.util.LogRecord;
+import java.util.List;
 import org.apache.hadoop.yarn.api.records.YarnApplicationState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +13,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 /**
  * huaixin 2022/4/14 20:35
@@ -36,10 +35,7 @@ public class DriverClientService {
         String uri = sparkDriverUrl + "/sparkDriver/getServerLog?instanceCode=" + instanceCode;
         try {
             ResponseEntity<List<LogRecord>> response = restTemplate.exchange(
-                    uri,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<LogRecord>>() {});
+                    uri, HttpMethod.GET, null, new ParameterizedTypeReference<List<LogRecord>>() {});
             if (response.hasBody()) {
                 return response.getBody();
             } else {
@@ -58,7 +54,8 @@ public class DriverClientService {
         } catch (Exception e) {
             SparkDriver driver = driverService.queryDriverByAppId(applicationId);
             if (driver != null) {
-                YarnApplicationState state = yarnClientService.getApplicationStatus(driver.getClusterCode(), applicationId);
+                YarnApplicationState state =
+                        yarnClientService.getApplicationStatus(driver.getClusterCode(), applicationId);
 
                 String newSparkDriverUrl = driver.getSparkDriverUrl();
                 if (!newSparkDriverUrl.equals(sparkDriverUrl)) {

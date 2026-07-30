@@ -1,12 +1,17 @@
 package io.github.melin.spark.jobserver.driver.support;
 
+import com.gitee.melin.bee.util.ThreadUtils;
+import com.google.common.collect.Lists;
 import io.github.melin.spark.jobserver.core.enums.DriverStatus;
 import io.github.melin.spark.jobserver.driver.SparkDriverContext;
 import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
 import io.github.melin.spark.jobserver.driver.listener.MetricsData;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
-import com.gitee.melin.bee.util.ThreadUtils;
-import com.google.common.collect.Lists;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.SparkSession;
@@ -15,12 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author melin 2021/8/23 10:06 上午
@@ -100,7 +99,8 @@ public class TaskLogThread implements InitializingBean, Runnable {
             } else {
                 try {
                     TimeUnit.SECONDS.sleep(1);
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
         }
     }

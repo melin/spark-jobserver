@@ -9,7 +9,7 @@ public enum LeaderTypeEnum {
 
     private String redisKey;
 
-    private LeaderTypeEnum(String redisKey){
+    private LeaderTypeEnum(String redisKey) {
         this.redisKey = redisKey;
     }
 

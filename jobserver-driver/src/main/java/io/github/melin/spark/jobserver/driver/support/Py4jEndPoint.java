@@ -1,10 +1,11 @@
 package io.github.melin.spark.jobserver.driver.support;
 
+import com.google.common.base.Joiner;
 import io.github.melin.spark.jobserver.core.enums.InstanceType;
 import io.github.melin.spark.jobserver.driver.InstanceContext;
 import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
-import com.google.common.base.Joiner;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -13,8 +14,6 @@ import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 /**
  * @author melin 2021/8/19 10:35 下午
@@ -65,8 +64,10 @@ public class Py4jEndPoint {
     }
 
     public Boolean execDataFrameShowEnabled() {
-        boolean enabled = SparkDriverEnv.getSparkSession().sparkContext()
-                .getConf().getBoolean("spark.prod.dataframe.show.enabled", false);
+        boolean enabled = SparkDriverEnv.getSparkSession()
+                .sparkContext()
+                .getConf()
+                .getBoolean("spark.prod.dataframe.show.enabled", false);
 
         if (InstanceType.DEV == InstanceContext.getInstanceType() || enabled) {
             return true;

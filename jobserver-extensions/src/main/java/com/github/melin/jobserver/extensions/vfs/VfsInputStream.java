@@ -1,13 +1,12 @@
 package com.github.melin.jobserver.extensions.vfs;
 
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
 import org.apache.commons.vfs2.FileContent;
 import org.apache.hadoop.fs.FSExceptionMessages;
 import org.apache.hadoop.fs.FSInputStream;
 import org.apache.hadoop.fs.FileSystem;
-
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
 
 class VfsInputStream extends FSInputStream {
 
@@ -27,8 +26,7 @@ class VfsInputStream extends FSInputStream {
 
     private long contentLength;
 
-    VfsInputStream(FileContent fileContent, String path, FileSystem.Statistics stats)
-            throws IOException {
+    VfsInputStream(FileContent fileContent, String path, FileSystem.Statistics stats) throws IOException {
         this.fileContent = fileContent;
         this.path = path;
         this.stats = stats;

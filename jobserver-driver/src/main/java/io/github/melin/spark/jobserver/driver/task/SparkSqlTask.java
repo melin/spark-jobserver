@@ -1,10 +1,10 @@
 package io.github.melin.spark.jobserver.driver.task;
 
 import com.gitee.melin.bee.util.JsonUtils;
+import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.core.util.CommonUtils;
 import io.github.melin.spark.jobserver.core.util.HttpClientUtils;
 import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
-import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.driver.support.ConfigClient;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
 import io.github.melin.superior.common.SQLParserException;
@@ -12,6 +12,8 @@ import io.github.melin.superior.common.StatementType;
 import io.github.melin.superior.common.relational.Statement;
 import io.github.melin.superior.common.relational.dml.QueryStmt;
 import io.github.melin.superior.parser.spark.SparkSqlHelper;
+import java.io.IOException;
+import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -20,9 +22,6 @@ import org.apache.spark.sql.types.StructType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * huaixin 2022/4/7 6:03 PM
@@ -43,13 +42,12 @@ public class SparkSqlTask extends AbstractSparkTask {
         for (String row : sqls) {
             String sql = StringUtils.trim(row);
             if (StringUtils.isNotBlank(sql)) {
-                Statement statement = SparkSqlHelper.getStatementData(sql);
+                Statement statement = SparkSqlHelper.parseStatement(sql);
                 StatementType type = statement.getStatementType();
 
                 if (StatementType.SELECT == type) {
                     QueryStmt tableData = (QueryStmt) statement;
-                    int maxRecords = ConfigClient.getInstance()
-                            .getInt("jobserver.driver.sql.query.max.records", 1000);
+                    int maxRecords = ConfigClient.getInstance().getInt("jobserver.driver.sql.query.max.records", 1000);
 
                     if (tableData.getInputTables().size() > 0) {
                         if (tableData.getLimit() == null) {
@@ -106,7 +104,7 @@ public class SparkSqlTask extends AbstractSparkTask {
             LinkedList<StructField> fieldList = new LinkedList<>();
             StructType schema = dataSet.schema();
 
-            //防止重列名
+            // 防止重列名
             for (int index = 0, len = schema.fields().length; index < len; index++) {
                 StructField field = schema.fields()[index];
                 fieldList.add(field);
@@ -126,8 +124,7 @@ public class SparkSqlTask extends AbstractSparkTask {
                     StructField field = fieldList.get(index);
                     String fieldType = field.dataType().typeName();
                     if (obj != null) {
-                        if (fieldType.contains("map") || fieldType.contains("array")
-                                || fieldType.contains("struct")) {
+                        if (fieldType.contains("map") || fieldType.contains("array") || fieldType.contains("struct")) {
 
                             value = JsonUtils.toJSONString(obj);
                         } else {
@@ -147,8 +144,12 @@ public class SparkSqlTask extends AbstractSparkTask {
             result.put("command", sql);
             String content = JsonUtils.toJSONString(result);
 
-            HttpClientUtils.postRequet(resultCallbackUri + "/innerApi/v1/receiveJobResult",
-                    "instanceCode", instanceCode, "result", content);
+            HttpClientUtils.postRequest(
+                    resultCallbackUri + "/innerApi/v1/receiveJobResult",
+                    "instanceCode",
+                    instanceCode,
+                    "result",
+                    content);
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
             LogUtils.error("调用接口失败: " + e.getMessage());

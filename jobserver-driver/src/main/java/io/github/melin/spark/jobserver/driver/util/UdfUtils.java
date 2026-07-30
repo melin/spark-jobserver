@@ -41,9 +41,7 @@ public class UdfUtils {
                     throw invalidEscapeSequence(sqlPattern, i);
                 }
                 char nextChar = sqlPattern.charAt(i + 1);
-                if ((nextChar == '_')
-                        || (nextChar == '%')
-                        || (nextChar == escapeChar)) {
+                if ((nextChar == '_') || (nextChar == '%') || (nextChar == escapeChar)) {
                     javaPattern.append(nextChar);
                     i++;
                 } else {

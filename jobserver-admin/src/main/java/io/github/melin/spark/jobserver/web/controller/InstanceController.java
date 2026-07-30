@@ -1,9 +1,10 @@
 package io.github.melin.spark.jobserver.web.controller;
 
+import com.gitee.melin.bee.core.support.Pagination;
+import com.gitee.melin.bee.core.support.Result;
+import com.google.common.collect.Lists;
+import com.google.common.io.ByteStreams;
 import io.github.melin.spark.jobserver.ConfigProperties;
-import io.github.melin.spark.jobserver.util.DateUtils;
-import io.github.melin.spark.jobserver.util.JobServerUtils;
-import io.github.melin.spark.jobserver.util.RandomUniqueIdGenerator;
 import io.github.melin.spark.jobserver.core.entity.Cluster;
 import io.github.melin.spark.jobserver.core.entity.JobInstance;
 import io.github.melin.spark.jobserver.core.entity.JobInstanceContent;
@@ -14,11 +15,20 @@ import io.github.melin.spark.jobserver.core.service.ClusterService;
 import io.github.melin.spark.jobserver.core.service.JobInstanceContentService;
 import io.github.melin.spark.jobserver.core.service.JobInstanceService;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
-import com.gitee.melin.bee.core.support.Pagination;
-import com.gitee.melin.bee.core.support.Result;
-import com.google.common.collect.Lists;
-import com.google.common.io.ByteStreams;
 import io.github.melin.spark.jobserver.util.Constant;
+import io.github.melin.spark.jobserver.util.DateUtils;
+import io.github.melin.spark.jobserver.util.JobServerUtils;
+import io.github.melin.spark.jobserver.util.RandomUniqueIdGenerator;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.nio.file.Files;
+import java.time.Instant;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hibernate.criterion.*;
@@ -28,21 +38,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.nio.file.Files;
-import java.time.Instant;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 @Controller
 public class InstanceController {
@@ -67,10 +67,10 @@ public class InstanceController {
     @Autowired
     private ConfigProperties configProperties;
 
-    @RequestMapping("/instance")
+    @GetMapping("/instance")
     public String home(ModelMap model) {
-        List<String> clients = instanceService.findByCriterion(
-                Projections.distinct(Projections.property("clientName")));
+        List<String> clients =
+                instanceService.findByCriterion(Projections.distinct(Projections.property("clientName")));
 
         List<Cluster> clusters = clusterService.queryValidClusters();
 
@@ -82,8 +82,14 @@ public class InstanceController {
     @PostMapping("/instance/saveJobInstance")
     @ResponseBody
     @Transactional
-    public Result<Void> saveJobInstance(Long id, JobType jobType, String name, String jobText,
-                                        String clusterCode, String jobConfig, boolean isRun) {
+    public Result<Void> saveJobInstance(
+            Long id,
+            JobType jobType,
+            String name,
+            String jobText,
+            String clusterCode,
+            String jobConfig,
+            boolean isRun) {
         if (id == null) {
             String instanceCode = RandomUniqueIdGenerator.getNewString(32);
             JobInstance.Builder builder = JobInstance.builder()
@@ -113,8 +119,7 @@ public class InstanceController {
             }
             instanceService.updateEntity(instance);
 
-            JobInstanceContent instanceContent =
-                    instanceContentService.queryByNamedParam("code", instance.getCode());
+            JobInstanceContent instanceContent = instanceContentService.queryByNamedParam("code", instance.getCode());
 
             instanceContent.setJobConfig(jobConfig);
             instanceContent.setJobText(jobText);
@@ -124,25 +129,30 @@ public class InstanceController {
         return Result.successResult();
     }
 
-    @RequestMapping("/instance/queryInstance")
+    @GetMapping("/instance/queryInstance")
     @ResponseBody
     public Result<JobInstance> queryInstance(Long instanceId) {
         JobInstance instance = instanceService.getEntity(instanceId);
         return Result.successDataResult(instance);
     }
 
-    @RequestMapping("/instance/queryInstanceContent")
+    @GetMapping("/instance/queryInstanceContent")
     @ResponseBody
     public Result<JobInstanceContent> queryInstanceContent(String code) {
         JobInstanceContent instance = instanceContentService.queryByNamedParam("code", code);
         return Result.successDataResult(instance);
     }
 
-    @RequestMapping("/instance/queryInstances")
+    @GetMapping("/instance/queryInstances")
     @ResponseBody
-    public Pagination<JobInstance> queryInstances(String instanceCode, String instanceName,
-                                                  InstanceStatus status, String clientName,
-                                               int page, int limit, HttpServletRequest request) {
+    public Pagination<JobInstance> queryInstances(
+            String instanceCode,
+            String instanceName,
+            InstanceStatus status,
+            String clientName,
+            int page,
+            int limit,
+            HttpServletRequest request) {
         String sort = request.getParameter("sort");
         String order = request.getParameter("order");
 
@@ -176,23 +186,22 @@ public class InstanceController {
             params.add("status");
             values.add(status);
         }
-        return instanceService.findPageByNamedParamAndOrder(params, values,
-                Lists.newArrayList(order1), page, limit);
+        return instanceService.findPageByNamedParamAndOrder(params, values, Lists.newArrayList(order1), page, limit);
     }
 
-    @RequestMapping("/instance/queryJobText")
+    @GetMapping("/instance/queryJobText")
     @ResponseBody
     public Result<String> queryJobText(String instanceCode) {
-        String jobText = instanceContentService.queryByCriterions(Projections.property("jobText"),
-                Restrictions.eq("code", instanceCode));
+        String jobText = instanceContentService.queryByCriterions(
+                Projections.property("jobText"), Restrictions.eq("code", instanceCode));
         return Result.successDataResult(jobText);
     }
 
-    @RequestMapping("/instance/queryJobConfig")
+    @GetMapping("/instance/queryJobConfig")
     @ResponseBody
     public Result<String> queryJobConfig(String instanceCode) {
-        String jobConfig = instanceContentService.queryByCriterions(Projections.property("jobConfig"),
-                Restrictions.eq("code", instanceCode));
+        String jobConfig = instanceContentService.queryByCriterions(
+                Projections.property("jobConfig"), Restrictions.eq("code", instanceCode));
 
         if (jobConfig == null) {
             jobConfig = "";
@@ -214,7 +223,7 @@ public class InstanceController {
         }
     }
 
-    @RequestMapping("/instance/queryInstanceLog")
+    @GetMapping("/instance/queryInstanceLog")
     @ResponseBody
     public Result<String> queryInstanceLog(String scheduleDate, String instanceCode) {
         String instanceLogPath = configProperties.getInstanceLogPath();
@@ -237,7 +246,7 @@ public class InstanceController {
         }
     }
 
-    @RequestMapping("/instance/downloadInstanceLog")
+    @GetMapping("/instance/downloadInstanceLog")
     public void downloadInstanceLog(String scheduleDate, String instanceCode, HttpServletResponse response) {
         String instanceLogPath = configProperties.getInstanceLogPath();
         String logFile = instanceLogPath + "/" + scheduleDate + "/" + instanceCode + ".log";
@@ -245,11 +254,11 @@ public class InstanceController {
         outputFile(response, file);
     }
 
-    @RequestMapping("/instance/batchDownloadLogs")
+    @GetMapping("/instance/batchDownloadLogs")
     public void batchDownloadLogs(String[] codes, HttpServletResponse response) throws IOException {
         String fileName = "/tmp/logs-" + System.currentTimeMillis() + ".zip";
         try (FileOutputStream fos = new FileOutputStream(fileName);
-             ZipOutputStream zipOut = new ZipOutputStream(fos)) {
+                ZipOutputStream zipOut = new ZipOutputStream(fos)) {
             for (String instanceCode : codes) {
                 JobInstance instance = instanceService.queryJobInstanceByCode(instanceCode);
                 if (instance != null) {
@@ -280,7 +289,7 @@ public class InstanceController {
         response.addHeader("Content-Length", "" + file.length());
 
         try (InputStream inputStream = Files.newInputStream(file.toPath());
-             OutputStream out = new BufferedOutputStream(response.getOutputStream())) {
+                OutputStream out = new BufferedOutputStream(response.getOutputStream())) {
             byte[] buffer = new byte[1024 * 1024 * 2];
             int i;
             while ((i = inputStream.read(buffer)) != -1) {
@@ -305,7 +314,7 @@ public class InstanceController {
         return Result.successResult();
     }
 
-    @PostMapping("/instance/delete")
+    @DeleteMapping("/instance/delete")
     @ResponseBody
     public Result<String> deleteInstance(String instanceCode) throws Exception {
         JobInstance instance = instanceService.queryJobInstanceByCode(instanceCode);
@@ -320,7 +329,7 @@ public class InstanceController {
         return Result.successResult();
     }
 
-    @PostMapping("/instance/killJob")
+    @DeleteMapping("/instance/killJob")
     @ResponseBody
     public Result<String> killJob(String instanceCode) {
         LOG.info("kill job {}", instanceCode);
@@ -339,7 +348,7 @@ public class InstanceController {
         return Result.failureResult("can not find job instance: " + instanceCode);
     }
 
-    @PostMapping("/instance/queryInstanceStatistics")
+    @GetMapping("/instance/queryInstanceStatistics")
     @ResponseBody
     public Result<Map<String, Long>> queryInstanceStatistics() {
         Map<String, Long> data = instanceService.queryInstanceStatistics();
@@ -352,11 +361,13 @@ public class InstanceController {
             if (StringUtils.isNotBlank(driverUrl)) {
                 driverUrl = driverUrl + "/sparkDriver/killJob";
                 try {
-                    restTemplate.postForObject(driverUrl + "?instanceCode=" + instanceCode,
-                            null, String.class);
+                    restTemplate.postForObject(driverUrl + "?instanceCode=" + instanceCode, null, String.class);
                 } catch (Exception e) {
-                    LOG.error("reset server: {} , url: {}, error: \n{}",
-                            appId, driverUrl, ExceptionUtils.getStackTrace(e));
+                    LOG.error(
+                            "reset server: {} , url: {}, error: \n{}",
+                            appId,
+                            driverUrl,
+                            ExceptionUtils.getStackTrace(e));
                 }
             }
         }

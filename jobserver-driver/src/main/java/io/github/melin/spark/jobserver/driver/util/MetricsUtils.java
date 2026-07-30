@@ -1,18 +1,17 @@
 package io.github.melin.spark.jobserver.driver.util;
 
+import com.google.common.collect.Lists;
 import io.github.melin.spark.jobserver.core.enums.JobType;
 import io.github.melin.spark.jobserver.core.util.CommonUtils;
 import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
 import io.github.melin.spark.jobserver.driver.listener.DriverMetric;
 import io.github.melin.spark.jobserver.driver.listener.ExecutorMetric;
 import io.github.melin.spark.jobserver.driver.listener.MetricsData;
-import com.google.common.collect.Lists;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * Created by libinsong on 2018/8/18.
@@ -22,7 +21,8 @@ public class MetricsUtils {
 
     public static void logMetricsCollect(JobType jobType) {
         try {
-            SparkConf sparkConf = SparkDriverEnv.getSparkSession().sparkContext().getConf();
+            SparkConf sparkConf =
+                    SparkDriverEnv.getSparkSession().sparkContext().getConf();
             long executorMemory = sparkConf.getSizeAsKb("spark.executor.memory", "10485760");
             long driverMemory = sparkConf.getSizeAsKb("spark.driver.memory", "5242880");
 
@@ -94,41 +94,45 @@ public class MetricsUtils {
 
             double driverMemoryRatio = (currentDriverMemory + currentPythonMemory) * 1.0 / totalDriverMem;
             double executorMemoryRatio = executorMaxHeapMemory * 1.0 / totalExecutorMem;
-            double driverMemoryOverheadRatio = (currentPythonMemory + executorPythonMaxHeapMemory) * 1.0 / driverMemoryOverhead;
+            double driverMemoryOverheadRatio =
+                    (currentPythonMemory + executorPythonMaxHeapMemory) * 1.0 / driverMemoryOverhead;
             double executorMemoryOverheadRatio = executorPythonMaxHeapMemory * 1.0 / executorMemoryOverhead;
 
             List<String> msgs = Lists.newArrayList();
-            if (currentDriverMemory > 0 && driverMemory > defaultDriverMemoryKb
-                    && driverMemoryRatio < 0.5) {
+            if (currentDriverMemory > 0 && driverMemory > defaultDriverMemoryKb && driverMemoryRatio < 0.5) {
                 msgs.add("Driver 内存利用率: " + CommonUtils.DECIMAL_FORMAT.format(driverMemoryRatio)
                         + ", 建议您下调 spark.driver.memory 参数值或者删除参数配置，节约宝贵资源，默认值：" + defaultDriverMemory);
             }
             if ((JobType.SPARK_PYTHON == jobType)
-                    && currentDriverMemory > 0 && driverMemoryOverhead > defaultDriverMemoryOverheadKb
+                    && currentDriverMemory > 0
+                    && driverMemoryOverhead > defaultDriverMemoryOverheadKb
                     && driverMemoryOverheadRatio < 0.5) {
                 msgs.add("Driver python 内存利用率: " + CommonUtils.DECIMAL_FORMAT.format(driverMemoryOverheadRatio)
                         + ", 建议您下调 spark.driver.memoryOverhead 参数值或者删除参数配置，节约宝贵资源，默认值：" + defaultDriverMemoryOverhead);
             }
-            if (executorMaxHeapMemory > 0 && executorMemory > defaultExecutorMemoryKb
-                    && executorMemoryRatio < 0.5) {
+            if (executorMaxHeapMemory > 0 && executorMemory > defaultExecutorMemoryKb && executorMemoryRatio < 0.5) {
                 msgs.add("Executor 内存利用率: " + CommonUtils.DECIMAL_FORMAT.format(executorMemoryRatio)
                         + ", 建议您下调 spark.executor.memory 参数值或者删除参数配置，节约宝贵资源，默认值：" + defaultExecutorMemory);
             }
             if ((JobType.SPARK_PYTHON == jobType)
-                    && executorPythonMaxHeapMemory > 0 && executorMemoryOverhead > defaultExecutorMemoryOverheadKb
+                    && executorPythonMaxHeapMemory > 0
+                    && executorMemoryOverhead > defaultExecutorMemoryOverheadKb
                     && executorMemoryOverheadRatio < 0.5) {
                 msgs.add("Executor python 内存利用率: " + CommonUtils.DECIMAL_FORMAT.format(executorMemoryOverheadRatio)
-                        + ", 建议您下调 spark.executor.memoryOverhead 参数值或者删除参数配置，节约宝贵资源，默认值：" + defaultExecutorMemoryOverhead);
+                        + ", 建议您下调 spark.executor.memoryOverhead 参数值或者删除参数配置，节约宝贵资源，默认值："
+                        + defaultExecutorMemoryOverhead);
             }
 
-            StringBuilder driverSB = new StringBuilder("Driver 配置内存 = ").append(CommonUtils.convertUnit(totalDriverMem));
+            StringBuilder driverSB =
+                    new StringBuilder("Driver 配置内存 = ").append(CommonUtils.convertUnit(totalDriverMem));
             driverSB.append(", Driver 实际使用内存 = ").append(CommonUtils.convertUnit(currentDriverMemory));
             if (JobType.SPARK_PYTHON == jobType) {
                 driverSB.append(", Driver python 可用内存 = ").append(CommonUtils.convertUnit(driverMemoryOverhead));
                 driverSB.append(", Driver Python 进程实际使用内存 = ").append(CommonUtils.convertUnit(currentPythonMemory));
             }
 
-            StringBuilder executorSB = new StringBuilder("JVM 配置内存 = ").append(CommonUtils.convertUnit(totalExecutorMem));
+            StringBuilder executorSB =
+                    new StringBuilder("JVM 配置内存 = ").append(CommonUtils.convertUnit(totalExecutorMem));
             executorSB.append(", JVM 最小使用内存 = ").append(CommonUtils.convertUnit(executorMinHeapMemory));
             executorSB.append(", JVM 最大使用内存 = ").append(CommonUtils.convertUnit(executorMaxHeapMemory));
             executorSB.append(", JVM 平均使用内存 = ").append(CommonUtils.convertUnit(executorAverageHeapMemory));
@@ -136,10 +140,17 @@ public class MetricsUtils {
             LogUtils.info("Driver 内存统计信息 = " + driverSB);
             LogUtils.info("Executor JVM 内存统计信息：" + executorSB);
             if (JobType.SPARK_PYTHON == jobType) {
-                StringBuilder executorPythonSB = new StringBuilder("Python 最大可用内存 = ").append(CommonUtils.convertUnit(executorMemoryOverhead));
-                executorPythonSB.append(", Python 最小使用内存 = ").append(CommonUtils.convertUnit(executorPythonMinHeapMemory));
-                executorPythonSB.append(", Python 最大使用内存 = ").append(CommonUtils.convertUnit(executorPythonMaxHeapMemory));
-                executorPythonSB.append(", Python 平均使用内存 = ").append(CommonUtils.convertUnit(executorPythonAverageHeapMemory));
+                StringBuilder executorPythonSB =
+                        new StringBuilder("Python 最大可用内存 = ").append(CommonUtils.convertUnit(executorMemoryOverhead));
+                executorPythonSB
+                        .append(", Python 最小使用内存 = ")
+                        .append(CommonUtils.convertUnit(executorPythonMinHeapMemory));
+                executorPythonSB
+                        .append(", Python 最大使用内存 = ")
+                        .append(CommonUtils.convertUnit(executorPythonMaxHeapMemory));
+                executorPythonSB
+                        .append(", Python 平均使用内存 = ")
+                        .append(CommonUtils.convertUnit(executorPythonAverageHeapMemory));
                 LogUtils.info("Executor Python 内存统计信息：" + executorPythonSB);
             }
 

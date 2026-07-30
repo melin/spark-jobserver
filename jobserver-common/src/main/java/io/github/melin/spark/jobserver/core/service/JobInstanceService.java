@@ -1,30 +1,29 @@
 package io.github.melin.spark.jobserver.core.service;
 
+import static io.github.melin.spark.jobserver.core.enums.InstanceStatus.*;
+import static io.github.melin.spark.jobserver.core.enums.InstanceType.API;
+import static io.github.melin.spark.jobserver.core.enums.InstanceType.SCHEDULE;
+
+import com.gitee.melin.bee.core.hibernate5.HibernateBaseDao;
+import com.gitee.melin.bee.core.service.BaseServiceImpl;
+import com.google.common.collect.Maps;
 import io.github.melin.spark.jobserver.core.dao.JobInstanceDao;
 import io.github.melin.spark.jobserver.core.entity.JobInstance;
 import io.github.melin.spark.jobserver.core.entity.JobInstanceContent;
 import io.github.melin.spark.jobserver.core.entity.JobInstanceDependent;
 import io.github.melin.spark.jobserver.core.enums.InstanceStatus;
-import com.gitee.melin.bee.core.hibernate5.HibernateBaseDao;
-import com.gitee.melin.bee.core.service.BaseServiceImpl;
-import com.google.common.collect.Maps;
-import org.hibernate.criterion.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import static io.github.melin.spark.jobserver.core.enums.InstanceStatus.*;
-import static io.github.melin.spark.jobserver.core.enums.InstanceType.API;
-import static io.github.melin.spark.jobserver.core.enums.InstanceType.SCHEDULE;
+import org.hibernate.criterion.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -72,8 +71,11 @@ public class JobInstanceService extends BaseServiceImpl<JobInstance, Long> {
         JobInstance instance = queryJobInstanceByCode(instanceCode);
         Instant nowDate = Instant.now();
         instance.setEndTime(nowDate);
-        long times = nowDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() -
-                instance.getStartTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long times = nowDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                - instance.getStartTime()
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()
+                        .toEpochMilli();
         instance.setRunTimes(times);
         if (FAILED == status) {
             instance.setRetryCount(instance.getRetryCount() + 1);
@@ -87,8 +89,9 @@ public class JobInstanceService extends BaseServiceImpl<JobInstance, Long> {
      * 保存作业实例依赖信息
      */
     public void saveInstanceDependent(String instanceCode, String[] dependentCodes) {
-        Arrays.stream(dependentCodes).forEach(dependentCode ->
-                dependentService.insertEntity(new JobInstanceDependent(instanceCode, dependentCode)));
+        Arrays.stream(dependentCodes)
+                .forEach(dependentCode ->
+                        dependentService.insertEntity(new JobInstanceDependent(instanceCode, dependentCode)));
     }
 
     /**
@@ -103,10 +106,13 @@ public class JobInstanceService extends BaseServiceImpl<JobInstance, Long> {
      * 乐观锁 控制实例同时被提交一次
      */
     public boolean lockInstance(String instanceCode) {
-        int updateCount = jobInstanceDao.deleteOrUpdateByHQL("update JobInstance set status = :status " +
-                        "where code = :code and status in (:status1, :status2)",
-                new String[]{"status", "code", "status1", "status2"},
-                LOCKED, instanceCode, WAITING, SUBMITTING);
+        int updateCount = jobInstanceDao.deleteOrUpdateByHQL(
+                "update JobInstance set status = :status " + "where code = :code and status in (:status1, :status2)",
+                new String[] {"status", "code", "status1", "status2"},
+                LOCKED,
+                instanceCode,
+                WAITING,
+                SUBMITTING);
 
         return updateCount > 0;
     }
@@ -115,9 +121,12 @@ public class JobInstanceService extends BaseServiceImpl<JobInstance, Long> {
      * 乐观锁 控制实例同时被提交一次
      */
     public void unLockInstance(String instanceCode) {
-        int updateCount = jobInstanceDao.deleteOrUpdateByHQL("update JobInstance set status = :status " +
-                        "where code = :code and status = :status1",
-                new String[]{"status", "code", "status1"}, WAITING, instanceCode, LOCKED);
+        int updateCount = jobInstanceDao.deleteOrUpdateByHQL(
+                "update JobInstance set status = :status " + "where code = :code and status = :status1",
+                new String[] {"status", "code", "status1"},
+                WAITING,
+                instanceCode,
+                LOCKED);
 
         if (updateCount > 0) {
             LOG.info("instance: {} lock release success", instanceCode);
@@ -131,20 +140,25 @@ public class JobInstanceService extends BaseServiceImpl<JobInstance, Long> {
     @Transactional(readOnly = true)
     public List<Long> findScheduleInstances() {
         Instant lastDay = Instant.now().minus(7, ChronoUnit.DAYS);
-        Criterion lastScheduleTimeCrt = Restrictions.gt("scheduleTime", lastDay); //最近7天实例
+        Criterion lastScheduleTimeCrt = Restrictions.gt("scheduleTime", lastDay); // 最近7天实例
         Criterion scheduleTimeCrt = Restrictions.le("scheduleTime", Instant.now());
 
         Criterion newStatusCrt = Restrictions.eq("status", WAITING);
-        Criterion failureStatusCrt = Restrictions.and(Restrictions.eq("status", FAILED),
+        Criterion failureStatusCrt = Restrictions.and(
+                Restrictions.eq("status", FAILED),
                 Restrictions.gt("retryCount", 0),
                 Restrictions.ltProperty("failureCount", "retryCount"));
         Criterion statusCrt = Restrictions.or(newStatusCrt, failureStatusCrt);
 
         Criterion instanceTypeCrt = Restrictions.in("instanceType", SCHEDULE, API);
 
-        return this.findByCriterion(Projections.property("id"),
+        return this.findByCriterion(
+                Projections.property("id"),
                 Order.asc("gmtModified"),
-                lastScheduleTimeCrt, scheduleTimeCrt, instanceTypeCrt, statusCrt);
+                lastScheduleTimeCrt,
+                scheduleTimeCrt,
+                instanceTypeCrt,
+                statusCrt);
     }
 
     /**
@@ -179,8 +193,8 @@ public class JobInstanceService extends BaseServiceImpl<JobInstance, Long> {
      */
     @Transactional(readOnly = true)
     public JobInstance queryInstanceByAppId(String appId) {
-        return queryByCriterions(Restrictions.eq("applicationId", appId),
-                Restrictions.eq("status", InstanceStatus.RUNNING));
+        return queryByCriterions(
+                Restrictions.eq("applicationId", appId), Restrictions.eq("status", InstanceStatus.RUNNING));
     }
 
     @Transactional
@@ -205,7 +219,7 @@ public class JobInstanceService extends BaseServiceImpl<JobInstance, Long> {
         long waitingCount = this.queryCount("status", InstanceStatus.WAITING);
 
         Instant lastDay = Instant.now().minus(1, ChronoUnit.DAYS);
-        Criterion lastCreateTimeCrt = Restrictions.gt("gmtCreated", lastDay); //最近1天实例
+        Criterion lastCreateTimeCrt = Restrictions.gt("gmtCreated", lastDay); // 最近1天实例
 
         long lastDayStoppedCount = this.queryCount("status", InstanceStatus.KILLED, "gmtCreated", lastCreateTimeCrt);
         long lastDayFailedCount = this.queryCount("status", InstanceStatus.FAILED, "gmtCreated", lastCreateTimeCrt);

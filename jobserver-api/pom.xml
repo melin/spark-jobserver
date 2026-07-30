@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.melin.spark.jobserver</groupId>
     <artifactId>spark-jobserver-api</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <packaging>jar</packaging>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <spark.version>3.3.0</spark.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <spark.version>3.5.9</spark.version>
+        <spotless.version>3.8.0</spotless.version>
     </properties>
 
     <dependencies>
@@ -32,7 +32,52 @@
     </dependencies>
 
     <build>
+
         <plugins>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <java>
+                        <palantirJavaFormat>
+                            <style>PALANTIR</style>
+                            <formatJavadoc>false</formatJavadoc>
+                        </palantirJavaFormat>
+                        <removeUnusedImports />
+                    </java>
+                    <pom>
+                        <sortPom>
+                            <encoding>UTF-8</encoding>
+                            <nrOfIndentSpace>4</nrOfIndentSpace>
+                            <keepBlankLines>true</keepBlankLines>
+                            <indentBlankLines>false</indentBlankLines>
+                            <indentAttribute>schemaLocation</indentAttribute>
+                            <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
+                            <sortModules>false</sortModules>
+                            <sortExecutions>false</sortExecutions>
+                            <predefinedSortOrder>custom_1</predefinedSortOrder>
+                            <expandEmptyElements>false</expandEmptyElements>
+                            <sortProperties>false</sortProperties>
+                        </sortPom>
+                        <replace>
+                            <name>Leading blank line</name>
+                            <search>project</search>
+                            <replacement>project</replacement>
+                        </replace>
+                    </pom>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>spotless-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>validate</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>

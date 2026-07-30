@@ -1,19 +1,18 @@
 package io.github.melin.spark.jobserver.monitor;
 
+import com.gitee.melin.bee.util.ThreadUtils;
 import io.github.melin.spark.jobserver.monitor.task.CheckJobSubmitTimoutTask;
 import io.github.melin.spark.jobserver.monitor.task.CheckSparkDriverTask;
 import io.github.melin.spark.jobserver.monitor.task.UpdateDriverResourceTask;
-import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
-import com.gitee.melin.bee.util.ThreadUtils;
 import io.github.melin.spark.jobserver.support.leader.LeaderTypeEnum;
+import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * jobserver pool 大小控制
@@ -49,14 +48,11 @@ public class DriverPoolMonitor implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         redisLeaderElection.buildLeader(LeaderTypeEnum.DRIVER_POOL_MONITOR);
 
-        jobServerCheckExecutorService.scheduleAtFixedRate(checkSparkDriverTask,
-                1, 60, TimeUnit.SECONDS);
+        jobServerCheckExecutorService.scheduleAtFixedRate(checkSparkDriverTask, 1, 60, TimeUnit.SECONDS);
 
-        //作业实例提交超时
-        checkJobSubmitTimoutExecutorService.scheduleAtFixedRate(checkJobSubmitTimoutTask,
-                1, 30, TimeUnit.MINUTES);
+        // 作业实例提交超时
+        checkJobSubmitTimoutExecutorService.scheduleAtFixedRate(checkJobSubmitTimoutTask, 1, 30, TimeUnit.MINUTES);
 
-        updateDriverResourceExecutorService.scheduleAtFixedRate(updateDriverResourceTask,
-                1, 3, TimeUnit.SECONDS);
+        updateDriverResourceExecutorService.scheduleAtFixedRate(updateDriverResourceTask, 1, 3, TimeUnit.SECONDS);
     }
 }

@@ -1,9 +1,9 @@
 package io.github.melin.spark.jobserver.core.service;
 
-import io.github.melin.spark.jobserver.core.dao.TableLineageDao;
-import io.github.melin.spark.jobserver.core.entity.TableLineage;
 import com.gitee.melin.bee.core.hibernate5.HibernateBaseDao;
 import com.gitee.melin.bee.core.service.BaseServiceImpl;
+import io.github.melin.spark.jobserver.core.dao.TableLineageDao;
+import io.github.melin.spark.jobserver.core.entity.TableLineage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +23,4 @@ public class TableLineageService extends BaseServiceImpl<TableLineage, Long> {
     public HibernateBaseDao<TableLineage, Long> getHibernateBaseDao() {
         return tableLineageDao;
     }
-
 }

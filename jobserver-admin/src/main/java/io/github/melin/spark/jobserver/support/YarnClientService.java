@@ -1,11 +1,13 @@
 package io.github.melin.spark.jobserver.support;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.github.melin.spark.jobserver.SparkJobServerConf;
 import io.github.melin.spark.jobserver.core.entity.SparkDriver;
 import io.github.melin.spark.jobserver.core.exception.SwitchYarnQueueException;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
-import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -24,9 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.concurrent.ConcurrentMap;
 
 @Service
 @DependsOn("clusterManager")
@@ -122,7 +121,8 @@ public class YarnClientService implements DisposableBean {
             SparkDriver driver = driverService.queryDriverByAppId(appId);
             if (driver != null) {
                 int runCount = driver.getInstanceCount();
-                int maxInstanceCount = clusterConfig.getInt(clusterCode, SparkJobServerConf.JOBSERVER_DRIVER_RUN_MAX_INSTANCE_COUNT);
+                int maxInstanceCount =
+                        clusterConfig.getInt(clusterCode, SparkJobServerConf.JOBSERVER_DRIVER_RUN_MAX_INSTANCE_COUNT);
                 LOG.info("当前driver {} 超过运行次数 {}/{}", appId, runCount, maxInstanceCount);
                 if (runCount >= maxInstanceCount) {
                     this.killApplication(clusterCode, appId);

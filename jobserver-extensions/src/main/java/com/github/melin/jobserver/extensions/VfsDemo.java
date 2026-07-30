@@ -1,11 +1,10 @@
 package com.github.melin.jobserver.extensions;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
 import org.apache.commons.vfs2.*;
 import org.apache.commons.vfs2.provider.ftp.FtpFileSystemConfigBuilder;
 import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
 
 public class VfsDemo {
     public static void main(String[] args) throws IOException {
@@ -39,12 +38,10 @@ public class VfsDemo {
         fsManager.close();
     }
 
-    public static FileSystemOptions createDefaultOptions()
-            throws FileSystemException {
+    public static FileSystemOptions createDefaultOptions() throws FileSystemException {
         FileSystemOptions opts = new FileSystemOptions();
 
-        SftpFileSystemConfigBuilder.getInstance().setStrictHostKeyChecking(
-                opts, "no");
+        SftpFileSystemConfigBuilder.getInstance().setStrictHostKeyChecking(opts, "no");
 
         SftpFileSystemConfigBuilder.getInstance().setUserDirIsRoot(opts, true);
 

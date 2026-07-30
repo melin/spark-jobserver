@@ -1,14 +1,18 @@
 package io.github.melin.spark.jobserver.logs;
 
+import com.gitee.melin.bee.util.ThreadUtils;
 import com.google.common.collect.Maps;
 import io.github.melin.spark.jobserver.ConfigProperties;
-import io.github.melin.spark.jobserver.deployment.dto.JobInstanceInfo;
 import io.github.melin.spark.jobserver.core.entity.JobInstance;
 import io.github.melin.spark.jobserver.core.entity.SparkDriver;
 import io.github.melin.spark.jobserver.core.enums.ComputeType;
 import io.github.melin.spark.jobserver.core.service.JobInstanceService;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
-import com.gitee.melin.bee.util.ThreadUtils;
+import io.github.melin.spark.jobserver.deployment.dto.JobInstanceInfo;
+import java.util.List;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.apache.hadoop.util.ShutdownHookManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class SparkLogService implements ApplicationContextAware, InitializingBean, DisposableBean {
@@ -58,55 +57,62 @@ public class SparkLogService implements ApplicationContextAware, InitializingBea
     public void afterPropertiesSet() {
         driverService.clearCurrentLogServer();
 
-        scheduledExecutorService.scheduleWithFixedDelay(() -> {
-            try {
-                List<SparkDriver> list = driverService.queryEmptyLogServers();
-                if (list.size() > 0) {
-                    LOGGER.info("query log server count: {}", list.size());
-                }
-                list.forEach(driver -> {
-                    boolean flag = driverService.lockCurrentLogServer(driver.getApplicationId());
-                    if (flag) {
-                        ComputeType scheduleType = driver.getComputeType();
-                        String appId = driver.getApplicationId();
-                        String sparkDriverUrl = driver.getSparkDriverUrl();
-                        boolean shareDriver = driver.isShareDriver();
-
-                        if (ComputeType.YARN_BATCH == scheduleType) {
-                            JobInstance instance = instanceService.queryInstanceByAppId(appId);
-                            if (instance != null) {
-                                JobInstanceInfo instanceInfo = new JobInstanceInfo();
-                                String instanceCode = instance.getCode();
-                                instanceInfo.setClusterCode(instance.getClusterCode());
-                                instanceInfo.setInstanceCode(instanceCode);
-                                instanceInfo.setScheduleTime(instance.getScheduleTime());
-                                instanceInfo.setInstanceType(instance.getInstanceType());
-                                instanceInfo.setJobType(instance.getJobType());
-                                instanceInfo.setOwner(instance.getOwner());
-
-                                this.createSparkJobLog(instanceInfo, appId, shareDriver, sparkDriverUrl);
-                                this.startJobLogThread(instanceCode);
-                            }
-                        } else {
-                            throw new UnsupportedOperationException("compute type not supported");
-                        }
-                    }
-
+        scheduledExecutorService.scheduleWithFixedDelay(
+                () -> {
                     try {
-                        TimeUnit.MILLISECONDS.sleep(200);
+                        List<SparkDriver> list = driverService.queryEmptyLogServers();
+                        if (list.size() > 0) {
+                            LOGGER.info("query log server count: {}", list.size());
+                        }
+                        list.forEach(driver -> {
+                            boolean flag = driverService.lockCurrentLogServer(driver.getApplicationId());
+                            if (flag) {
+                                ComputeType scheduleType = driver.getComputeType();
+                                String appId = driver.getApplicationId();
+                                String sparkDriverUrl = driver.getSparkDriverUrl();
+                                boolean shareDriver = driver.isShareDriver();
+
+                                if (ComputeType.YARN_BATCH == scheduleType) {
+                                    JobInstance instance = instanceService.queryInstanceByAppId(appId);
+                                    if (instance != null) {
+                                        JobInstanceInfo instanceInfo = new JobInstanceInfo();
+                                        String instanceCode = instance.getCode();
+                                        instanceInfo.setClusterCode(instance.getClusterCode());
+                                        instanceInfo.setInstanceCode(instanceCode);
+                                        instanceInfo.setScheduleTime(instance.getScheduleTime());
+                                        instanceInfo.setInstanceType(instance.getInstanceType());
+                                        instanceInfo.setJobType(instance.getJobType());
+                                        instanceInfo.setOwner(instance.getOwner());
+
+                                        this.createSparkJobLog(instanceInfo, appId, shareDriver, sparkDriverUrl);
+                                        this.startJobLogThread(instanceCode);
+                                    }
+                                } else {
+                                    throw new UnsupportedOperationException("compute type not supported");
+                                }
+                            }
+
+                            try {
+                                TimeUnit.MILLISECONDS.sleep(200);
+                            } catch (Exception e) {
+                                LOGGER.error(e.getMessage(), e);
+                            }
+                        });
                     } catch (Exception e) {
                         LOGGER.error(e.getMessage(), e);
                     }
-                });
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }, 3, 1, TimeUnit.SECONDS);
+                },
+                3,
+                1,
+                TimeUnit.SECONDS);
 
-        ShutdownHookManager.get().addShutdownHook(() -> {
-            LOGGER.info("clear current log server");
-            driverService.clearCurrentLogServer();
-        }, 2);
+        ShutdownHookManager.get()
+                .addShutdownHook(
+                        () -> {
+                            LOGGER.info("clear current log server");
+                            driverService.clearCurrentLogServer();
+                        },
+                        2);
     }
 
     @Override
@@ -114,8 +120,8 @@ public class SparkLogService implements ApplicationContextAware, InitializingBea
         driverService.clearCurrentLogServer();
     }
 
-    public void createSparkJobLog(JobInstanceInfo instanceInfo, String applicationId,
-                                  boolean shareDriver, String sparkDriverUrl) {
+    public void createSparkJobLog(
+            JobInstanceInfo instanceInfo, String applicationId, boolean shareDriver, String sparkDriverUrl) {
 
         String instanceCode = instanceInfo.getInstanceCode();
         LogTaskDto logTaskDto = LogTaskDto.builder()

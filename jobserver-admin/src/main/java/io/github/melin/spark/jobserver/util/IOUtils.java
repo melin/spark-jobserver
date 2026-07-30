@@ -15,7 +15,8 @@ public class IOUtils {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (final Exception e) {}
+            } catch (final Exception e) {
+            }
         }
     }
 }

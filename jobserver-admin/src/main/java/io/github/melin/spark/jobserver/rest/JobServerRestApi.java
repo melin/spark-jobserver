@@ -6,6 +6,7 @@ import io.github.melin.spark.jobserver.rest.dto.JobSubmitRequet;
 import io.github.melin.spark.jobserver.service.JobServerServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.List;
 
 @Controller
 @Tag(name = "JobServer 接口")
@@ -54,7 +53,8 @@ public class JobServerRestApi {
     @GetMapping("v1/jobserver/batchQueryInstanceStatus")
     @Operation(summary = "批量查询作业实例状态")
     @ResponseBody
-    public Result<List<InstanceInfo>> batchQueryInstanceStatus(String accessKey, String accessSecret, String[] instanceCode) {
+    public Result<List<InstanceInfo>> batchQueryInstanceStatus(
+            String accessKey, String accessSecret, String[] instanceCode) {
         try {
             List<InstanceInfo> infos = jobServerService.batchQueryInstanceStatus(instanceCode);
             return Result.successDataResult(infos);

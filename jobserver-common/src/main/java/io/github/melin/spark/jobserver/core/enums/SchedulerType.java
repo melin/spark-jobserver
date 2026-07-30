@@ -12,7 +12,7 @@ public enum SchedulerType implements BaseStringEnum {
 
     private String name;
 
-    private SchedulerType(String name){
+    private SchedulerType(String name) {
         this.name = name;
     }
 

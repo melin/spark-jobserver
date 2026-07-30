@@ -1,11 +1,11 @@
-
 package io.github.melin.spark.jobserver.monitor.task;
 
-import io.github.melin.spark.jobserver.support.YarnClientService;
-import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
 import io.github.melin.spark.jobserver.core.entity.SparkDriver;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
+import io.github.melin.spark.jobserver.support.YarnClientService;
 import io.github.melin.spark.jobserver.support.leader.LeaderTypeEnum;
+import io.github.melin.spark.jobserver.support.leader.RedisLeaderElection;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.hadoop.yarn.api.records.Resource;
@@ -13,8 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * huaixin 2022/3/19 12:48 PM
@@ -46,7 +44,8 @@ public class UpdateDriverResourceTask implements Runnable {
                 String clusterCode = driver.getClusterCode();
                 if (StringUtils.isNotBlank(applicationId)) {
                     ApplicationReport report = yarnClientService.getYarnApplicationReport(clusterCode, applicationId);
-                    Resource resource = report.getApplicationResourceUsageReport().getNeededResources();
+                    Resource resource =
+                            report.getApplicationResourceUsageReport().getNeededResources();
 
                     if (resource != null) {
                         driver.setServerCores(resource.getVirtualCores());

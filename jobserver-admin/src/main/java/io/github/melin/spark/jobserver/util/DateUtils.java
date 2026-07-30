@@ -1,22 +1,21 @@
 package io.github.melin.spark.jobserver.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DateUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(DateUtils.class);
 
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            .withZone(ZoneId.systemDefault());
+    public static final DateTimeFormatter DATE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
 
-    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-            .withZone(ZoneId.systemDefault());
+    public static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.systemDefault());
 
     public static String formatDateTime(Instant dateTime) {
         if (dateTime == null) {

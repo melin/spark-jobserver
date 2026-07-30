@@ -1,25 +1,24 @@
 package io.github.melin.spark.jobserver.driver.task;
 
-import io.github.melin.spark.jobserver.api.SparkJob;
 import io.github.melin.spark.jobserver.api.JobServerException;
+import io.github.melin.spark.jobserver.api.SparkJob;
+import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.core.util.CommonUtils;
 import io.github.melin.spark.jobserver.driver.InstanceContext;
 import io.github.melin.spark.jobserver.driver.SparkDriverEnv;
-import io.github.melin.spark.jobserver.core.dto.InstanceDto;
 import io.github.melin.spark.jobserver.driver.support.SparkClassLoader;
 import io.github.melin.spark.jobserver.driver.util.LogUtils;
 import io.github.melin.superior.common.relational.Statement;
 import io.github.melin.superior.parser.appjar.AppJarHelper;
 import io.github.melin.superior.parser.appjar.AppJarInfo;
+import java.net.URL;
+import java.util.List;
+import java.util.UUID;
 import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.net.URL;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * huaixin 2022/4/8 3:00 PM
@@ -49,12 +48,13 @@ public class SparkAppTask extends AbstractSparkTask {
                     List<String> params = data.getParams();
                     InstanceContext.setJobClassName(className);
 
-                    SparkClassLoader loader = new SparkClassLoader(new URL[]{}, this.getClass().getClassLoader());
+                    SparkClassLoader loader =
+                            new SparkClassLoader(new URL[] {}, this.getClass().getClassLoader());
                     Thread.currentThread().setContextClassLoader(loader);
 
                     LogUtils.info("load jar: " + filePath);
 
-                    //String destPath = createTempHdfsFile(hadoopConf, instanceDto, filePath);
+                    // String destPath = createTempHdfsFile(hadoopConf, instanceDto, filePath);
                     String defaultFs = hadoopConf.get("fs.defaultFS");
                     jarHdfsPath = defaultFs + filePath;
                     loader.addJar(jarHdfsPath);
@@ -84,7 +84,7 @@ public class SparkAppTask extends AbstractSparkTask {
             }
         } finally {
             InstanceContext.setJobClassName("");
-            //deleteJarHdfsPath(jarHdfsPath);
+            // deleteJarHdfsPath(jarHdfsPath);
         }
     }
 }

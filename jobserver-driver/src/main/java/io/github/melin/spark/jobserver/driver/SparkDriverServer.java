@@ -1,8 +1,10 @@
 package io.github.melin.spark.jobserver.driver;
 
+import com.beust.jcommander.JCommander;
 import io.github.melin.spark.jobserver.driver.model.DriverParam;
 import io.github.melin.spark.jobserver.driver.support.ConfigClient;
-import com.beust.jcommander.JCommander;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
 import org.slf4j.Logger;
@@ -16,9 +18,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
 /**
  * huaixin 2022/4/6 7:05 PM

@@ -2,14 +2,13 @@ package io.github.melin.spark.jobserver.core.util;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * huaixin 2022/4/7 12:32 PM
@@ -18,20 +17,19 @@ public class CommonUtils {
 
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 
-    private static final ImmutableMap<String, ByteUnit> byteSuffixes =
-            ImmutableMap.<String, ByteUnit>builder()
-                    .put("b", ByteUnit.BYTE)
-                    .put("k", ByteUnit.KiB)
-                    .put("kb", ByteUnit.KiB)
-                    .put("m", ByteUnit.MiB)
-                    .put("mb", ByteUnit.MiB)
-                    .put("g", ByteUnit.GiB)
-                    .put("gb", ByteUnit.GiB)
-                    .put("t", ByteUnit.TiB)
-                    .put("tb", ByteUnit.TiB)
-                    .put("p", ByteUnit.PiB)
-                    .put("pb", ByteUnit.PiB)
-                    .build();
+    private static final ImmutableMap<String, ByteUnit> byteSuffixes = ImmutableMap.<String, ByteUnit>builder()
+            .put("b", ByteUnit.BYTE)
+            .put("k", ByteUnit.KiB)
+            .put("kb", ByteUnit.KiB)
+            .put("m", ByteUnit.MiB)
+            .put("mb", ByteUnit.MiB)
+            .put("g", ByteUnit.GiB)
+            .put("gb", ByteUnit.GiB)
+            .put("t", ByteUnit.TiB)
+            .put("tb", ByteUnit.TiB)
+            .put("p", ByteUnit.PiB)
+            .put("pb", ByteUnit.PiB)
+            .build();
 
     /**
      * Convert a passed byte string (e.g. 50b, 100kb, or 250mb) to the given. If no suffix is
@@ -42,7 +40,8 @@ public class CommonUtils {
 
         try {
             Matcher m = Pattern.compile("([0-9]+)([a-z]+)?").matcher(lower);
-            Matcher fractionMatcher = Pattern.compile("([0-9]+\\.[0-9]+)([a-z]+)?").matcher(lower);
+            Matcher fractionMatcher =
+                    Pattern.compile("([0-9]+\\.[0-9]+)([a-z]+)?").matcher(lower);
 
             if (m.matches()) {
                 long val = Long.parseLong(m.group(1));
@@ -56,16 +55,16 @@ public class CommonUtils {
                 // If suffix is valid use that, otherwise none was provided and use the default passed
                 return unit.convertFrom(val, suffix != null ? byteSuffixes.get(suffix) : unit);
             } else if (fractionMatcher.matches()) {
-                throw new NumberFormatException("Fractional values are not supported. Input was: "
-                        + fractionMatcher.group(1));
+                throw new NumberFormatException(
+                        "Fractional values are not supported. Input was: " + fractionMatcher.group(1));
             } else {
                 throw new NumberFormatException("Failed to parse byte string: " + str);
             }
 
         } catch (NumberFormatException e) {
-            String byteError = "Size must be specified as bytes (b), " +
-                    "kibibytes (k), mebibytes (m), gibibytes (g), tebibytes (t), or pebibytes(p). " +
-                    "E.g. 50b, 100k, or 250m.";
+            String byteError = "Size must be specified as bytes (b), "
+                    + "kibibytes (k), mebibytes (m), gibibytes (g), tebibytes (t), or pebibytes(p). "
+                    + "E.g. 50b, 100k, or 250m.";
 
             throw new NumberFormatException(byteError + "\n" + e.getMessage());
         }
@@ -220,10 +219,30 @@ public class CommonUtils {
         return StringUtils.join(chars, "");
     }
 
-    private static final String[] SQL_SPLIT_WORDKEYS =
-            new String[] {"insert", "delete", "update", "drop", "create", "explain",
-                    "alter", "select", "use", "set", "replace", "analyze", "show", "desc", "truncate",
-                    "merge", "call", "sync", "msck", "with", "load", "datatunnel"};
+    private static final String[] SQL_SPLIT_WORDKEYS = new String[] {
+        "insert",
+        "delete",
+        "update",
+        "drop",
+        "create",
+        "explain",
+        "alter",
+        "select",
+        "use",
+        "set",
+        "replace",
+        "analyze",
+        "show",
+        "desc",
+        "truncate",
+        "merge",
+        "call",
+        "sync",
+        "msck",
+        "with",
+        "load",
+        "datatunnel"
+    };
 
     /**
      * 多个sql语句逗号分隔拆开
@@ -263,7 +282,8 @@ public class CommonUtils {
                 for (String wordkey : SQL_SPLIT_WORDKEYS) {
                     int index = StringUtils.indexOfIgnoreCase(sql, wordkey, i);
                     if ((i + 1) == index) {
-                        String content = StringUtils.substring(sql, lastIndex, i).trim();
+                        String content =
+                                StringUtils.substring(sql, lastIndex, i).trim();
                         if (StringUtils.isNotBlank(content)) {
                             sqls.add(content);
                         }

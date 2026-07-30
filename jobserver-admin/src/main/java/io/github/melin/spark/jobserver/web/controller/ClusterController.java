@@ -1,13 +1,21 @@
 package io.github.melin.spark.jobserver.web.controller;
 
+import com.gitee.melin.bee.core.support.Pagination;
+import com.gitee.melin.bee.core.support.Result;
+import com.google.common.collect.Lists;
 import io.github.melin.spark.jobserver.SparkJobServerConf;
 import io.github.melin.spark.jobserver.core.entity.Cluster;
 import io.github.melin.spark.jobserver.core.enums.SchedulerType;
 import io.github.melin.spark.jobserver.core.service.ClusterService;
-import com.gitee.melin.bee.core.support.Pagination;
-import com.gitee.melin.bee.core.support.Result;
-import com.google.common.collect.Lists;
 import io.github.melin.spark.jobserver.core.service.SparkDriverService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.time.Instant;
+import java.util.Base64;
+import java.util.List;
+import java.util.Objects;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.Order;
@@ -16,18 +24,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.time.Instant;
-import java.util.Base64;
-import java.util.List;
-import java.util.Objects;
 
 @Controller
 public class ClusterController {
@@ -43,14 +45,14 @@ public class ClusterController {
     @Autowired
     protected RestTemplate restTemplate;
 
-    @RequestMapping("/cluster")
+    @GetMapping("/cluster")
     public String cluster(ModelMap model) throws Exception {
         String confDefaultValue = SparkJobServerConf.printConfWithDefaultValue();
         model.addAttribute("confDefaultValue", confDefaultValue);
         return "cluster";
     }
 
-    @RequestMapping("/cluster/queryClusters")
+    @GetMapping("/cluster/queryClusters")
     @ResponseBody
     public Pagination<Cluster> queryClusters(String code, int page, int limit, HttpServletRequest request) {
         String sort = request.getParameter("sort");
@@ -71,11 +73,10 @@ public class ClusterController {
             params.add("code");
             values.add(code);
         }
-        return clusterService.findPageByNamedParamAndOrder(params, values,
-                Lists.newArrayList(order1), page, limit);
+        return clusterService.findPageByNamedParamAndOrder(params, values, Lists.newArrayList(order1), page, limit);
     }
 
-    @RequestMapping("/cluster/queryCluster")
+    @GetMapping("/cluster/queryCluster")
     @ResponseBody
     public Result<Cluster> queryCluster(Long clusterId) {
         try {
@@ -87,7 +88,7 @@ public class ClusterController {
         }
     }
 
-    @RequestMapping("/cluster/saveCluster")
+    @PostMapping("/cluster/saveCluster")
     @ResponseBody
     public Result<Void> saveCluster(Cluster cluster, String keytabBase64) {
         if (SchedulerType.YARN == cluster.getSchedulerType()) {
@@ -165,7 +166,7 @@ public class ClusterController {
         }
     }
 
-    @RequestMapping("/cluster/updateStatus")
+    @PutMapping("/cluster/updateStatus")
     @ResponseBody
     public Result<Void> updateStatus(Long clusterId, Boolean status) {
         try {
@@ -183,7 +184,7 @@ public class ClusterController {
         }
     }
 
-    @RequestMapping("/cluster/deleteCluster")
+    @DeleteMapping("/cluster/deleteCluster")
     @ResponseBody
     public Result<Void> deleteCluster(Long clusterId) {
         try {
@@ -202,7 +203,7 @@ public class ClusterController {
         }
     }
 
-    @RequestMapping("/cluster/downloadKeytab")
+    @GetMapping("/cluster/downloadKeytab")
     public void downloadKeytab(HttpServletResponse response, Long clusterId) throws IOException {
         Cluster cluster = clusterService.getEntity(clusterId);
         if (Objects.isNull(cluster)) {

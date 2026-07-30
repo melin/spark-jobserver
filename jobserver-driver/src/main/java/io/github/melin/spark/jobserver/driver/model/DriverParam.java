@@ -1,15 +1,14 @@
 package io.github.melin.spark.jobserver.driver.model;
 
-import io.github.melin.spark.jobserver.core.enums.DriverType;
 import com.beust.jcommander.Parameter;
+import io.github.melin.spark.jobserver.core.enums.DriverType;
 
 public class DriverParam {
 
     @Parameter(names = "-j", description = "driverId", required = true)
     private Long driverId;
 
-    @Parameter(names = "-type", description = "driver type", required = true,
-            converter = DriverTypeConverter.class)
+    @Parameter(names = "-type", description = "driver type", required = true, converter = DriverTypeConverter.class)
     private DriverType driverType;
 
     @Parameter(names = "-conf", description = "driver config", required = true)

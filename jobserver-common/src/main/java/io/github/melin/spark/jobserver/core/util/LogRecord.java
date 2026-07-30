@@ -13,8 +13,7 @@ public class LogRecord {
 
     private String message;
 
-    public LogRecord() {
-    }
+    public LogRecord() {}
 
     public LogRecord(LogLevel level, String message) {
         this.level = level;

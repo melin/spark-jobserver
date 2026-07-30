@@ -8,8 +8,8 @@ import java.security.SecureRandom;
  */
 public class RandomUniqueIdGenerator {
     /** The array of printable characters to be used in our random string. */
-    private static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679"
-            .toCharArray();
+    private static final char[] PRINTABLE_CHARACTERS =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679".toCharArray();
 
     /** The default maximum length. */
     private static final int DEFAULT_MAX_RANDOM_LENGTH = 32;
