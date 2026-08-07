@@ -42,11 +42,6 @@ Spark JobServer特点:
 
 标准产品效果，支持 Yarn 和 Kubernetes, Kubernetes 基于 native 模式，Jobserver 可以替代 Operator 扩展，例如 Spark On Kubernetes，增强添加 NodePort，暴露 Spark webUI。任务运行结束之前，获取 pod 日志归档写入对象存储中
 
-![hadoop](imgs/hadoop.png)
-![kubernetes](imgs/kubernetes.png)
-![spark](imgs/spark.png)
-![flink](imgs/flink.png)
-
 ## 二、Build
 
 ```
