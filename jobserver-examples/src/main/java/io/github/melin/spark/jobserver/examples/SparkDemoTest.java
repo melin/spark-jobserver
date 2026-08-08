@@ -12,7 +12,7 @@ public class SparkDemoTest implements SparkJob {
         // LogUtils 方法打印的日志，收集到作业实例日志文件中，而不是输出到yarn 日志中
         LogUtils.info("execute spark examples");
 
-        LogUtils.info("hello {}", args);
+        LogUtils.info("hello {}", args[0]);
 
         sparkSession.sql("select * from bigdata.test_demo_dt").show();
     }
